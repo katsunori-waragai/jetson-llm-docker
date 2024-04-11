@@ -17,7 +17,7 @@ RUN python3 -m pip install pycocotools
 RUN python3 -m pip install opencv-python==3.4.18.65
 RUN python3 -m pip install transformers
 RUN python3 -m pip install onnx
-RUN python3 -m pip install clip
+RUN python3 -m pip install openai-clip
 RUN python3 -m pip install aiohttp
 
 RUN ldconfig
