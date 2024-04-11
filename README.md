@@ -36,21 +36,23 @@ ls ../data
 owl_predict_out.jpg が作成されていれば成功。
 
 
-# why
+# このリポジトリを作った理由
 - https://github.com/NVIDIA-AI-IOT/nanoowl/tree/main にdocker/23-01 があるが
 - sh build.sh の動作に成功していない。
 - そのため、自分でdocker環境を構築することにした。
 
 
 ## TODO
-
-Libnvdla_compiler.so error on nvidia jetson container
+- bash docker_build.sh の際にエラーを生じる。(tensortrtをdocker build 中に利用しようとした場合)
+- Libnvdla_compiler.so error on nvidia jetson container
 https://forums.developer.nvidia.com/t/libnvdla-compiler-so-cannot-open-shared-object-file-no-such-file-or-directory/240750
 
-### 問題の切り分け
-host環境では問題を生じていない。
+### Libnvdla_compiler.so error 問題の切り分け
+- docker run 後には生じていない。
+  - そのため、tensorrt を使う処理はdocker環境内で実行している。
+- host環境では問題を生じていない。
 ```commandline
 $ python3
->>> import tensorrr
+>>> import tensorrt
 
 ```
