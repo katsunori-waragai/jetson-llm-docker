@@ -7,7 +7,8 @@ RUN apt-get install -y libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev lib
 RUN apt-get install -y libv4l-dev v4l-utils qv4l2
 RUN apt-get install -y curl
 RUN apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
-RUN apt-get install -y tensorrt nvidia-tensorrt-dev python3-libnvinfer-dev
+RUN apt-get install -y tensorrt nvidia-tensorrt python3-libnvinfer
+RUN apt-get install -y cuda-toolkit-11.4
 RUN python3 -m pip install -U pip
 RUN python3 -m pip install loguru tqdm thop ninja tabulate
 RUN python3 -m pip install pycocotools
@@ -15,11 +16,12 @@ RUN python3 -m pip install pycocotools
 
 RUN python3 -m pip install opencv-python==3.4.18.65
 
+RUN ldconfig
 # torch2trt
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
-RUN cd /root/torch2trt; python3 setup.py install
+# RUN cd /root/torch2trt; python3 setup.py install
 
-RUN python3 -m pip install transformers
-RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
+# RUN python3 -m pip install transformers
+# RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
 
 # RUN cd /root/YOLOX && python3 tools/trt.py -n yolox-s -c yolox_s.pth
