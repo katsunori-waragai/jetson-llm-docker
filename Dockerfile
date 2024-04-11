@@ -12,6 +12,7 @@ RUN apt-get install -y cuda-toolkit-11.4
 RUN apt-get install -y libnvidia-container-tools libnvidia-container0 libnvidia-container1
 RUN apt-get install -y nvidia-container-runtime nvidia-container-toolkit nvidia-container
 RUN python3 -m pip install -U pip
+RUN python3 -m pip install wheel
 RUN python3 -m pip install loguru tqdm thop ninja tabulate
 RUN python3 -m pip install pycocotools
 RUN python3 -m pip install opencv-python==3.4.18.65
@@ -19,6 +20,7 @@ RUN python3 -m pip install transformers
 RUN python3 -m pip install onnx
 RUN python3 -m pip install openai-clip
 RUN python3 -m pip install aiohttp
+RUN python3 -m pip install --pre --upgrade tensorrt
 
 RUN ldconfig
 
