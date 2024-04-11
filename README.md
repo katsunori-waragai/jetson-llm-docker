@@ -18,6 +18,8 @@ docker for nanoowl
 torch2trt が表示されていれば、torch2trt のインストールには成功している。
 
 ### nanoowl の install
+- 以下のインストール作業をdocker環境内で行なっている場合、毎回行うこと。
+
 ```commandline
 cd /root/nanoowl/
 python3 setup.py develop --user
@@ -35,6 +37,9 @@ ls ../data
 
 owl_predict_out.jpg が作成されていれば成功。
 
+## nanoowl になれるには
+- 以下のURLのREADME.md を読むこと
+https://github.com/NVIDIA-AI-IOT/nanoowl
 
 # このリポジトリを作った理由
 - https://github.com/NVIDIA-AI-IOT/nanoowl/tree/main にdocker/23-01 があるが
@@ -56,3 +61,6 @@ $ python3
 >>> import tensorrt
 
 ```
+
+### nanoowl に関する日本語記事
+- https://techblog.cccmkhd.co.jp/entry/2023/12/19/112221
