@@ -17,16 +17,14 @@ RUN apt-get install -y nvidia-container-runtime nvidia-container-toolkit nvidia-
 RUN python3 -m pip install -U pip
 RUN python3 -m pip install loguru tqdm thop ninja tabulate
 RUN python3 -m pip install pycocotools
-
-
 RUN python3 -m pip install opencv-python==3.4.18.65
+RUN python3 -m pip install transformers
 
 RUN ldconfig
 # torch2trt
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
 # RUN cd /root/torch2trt; python3 setup.py install
 
-# RUN python3 -m pip install transformers
-# RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
+RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
 
-# RUN cd /root/YOLOX && python3 tools/trt.py -n yolox-s -c yolox_s.pth
+
