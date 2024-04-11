@@ -20,15 +20,18 @@ RUN python3 -m pip install transformers
 RUN python3 -m pip install onnx
 RUN python3 -m pip install openai-clip
 RUN python3 -m pip install aiohttp
-RUN python3 -m pip install --pre --upgrade tensorrt
+# RUN python3 -m pip install --upgrade tensorrt
+RUN python3 -m pip install nvidia-pyindex
+# RUN python3 -m pip install nvidia-tensorrt==8.4.1.5
+RUN python3 -m pip install "tensorrt<=8.6"
 
 RUN ldconfig
 
 RUN python3 -c "import onnx"
-RUN python3 -c "import tensorrt"
+# RUN python3 -c "import tensorrt"
 # torch2trt
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
-RUN cd /root/torch2trt; python3 setup.py install
+# RUN cd /root/torch2trt; python3 setup.py install
 
 RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
 
