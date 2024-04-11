@@ -62,5 +62,10 @@ $ python3
 
 ```
 
+## trouble shooting
+− [tree-prediction-live-camer](https://github.com/NVIDIA-AI-IOT/nanoowl?tab=readme-ov-file#example-3---tree-prediction-live-camera)
+で必要になるclip は　openai-clipである。
+- `RUN python3 -m pip install openai-clip`　の行を追加した。
+
 ### nanoowl に関する日本語記事
 - https://techblog.cccmkhd.co.jp/entry/2023/12/19/112221
