@@ -21,10 +21,12 @@ RUN python3 -m pip install openai-clip
 RUN python3 -m pip install aiohttp
 
 RUN ldconfig
+
+RUN python3 -c "import onnx"
+RUN python3 -c "import tensorrt"
 # torch2trt
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
-# RUN cd /root/torch2trt; python3 setup.py install
+RUN cd /root/torch2trt; python3 setup.py install
 
 RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
-
 
