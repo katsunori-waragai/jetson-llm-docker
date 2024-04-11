@@ -12,30 +12,14 @@ RUN python3 -m pip install -U pip
 RUN python3 -m pip install loguru tqdm thop ninja tabulate
 RUN python3 -m pip install pycocotools
 
-RUN wget -O ZED_SDK_Tegra_L4T35.3_v4.1.0.zstd.run https://download.stereolabs.com/zedsdk/4.1/l4t35.2/jetsons
-RUN chmod +x ZED_SDK_Tegra_L4T35.3_v4.1.0.zstd.run
-RUN apt install zstd
-RUN ./ZED_SDK_Tegra_L4T35.3_v4.1.0.zstd.run -- silent
 
-
-RUN python3 -m pip install ultralytics
 RUN python3 -m pip install opencv-python==3.4.18.65
-RUN python3 -m pip install PyOpenGL
-
-RUN cd /root && git clone https://github.com/Megvii-BaseDetection/YOLOX.git
-RUN cd /root/YOLOX && \
-    sed -i '/torchvision/d' requirements.txt && \
-    sed -i '/numpy/d' requirements.txt && \
-    sed -i '/torch/d' requirements.txt && \
-    sed -i 's/opencv[-_]python/opencv-python<=3.4.18.65/' requirements.txt && \
-    sed -i '/pycocotools/d' requirements.txt && \
-    sed -i '/onnx/d' requirements.txt && \
-    sed -i '/onnx/d' requirements.txt && \
-    sed -i '/onnx/d' requirements.txt
-RUN cd /root/YOLOX && python3 -m pip install -v -e .
-RUN cd /root/YOLOX && wget https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.pth
 
 # torch2trt
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
-# RUN cd /root/torch2trt; python3 setup.py install
+RUN cd /root/torch2trt; python3 setup.py install
+
+RUN python3 -m pip install transformers
+RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
+
 # RUN cd /root/YOLOX && python3 tools/trt.py -n yolox-s -c yolox_s.pth
