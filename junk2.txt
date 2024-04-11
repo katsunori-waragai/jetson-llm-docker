@@ -1,0 +1,25 @@
+  1  cd root/
+    2  pip3 list | grep torch
+    3  cd torch2trt/
+    4  python3 setup.py install
+    5  pip3 list | grep torch
+    6  cd ../nanoowl/
+    7  ls
+    8  python3 setup.py develop --user
+    9  mkdir -p data
+   10  python3 -m nanoowl.build_image_encoder_engine     data/owl_image_encoder_patch32.engine
+   11  pip3 install onxx
+   12  pip3 install onnx
+   13  python3 -m nanoowl.build_image_encoder_engine     data/owl_image_encoder_patch32.engine
+   14  cd examples
+   15  python3 owl_predict.py     --prompt="[an owl, a glove]"     --threshold=0.1     --image_encoder_engine=../data/owl_image_encoder_patch32.engine
+   16  cd ..
+   17  ls
+   18  cd data/
+   19  ls
+   20  ls /root
+   21  eog owl_predict_out.jpg &
+   22  apt install eog
+   23  eog owl_predict_out.jpg &
+   24  history
+
