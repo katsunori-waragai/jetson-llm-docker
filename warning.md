@@ -1,5 +1,5 @@
-root@waragai-orin:~/nanoowl# cd examples
-root@waragai-orin:~/nanoowl/examples# python3 owl_predict.py \
+root@orin:~/nanoowl# cd examples
+root@orin:~/nanoowl/examples# python3 owl_predict.py \
 >     --prompt="[an owl, a glove]" \
 >     --threshold=0.1 \
 >     --image_encoder_engine=../data/owl_image_encoder_patch32.engine
@@ -11,5 +11,5 @@ root@waragai-orin:~/nanoowl/examples# python3 owl_predict.py \
   return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
 /root/nanoowl/nanoowl/image_preprocessor.py:71: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /home/riship/old_pyt/pytorch/torch/csrc/utils/tensor_numpy.cpp:199.)
   image = torch.from_numpy(np.asarray(image))
-root@waragai-orin:~/nanoowl/examples# 
+root@orin:~/nanoowl/examples# 
 
