@@ -19,6 +19,7 @@ RUN python3 -m pip install loguru tqdm thop ninja tabulate
 RUN python3 -m pip install pycocotools
 RUN python3 -m pip install opencv-python==3.4.18.65
 RUN python3 -m pip install transformers
+RUN python3 -m pip install onnx
 
 RUN ldconfig
 # torch2trt
