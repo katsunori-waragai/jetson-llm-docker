@@ -34,8 +34,25 @@ orin:~$ sudo find / -name "libnvdla_compiler*" -print
 /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so
 ```
 
+#### docker build の最中での上記のファイルの有無、md5sum値
+- ファイルサイズが０であることが判明した。
+```Dockerfile
+RUN if [ -f /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo "File exists"; else echo "File does not exist"; fi
+RUN if [ -s /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo "File is not empty"; else echo "File is empty"; fi
+```
 
+```commandline
+Step 29/30 : RUN if [ -f /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo "File exists"; else echo "File does not exist"; fi
+ ---> Running in 972bbcc4fd10
+File exists
+Removing intermediate container 972bbcc4fd10
+ ---> 9438db06b516
+Step 30/30 : RUN if [ -s /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo "File is not empty"; else echo "File is empty"; fi
+ ---> Running in 214b04a3c3e4
+File is empty
+```
 
+### Q: なぜそのファイルが、docker build の最中にemptyになってしまっているのか？
 
 ----
 host environment
