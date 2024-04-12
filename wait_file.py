@@ -9,6 +9,3 @@ for i in range(100):
        break
     time.sleep(1)
 print(f"{found=}")
-
-
-
