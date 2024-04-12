@@ -20,32 +20,19 @@ RUN python3 -m pip install transformers
 RUN python3 -m pip install onnx
 RUN python3 -m pip install openai-clip
 RUN python3 -m pip install aiohttp
-# RUN python3 -m pip install --upgrade tensorrt
 RUN python3 -m pip install nvidia-pyindex
-# RUN python3 -m pip install nvidia-tensorrt==8.4.1.5
 RUN python3 -m pip install "tensorrt<=8.6"
 
 RUN ldconfig
 
-RUN python3 -c "import onnx"
 RUN if [ -f /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo "File exists"; else echo "File does not exist"; fi
 RUN if [ -s /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo "File is not empty"; else echo "File is empty"; fi
 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/cuda/bin
 
-COPY wait_file.py .
-RUN python3 wait_file.py
-
 COPY run_in_docker.sh .
-COPY live_demo.py .
+COPY live_demo.sh .
 
-# RUN python3 -c "import tensorrt"
-# torch2trt
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
-# RUN cd /root/torch2trt; python3 setup.py install
-
 RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
-
-
-

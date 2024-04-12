@@ -58,6 +58,10 @@ https://github.com/NVIDIA-AI-IOT/nanoowl
 - ここで、COCOデータセットには含まれていないカテゴリの物体を検出させる。
 
 
+## Next Step
+- ZED SDK を使用する物体検出の一例としてnanoowl を使うこと。
+- その場合には、別リポジトリとして作成する。
+
 # このリポジトリを作った理由
 - https://github.com/NVIDIA-AI-IOT/nanoowl/tree/main にdocker/23-01 があるが
 - sh build.sh の動作に成功していない。
