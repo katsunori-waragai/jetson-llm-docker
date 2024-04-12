@@ -1,3 +1,7 @@
+- 以下のwarningは無視する。
+
+```commandline
+
 root@orin:~/nanoowl# cd examples
 root@orin:~/nanoowl/examples# python3 owl_predict.py \
 >     --prompt="[an owl, a glove]" \
@@ -13,3 +17,4 @@ root@orin:~/nanoowl/examples# python3 owl_predict.py \
   image = torch.from_numpy(np.asarray(image))
 root@orin:~/nanoowl/examples# 
 
+```

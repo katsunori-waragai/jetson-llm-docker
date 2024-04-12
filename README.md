@@ -8,7 +8,18 @@ docker for nanoowl
 ## Dockerfile
 - 上記のnanoowl でのinstall 手順をDockerファイルに記述中
 
-## docker環境内で行なっている処理
+
+## docker環境内での処理の自動化（簡略化後）
+- run_in_docker.sh
+  - `$ sh docker_run.sh` の実行直後に動作させるスクリプト。
+  - torch2trt のインストール、nanoowlのsetup を実行し、モデルファイルのtrt化を実行する。
+- live_demo.py
+  - 接続したカメラでのliveでの検出処理をブラウザ上に表示する。
+  - 検出対象をブラウザのコンソールに入力する。
+  - ブラウザは"http://IPアドレス:7860/" で接続する。
+  - ブラウザは、到達可能な範囲のマシンからはアクセスが可能である。
+
+## docker環境内で行なっている処理（詳細）
 ### torch2trt の install
 ```commandline
 # cd /root/torch2trt/
