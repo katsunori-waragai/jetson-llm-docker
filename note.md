@@ -27,9 +27,10 @@ $  md5sum /usr/lib/python3.8/dist-packages/tensorrt/__init__.py
 ```
 
 ### チェック２：libnvdla_compiler.so
-host環境, guest環境で 以下のファイルが見つかる。
+- host環境, guest環境で 以下のファイルが見つかる。
+- md5sum の値も一致した。
 ```commandline
-aragai@waragai-orin:~$ sudo find / -name "libnvdla_compiler*" -print
+orin:~$ sudo find / -name "libnvdla_compiler*" -print
 /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so
 ```
 
@@ -40,7 +41,7 @@ aragai@waragai-orin:~$ sudo find / -name "libnvdla_compiler*" -print
 host environment
 
 ```
-waragai@waragai-orin:/usr/lib/python3.8/dist-packages/tensorrt$ grep import __init__.py 
+orin:/usr/lib/python3.8/dist-packages/tensorrt$ grep import __init__.py 
 import ctypes
 import glob
 import os
@@ -65,7 +66,7 @@ in guest environment
 
 ```commandline
 
-root@waragai-orin:/# grep import /usr/lib/python3.8/dist-packages/tensorrt/__init__.py 
+root@orin:/# grep import /usr/lib/python3.8/dist-packages/tensorrt/__init__.py 
 import ctypes
 import glob
 import os
@@ -73,7 +74,7 @@ import sys
 import warnings
 from .tensorrt import *
     import numpy as np
-root@waragai-orin:/# 
+root@orin:/# 
 
 ```
 
