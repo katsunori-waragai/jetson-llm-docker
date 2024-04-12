@@ -68,6 +68,8 @@ $ python3
 
 ```
 
+https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html
+
 #### 追加の設定をDockerfile に記述したい。
 - model のダウンロード、modelのtensorRT(*.engine)への変換作業をdocker build 時の1回にしたい。
 - 上記の`Libnvdla_compiler.so error on nvidia jetson container` がボトルネックになっている。
@@ -79,3 +81,6 @@ $ python3
 
 ### nanoowl に関する日本語記事
 - https://techblog.cccmkhd.co.jp/entry/2023/12/19/112221
+
+「小数のサンプル画像例示による物体検出」ができる。
+
