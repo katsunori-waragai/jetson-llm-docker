@@ -34,8 +34,8 @@ RUN if [ -s /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/cuda/bin
 
-COPY wait_file.py .
-RUN python3 wait_file.py
+# COPY wait_file.py .
+# RUN python3 wait_file.py
 
 COPY run_in_docker.sh .
 COPY live_demo.py .
