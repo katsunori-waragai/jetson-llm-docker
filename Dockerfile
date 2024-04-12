@@ -36,6 +36,3 @@ COPY live_demo.py .
 
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
 RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
-
-
-
