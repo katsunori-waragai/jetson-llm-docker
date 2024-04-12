@@ -28,17 +28,14 @@ RUN python3 -m pip install "tensorrt<=8.6"
 RUN ldconfig
 
 RUN python3 -c "import onnx"
-CMD ls -lF /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so 
-CMD md5sum /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so
-
 RUN if [ -f /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo "File exists"; else echo "File does not exist"; fi
 RUN if [ -s /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo "File is not empty"; else echo "File is empty"; fi
 # RUN python3 -c "import tensorrt"
 # torch2trt
-# RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
+RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
 # RUN cd /root/torch2trt; python3 setup.py install
 
-# RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
+RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
 
 
 
