@@ -37,7 +37,10 @@ ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local
 COPY wait_file.py .
 RUN python3 wait_file.py
 
-RUN python3 -c "import tensorrt"
+COPY run_in_docker.sh .
+COPY live_demo.py .
+
+# RUN python3 -c "import tensorrt"
 # torch2trt
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
 # RUN cd /root/torch2trt; python3 setup.py install
