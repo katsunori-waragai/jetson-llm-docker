@@ -1,0 +1,2 @@
+YOLOX output file location.
+Be sure to make this directory before docker run. 
