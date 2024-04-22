@@ -26,4 +26,5 @@ RUN python3 -m pip uninstall -y opencv-python-headless
 RUN python3 -m pip install opencv-python==3.4.18.65
 
 COPY [1-9]_*.sh /root/GroundingDINO/
+COPY inference_on_a_movie.py /root/GroundingDINO/demo
 
