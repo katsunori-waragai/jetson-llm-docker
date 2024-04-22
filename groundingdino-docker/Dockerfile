@@ -4,6 +4,7 @@ ENV CUDA_HOME=/usr/local/cuda
 RUN apt update
 RUN apt install sudo
 RUN apt-get install -y zip
+RUN apt-get install -y nano
 RUN python3 -m pip install -U pip
 RUN python3 -m pip install wheel
 RUN python3 -m pip uninstall -y opencv-python-headless
