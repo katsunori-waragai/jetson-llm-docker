@@ -25,6 +25,19 @@ def pil2cv(image):
         new_image = cv2.cvtColor(new_image, cv2.COLOR_RGBA2BGRA)
     return new_image
 
+def cv2pil(image):
+    ''' OpenCV型 -> PIL型 '''
+    new_image = image.copy()
+    if new_image.ndim == 2:  # モノクロ
+        pass
+    elif new_image.shape[2] == 3:  # カラー
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_BGR2RGB)
+    elif new_image.shape[2] == 4:  # 透過
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_BGRA2RGBA)
+    new_image = Image.fromarray(new_image)
+    return new_image
+
+
 def plot_boxes_to_image(image_pil, tgt):
     H, W = tgt["size"]
     boxes = tgt["boxes"]
@@ -69,6 +82,21 @@ def plot_boxes_to_image(image_pil, tgt):
 def load_image(image_path):
     # load image
     image_pil = Image.open(image_path).convert("RGB")  # load image
+
+    transform = T.Compose(
+        [
+            T.RandomResize([800], max_size=1333),
+            T.ToTensor(),
+            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
+    image, _ = transform(image_pil, None)  # 3, h, w
+    return image_pil, image
+
+def capture_image(cap):
+    # load image
+    r, opencvimg = cap.read()
+    image_pil = cv2pil(opencvimg)
 
     transform = T.Compose(
         [
@@ -195,32 +223,34 @@ if __name__ == "__main__":
     os.makedirs(output_dir, exist_ok=True)
     model = load_model(config_file, checkpoint_path, cpu_only=args.cpu_only)
 
-    image_pil, image = load_image(image_path)
-    # visualize raw image
-    image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
+    cap = cv2.VideoCapture(0)
+    while True:
+	    image_pil, image = capture_image(cap)
+	    # visualize raw image
+	    # image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
 
-    # set the text_threshold to None if token_spans is set.
-    if token_spans is not None:
-        text_threshold = None
-        print("Using token_spans. Set the text_threshold to None.")
+	    # set the text_threshold to None if token_spans is set.
+	    if token_spans is not None:
+	        text_threshold = None
+	        print("Using token_spans. Set the text_threshold to None.")
 
 
-    # run model
-    boxes_filt, pred_phrases = get_grounding_output(
-        model, image, text_prompt, box_threshold, text_threshold, cpu_only=args.cpu_only, token_spans=eval(f"{token_spans}")
-    )
+	    # run model
+	    boxes_filt, pred_phrases = get_grounding_output(
+	        model, image, text_prompt, box_threshold, text_threshold, cpu_only=args.cpu_only, token_spans=eval(f"{token_spans}")
+	    )
 
-    # visualize pred
-    size = image_pil.size
-    pred_dict = {
-        "boxes": boxes_filt,
-        "size": [size[1], size[0]],  # H,W
-        "labels": pred_phrases,
-    }
-    # import ipdb; ipdb.set_trace()
-    image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
-    image_with_box.save(os.path.join(output_dir, "pred.jpg"))
-    cvimg = pil2cv(image_with_box)
-    cv2.imshow("groundingDINO", cvimg)
-    cv2.waitKey(-1)
+	    # visualize pred
+	    size = image_pil.size
+	    pred_dict = {
+	        "boxes": boxes_filt,
+	        "size": [size[1], size[0]],  # H,W
+	        "labels": pred_phrases,
+	    }
+	    # import ipdb; ipdb.set_trace()
+	    image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
+	    # image_with_box.save(os.path.join(output_dir, "pred.jpg"))
+	    cvimg = pil2cv(image_with_box)
+	    cv2.imshow("groundingDINO", cvimg)
+	    cv2.waitKey(-1)
 
