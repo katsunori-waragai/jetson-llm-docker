@@ -6,6 +6,7 @@ RUN apt install sudo
 RUN apt-get install -y zip
 RUN python3 -m pip install -U pip
 RUN python3 -m pip install wheel
+RUN python3 -m pip uninstall opencv-python-headless
 RUN python3 -m pip install opencv-python==3.4.18.65
 
 RUN ldconfig
