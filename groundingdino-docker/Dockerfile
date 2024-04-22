@@ -1,6 +1,6 @@
 FROM nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
 
-ENV CUDA_HOME=/usr/local/cuda
+ENV CUDA_HOME=/usr/local/cuda-11.4
 RUN apt update
 RUN apt install sudo
 RUN apt-get install -y zip
