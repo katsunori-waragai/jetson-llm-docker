@@ -181,13 +181,10 @@ if __name__ == "__main__":
     text_threshold = args.text_threshold
     token_spans = args.token_spans
 
-    # make dir
     os.makedirs(output_dir, exist_ok=True)
-    # load image
-    image_pil, image = load_image(image_path)
-    # load model
     model = load_model(config_file, checkpoint_path, cpu_only=args.cpu_only)
 
+    image_pil, image = load_image(image_path)
     # visualize raw image
     image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
 
@@ -212,3 +209,6 @@ if __name__ == "__main__":
     # import ipdb; ipdb.set_trace()
     image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
     image_with_box.save(os.path.join(output_dir, "pred.jpg"))
+    cv2.imshow("groundingDINO", image_with_box)
+    cv2.waitKey(-1)
+
