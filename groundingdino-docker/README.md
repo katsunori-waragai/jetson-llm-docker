@@ -19,9 +19,16 @@ GPU_ID を取得するには、以下の情報を参照すること
 
 https://forums.developer.nvidia.com/t/find-the-gpu-information/182768
 
+## check point
+- CUDA_HOME の設定 -> Dockerfile 中で ENV で設定した。
+- {GPU_ID}の設定
+- pythonのバージョンが循環import を生じない版であること。
+
 ## trouble
 
 name '_C' error
+
+
 
 cuda のバージョンの問題
 cuda-11.3 は GroundingDINO の記述
