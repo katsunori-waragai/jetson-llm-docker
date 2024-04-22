@@ -10,11 +10,13 @@ Docker environment for grounding DINO
 sh docker_build.sh
 sh docker_run.sh
 cd /root/GroundingDINO
-sh download_weights.sh
-sh detect.sh /root/data/dog.jpg
+sh 1_install_groundingDino.sh 
+sh 2_reinstall-opencv.sh 
+sh 3_download_weights.sh 
+sh 4_detect.sh /root/data/dog.jpg
 ```
 
-##
+## GPU_ID
 GPU_ID を取得するには、以下の情報を参照すること
 
 https://forums.developer.nvidia.com/t/find-the-gpu-information/182768

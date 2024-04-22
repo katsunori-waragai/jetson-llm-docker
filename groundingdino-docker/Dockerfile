@@ -25,6 +25,5 @@ RUN cd /root/GroundingDINO && python3 -m pip install -e .
 RUN python3 -m pip uninstall -y opencv-python-headless
 RUN python3 -m pip install opencv-python==3.4.18.65
 
-
-COPY [1-9]_*.sh /root/GroundingDINO
+COPY [1-9]_*.sh /root/GroundingDINO/
 
