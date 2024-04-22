@@ -4,6 +4,18 @@ Docker environment for grounding DINO
 
 - https://github.com/IDEA-Research/GroundingDINO
 
+## instruction
+ 
+```
+sh docker_build.sh
+sh docker_run.sh
+cd /root/GroundingDINO
+sh download_weights.sh
+sh detect.sh /root/data/dog.jpg
+```
+
+
+
 ## trouble
 
 name '_C' error
