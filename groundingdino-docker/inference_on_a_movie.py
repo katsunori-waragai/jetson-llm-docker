@@ -225,32 +225,34 @@ if __name__ == "__main__":
 
     cap = cv2.VideoCapture(0)
     while True:
-	    image_pil, image = capture_image(cap)
-	    # visualize raw image
-	    # image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
+        image_pil, image = capture_image(cap)
+        # visualize raw image
+        # image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
 
-	    # set the text_threshold to None if token_spans is set.
-	    if token_spans is not None:
-	        text_threshold = None
-	        print("Using token_spans. Set the text_threshold to None.")
+        # set the text_threshold to None if token_spans is set.
+        if token_spans is not None:
+            text_threshold = None
+            print("Using token_spans. Set the text_threshold to None.")
 
 
-	    # run model
-	    boxes_filt, pred_phrases = get_grounding_output(
-	        model, image, text_prompt, box_threshold, text_threshold, cpu_only=args.cpu_only, token_spans=eval(f"{token_spans}")
-	    )
+        # run model
+        boxes_filt, pred_phrases = get_grounding_output(
+            model, image, text_prompt, box_threshold, text_threshold, cpu_only=args.cpu_only, token_spans=eval(f"{token_spans}")
+        )
 
-	    # visualize pred
-	    size = image_pil.size
-	    pred_dict = {
-	        "boxes": boxes_filt,
-	        "size": [size[1], size[0]],  # H,W
-	        "labels": pred_phrases,
-	    }
-	    # import ipdb; ipdb.set_trace()
-	    image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
-	    # image_with_box.save(os.path.join(output_dir, "pred.jpg"))
-	    cvimg = pil2cv(image_with_box)
-	    cv2.imshow("groundingDINO", cvimg)
-	    cv2.waitKey(1)
+        # visualize pred
+        size = image_pil.size
+        pred_dict = {
+            "boxes": boxes_filt,
+            "size": [size[1], size[0]],  # H,W
+            "labels": pred_phrases,
+        }
+        # import ipdb; ipdb.set_trace()
+        image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
+        # image_with_box.save(os.path.join(output_dir, "pred.jpg"))
+        cvimg = pil2cv(image_with_box)
+        cv2.imshow("groundingDINO", cvimg)
+        key = cv2.waitKey(1)
+            if key == ord("q"):
+                break
 
