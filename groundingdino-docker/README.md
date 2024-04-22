@@ -14,7 +14,10 @@ sh download_weights.sh
 sh detect.sh /root/data/dog.jpg
 ```
 
+##
+GPU_ID を取得するには、以下の情報を参照すること
 
+https://forums.developer.nvidia.com/t/find-the-gpu-information/182768
 
 ## trouble
 
