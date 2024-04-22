@@ -58,6 +58,11 @@ https://github.com/NVIDIA-AI-IOT/nanoowl
 - 上記のスクリプトの実行
 - ここで、COCOデータセットには含まれていないカテゴリの物体を検出させる。
 
+## TODO
+- [] モデルファイルのダウンロードをdocker_run.sh で起動後に毎回行うのをなんとかしたい。
+- [] tensorRTにモデルを変換したら、そのモデルを保存しておくこと。
+毎回の変換作業が面倒が多い。
+
 
 ## Next Step
 - ZED SDK を使用する物体検出の一例としてnanoowl を使うこと。
