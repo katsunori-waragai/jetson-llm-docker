@@ -1,7 +1,7 @@
 #!/bin/bash
 case $# in
   1)
-    echo "1" ;;
+    ;;
   *)
     echo "usage:" $0 "imagefile";
     exit ;;
