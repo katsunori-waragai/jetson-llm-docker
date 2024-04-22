@@ -28,4 +28,5 @@ RUN python3 -m pip install opencv-python==3.4.18.65
 
 COPY detect.sh /root/GroundingDINO
 COPY download_weights.sh /root/GroundingDINO
+COPY reinstall-opencv.sh /root/GroundingDINO
 

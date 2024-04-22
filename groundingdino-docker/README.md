@@ -29,6 +29,8 @@ https://forums.developer.nvidia.com/t/find-the-gpu-information/182768
 name '_C' error
 
 
+https://github.com/IDEA-Research/Grounded-Segment-Anything/issues/275
+
 
 cuda のバージョンの問題
 cuda-11.3 は GroundingDINO の記述
