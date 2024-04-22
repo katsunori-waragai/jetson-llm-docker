@@ -252,5 +252,5 @@ if __name__ == "__main__":
 	    # image_with_box.save(os.path.join(output_dir, "pred.jpg"))
 	    cvimg = pil2cv(image_with_box)
 	    cv2.imshow("groundingDINO", cvimg)
-	    cv2.waitKey(-1)
+	    cv2.waitKey(1)
 

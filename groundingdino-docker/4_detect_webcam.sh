@@ -14,5 +14,5 @@ python3 demo/inference_on_a_movie.py \
 -p weights/groundingdino_swint_ogc.pth \
 -i $1 \
 -o outdir \
--t "dog"
+-t "head . face . eye . hand"
 # [--cpu-only] # open it for cpu mode
