@@ -5,6 +5,7 @@ import sys
 import numpy as np
 import torch
 from PIL import Image, ImageDraw, ImageFont
+import cv2
 
 import groundingdino.datasets.transforms as T
 from groundingdino.models import build_model
@@ -13,6 +14,16 @@ from groundingdino.util.slconfig import SLConfig
 from groundingdino.util.utils import clean_state_dict, get_phrases_from_posmap
 from groundingdino.util.vl_utils import create_positive_map_from_span
 
+def pil2cv(image):
+    ''' PIL型 -> OpenCV型 '''
+    new_image = np.array(image, dtype=np.uint8)
+    if new_image.ndim == 2:  # モノクロ
+        pass
+    elif new_image.shape[2] == 3:  # カラー
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR)
+    elif new_image.shape[2] == 4:  # 透過
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_RGBA2BGRA)
+    return new_image
 
 def plot_boxes_to_image(image_pil, tgt):
     H, W = tgt["size"]
@@ -209,6 +220,7 @@ if __name__ == "__main__":
     # import ipdb; ipdb.set_trace()
     image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
     image_with_box.save(os.path.join(output_dir, "pred.jpg"))
-    cv2.imshow("groundingDINO", image_with_box)
+    cvimg = pil2cv(image_with_box)
+    cv2.imshow("groundingDINO", cvimg)
     cv2.waitKey(-1)
 
