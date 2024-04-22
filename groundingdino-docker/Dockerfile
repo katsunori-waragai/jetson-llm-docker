@@ -17,8 +17,10 @@ ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/cuda/bin
 
 RUN cd /root/ && git clone https://github.com/IDEA-Research/GroundingDINO.git
+RUN cd /root/GroundingDINO && sed -i '/opencv-python/d' requirements.txt 
 RUN cd /root/GroundingDINO && python3 -m pip install -e .
 
-COPY detect.py /root/GroundingDINO
+
+COPY detect.sh /root/GroundingDINO
 COPY download_weights.sh /root/GroundingDINO
 

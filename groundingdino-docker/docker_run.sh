@@ -1,5 +1,5 @@
 #!/bin/bash
-export GIT_ROOT=$(cd $(dirname $0)/.. ; pwd)
+export GIT_ROOT=$(cd $(dirname $0)/../.. ; pwd)
 sudo docker run -it --rm --net=host --runtime nvidia -e DISPLAY=$DISPLAY \
 	-v ${GIT_ROOT}/data:/root/data \
 	--device /dev/bus/usb \
