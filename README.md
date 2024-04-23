@@ -25,3 +25,13 @@ Jeston docker settings for LLMs
 ## Note
 - Each folder does not contain original repository.
 - In some folders model are converted into TensorRT.
+
+## Troubleshooting
+- If you use torch2trt in Dockerfile, you must modify /etc/docker/daemon.json
+```
+"default-runtime": "nvidia",
+```
+is needed in the json file.
+
+See 
+https://github.com/NVIDIA-AI-IOT/torch2trt/issues/483
