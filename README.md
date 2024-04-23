@@ -23,7 +23,7 @@ Jeston docker settings for LLMs
   - https://github.com/Megvii-BaseDetection/YOLOX
   - object detection
 ## Note
-- Each folder does not contain original repository.  git push --set-upstream origin feature/torch2trt-in-dockerfile
+- Each folder does not contain original repository. 
 - In some folders model are converted into TensorRT.
 
 ## Troubleshooting
