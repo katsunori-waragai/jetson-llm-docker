@@ -29,6 +29,7 @@ ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/cuda/bin
 
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
+RUN cd /root/torch2trt && python3 setup.py install --plugins
 RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
 
 COPY run_in_docker.sh /root/nanoowl

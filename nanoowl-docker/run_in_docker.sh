@@ -1,6 +1,6 @@
 #!/bin/bash
-cd /root/torch2trt/
-python3 setup.py install
+# cd /root/torch2trt/
+# python3 setup.py install
 cd /root/nanoowl
 python3 setup.py develop --user
 mkdir -p data
