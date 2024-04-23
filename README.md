@@ -23,8 +23,18 @@ Jeston docker settings for LLMs
   - https://github.com/Megvii-BaseDetection/YOLOX
   - object detection
 ## Note
-- Each folder does not contain original repository.
+- Each folder does not contain original repository. 
 - In some folders model are converted into TensorRT.
+
+## Troubleshooting
+- If you use torch2trt in Dockerfile, you must modify /etc/docker/daemon.json
+```
+"default-runtime": "nvidia",
+```
+is needed in the json file.
+
+See 
+https://github.com/NVIDIA-AI-IOT/torch2trt/issues/483
 
 ## for disk space
 - Jetson AGX Orin でのdocker の際にディスクスペースの枯渇を生じないように対策をとること。
@@ -40,3 +50,4 @@ Jeston docker settings for LLMs
 - 推論の際に、実際にGPUを用いているかを確認すること
   - jtop 
   - https://www.fabshop.jp/jetson-nano-jtop/#google_vignette
+
