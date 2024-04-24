@@ -3,6 +3,8 @@ RUN python3 -m pip install pillow --upgrade
 RUN python3 -m pip install timm
 RUN python3 -m pip install onnx
 RUN python3 -m pip install matplotlib
+RUN python3 -m pip install pillow
+RUN python3 -m pip install pycocotools
 
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
 RUN cd /root/torch2trt/ && python3 setup.py install --plugins
