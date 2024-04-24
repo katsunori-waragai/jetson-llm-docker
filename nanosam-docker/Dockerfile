@@ -8,4 +8,4 @@ RUN cd /root/trt_pose && python3 setup.py develop
 RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanosam
 RUN cd /root/nanosam && python3 setup.py develop
 
-COPY [1-9]*.sh /root/nanosam
+COPY [1-9]*.sh /root/nanosam/
