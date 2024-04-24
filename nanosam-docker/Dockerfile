@@ -28,7 +28,7 @@ RUN cd /root/nanosam/ && trtexec \
     --optShapes=point_coords:1x1x2,point_labels:1x1 \
     --maxShapes=point_coords:1x10x2,point_labels:1x10
 
-# download resnet18_image_encoder.onnx from Google Drive 
+# download resnet18_image_encoder.onnx from Google Drive destnation is /root/nanosam/data
 
 # RUN cd /root/nanosam/ && trtexec \
 #     --onnx=data/resnet18_image_encoder.onnx \
