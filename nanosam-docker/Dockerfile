@@ -12,6 +12,7 @@ RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/nanosam
 RUN cd /root/nanosam/ && python3 setup.py develop
 
 COPY [1-9]*.sh /root/nanosam/
+COPY my_basic_usage.py /root/nanosam/ 
 
 RUN cd /root/nanosam/ && mkdir -v data
 RUN cd /root/nanosam/ && python3 -m nanosam.tools.export_sam_mask_decoder_onnx \
