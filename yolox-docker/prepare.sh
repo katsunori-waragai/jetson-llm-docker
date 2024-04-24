@@ -1,7 +1,4 @@
 #!/bin/sh
-# torch2trt
-cd /root/YOLOX
-git clone https://github.com/NVIDIA-AI-IOT/torch2trt ; cd torch2trt; python3 setup.py install
 cd /root/YOLOX
 export TRTMODEL_S=YOLOX_outputs/yolox_s/model_trt.pth
 if [ ! -f ${TRTMODEL_S} ]; then
