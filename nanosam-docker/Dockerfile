@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/pytorch:23.01-py3
+FROM nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
 RUN python3 -m pip install pillow --upgrade 
 
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
