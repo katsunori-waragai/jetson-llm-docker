@@ -26,3 +26,5 @@ RUN cd /root/YOLOX && wget https://github.com/Megvii-BaseDetection/YOLOX/release
 
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ; cd torch2trt; python3 setup.py install
 RUN cd /root/YOLOX && python3 tools/trt.py -n yolox-s -c yolox_s.pth ; python3 tools/trt.py -n yolox-tiny -c yolox_tiny.pth
+COPY prepare.sh /root/YOLOX
+COPY run_webcam.sh /root/YOLOX
