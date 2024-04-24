@@ -1,4 +1,6 @@
 #!/bin/bash
+export PATH=$PATH:/usr/src/tensorrt/bin/
+
 trtexec \
     --onnx=data/mobile_sam_mask_decoder.onnx \
     --saveEngine=data/mobile_sam_mask_decoder.engine \
