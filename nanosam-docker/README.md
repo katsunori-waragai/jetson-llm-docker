@@ -29,3 +29,11 @@ python3 examples/basic_usage.py \
 - 入力ファイルを変更できること
 - 入力をファイルではなく、webcam にできること
 
+
+## 以下のモデルファイルのダウンロード
+- trt-pose を使うセグメンテーションの実行時に利用する。
+`nanosam/examples/segment_from_pose.py`
+
+densenet121_baseline_att_256x256_B_epoch_160.pth 
+以下の場所からダウンロードできる。
+https://github.com/NVIDIA-AI-IOT/trt_pose
