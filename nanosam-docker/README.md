@@ -25,9 +25,16 @@ python3 examples/basic_usage.py \
     --image_encoder=data/resnet18_image_encoder.engine \
     --mask_decoder=data/mobile_sam_mask_decoder.engine
 
+## 改変したスクリプト
+入力ファイルを変更したい。
+- my_basic_usage.py  
+- my_segment_from_pose.py
+
 ## TODO
 - 入力ファイルを変更できること
 - 入力をファイルではなく、webcam にできること
+- TRT済みのモデルを使うようになっているかの確認
+- なっていなければTRTに変更する
 
 
 ## 以下のモデルファイルのダウンロード
