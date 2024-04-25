@@ -96,7 +96,7 @@ if __name__ == "__main__":
     DEFAULT_IMAGE = PROJECT_ROOT / "assets/john_1.jpg"
     POSE_MODEL = PROJECT_ROOT / "data/densenet121_baseline_att_256x256_B_epoch_160.pth"
     POSE_JSON = PROJECT_ROOT / "assets/human_pose.json"
-    RESNET_ENGINE = PROJECT_ROOT / "data/resnet18_image_encoder.engine",
+    RESNET_ENGINE = PROJECT_ROOT / "data/resnet18_image_encoder.engine"
     SAM_ENGINE = PROJECT_ROOT / "data/mobile_sam_mask_decoder.engine"
 
     parser = argparse.ArgumentParser()
