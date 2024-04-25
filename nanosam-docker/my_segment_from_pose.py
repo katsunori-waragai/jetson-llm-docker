@@ -13,10 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from pathlib import Path
+
 import PIL.Image
 import matplotlib.pyplot as plt
 from nanosam.utils.trt_pose import PoseDetector, pose_to_sam_points
 from nanosam.utils.predictor import Predictor
+
+import cvpil
+
+PROJECT_ROOT = Path(__name__).resolve().parent.parent
 
 def get_torso_points(pose):
     return pose_to_sam_points(
@@ -86,22 +92,28 @@ def predict_and_show(N, index, pose, fg_points, bg_points):
 
 if __name__ == "__main__":
     import argparse
+    DEFAULT_IMAGE = PROJECT_ROOT / "assets/john_1.jpg"
+    POSE_MODEL = PROJECT_ROOT / "data/densenet121_baseline_att_256x256_B_epoch_160.pth"
+    POSE_JSON = PROJECT_ROOT / "assets/human_pose.json"
+    RESNET_ENGINE = PROJECT_ROOT / "data/resnet18_image_encoder.engine",
+    SAM_ENGINE = PROJECT_ROOT / "data/mobile_sam_mask_decoder.engine"
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--image", default="assets/john_1.jpg", help="image to segment")
+    parser.add_argument("--image", default=DEFAULT_IMAGE, help="image to segment")
     args = parser.parse_args()
 
     pose_model = PoseDetector(
-        "data/densenet121_baseline_att_256x256_B_epoch_160.pth",
-        "assets/human_pose.json"
+        str(POSE_MODEL),
+        POSE_JSON
     )
 
     image = PIL.Image.open(args.image)
-
+    image = cvpil.cv2pil(cv2.imread(args.image))
     detections = pose_model.predict(image)
 
     sam_predictor = Predictor(
-        "data/resnet18_image_encoder.engine",
-        "data/mobile_sam_mask_decoder.engine"
+        str(RESNET_ENGINE),
+        str(SAM_ENGINE)
     )
 
     pose = detections[0]
@@ -137,3 +149,7 @@ if __name__ == "__main__":
 
     plt.subplots_adjust(wspace=0, hspace=0)
     plt.savefig("data/segment_from_pose_out.png", bbox_inches="tight")
+
+    outimg = cv2.imread("data/segment_from_pose_out.png")
+    cv2.imshow("data/segment_from_pose_out", outimg)
+    cv2.waitKey(-1)
