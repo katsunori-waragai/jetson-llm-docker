@@ -22,7 +22,7 @@ from nanosam.utils.predictor import Predictor
 
 import cvpil
 
-PROJECT_ROOT = Path(__name__).resolve().parent.parent
+PROJECT_ROOT = Path(__name__).resolve().parent
 
 def get_torso_points(pose):
     return pose_to_sam_points(
