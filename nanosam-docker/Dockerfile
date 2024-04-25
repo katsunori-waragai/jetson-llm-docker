@@ -5,6 +5,8 @@ RUN python3 -m pip install onnx
 RUN python3 -m pip install matplotlib
 RUN python3 -m pip install pillow
 RUN python3 -m pip install pycocotools
+RUN python3 -m pip install transformers
+RUN python3 -m pip install gdown
 
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
 RUN cd /root/torch2trt/ && python3 setup.py install --plugins
@@ -32,6 +34,12 @@ RUN cd /root/nanosam/ && trtexec \
     --maxShapes=point_coords:1x10x2,point_labels:1x10
 
 # download resnet18_image_encoder.onnx from Google Drive destnation is /root/nanosam/data
+RUN cd /root/nanosam/data && \
+	gdown --fuzzy https://drive.google.com/file/d/14-SsvoaTl-esC3JOzomHDnI9OGgdO2OR/view
+
+# download densenet121_baseline_att_256x256_B_epoch_160.pth (used in TRT_pose)
+RUN cd /root/nanosam/data && \
+	gdown --fuzzy https://drive.google.com/open?id=13FkJkx7evQ1WwP54UmdiDXWyFMY1OxDU
 
 # RUN cd /root/nanosam/ && trtexec \
 #     --onnx=data/resnet18_image_encoder.onnx \
