@@ -1,5 +1,6 @@
 # docker for nanosam
 
+
 ## Original nanosam
 
 https://github.com/NVIDIA-AI-IOT/nanosam/blob/main/README.md
@@ -12,11 +13,16 @@ sh docker_build.sh
 sh docker_run.sh
 
 cd /root/nanosam
-# resnet18_image_encoder.onnxのダウンロード
-sh 4.sh
+```
+
+# model file のダウンロード
+- Google Drive からのmodel file のダウンロードは Dockerfile の中に記述した。
+  - resnet18_image_encoder.onnx
+  - densenet121_baseline_att_256x256_B_epoch_160.pth
+
 
 # デモプログラムの実行
-sh 5.sh
+sh 5_demo.sh
 ```
 
 
