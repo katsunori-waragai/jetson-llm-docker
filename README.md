@@ -13,6 +13,8 @@ Jeston docker settings for LLMs
 - nanoowl-docker
   - https://github.com/NVIDIA-AI-IOT/nanoowl
   - open vocabulary object detection
+- nanosam-docker
+  - https://github.com/NVIDIA-AI-IOT/nanosam
 - xmem-docker
   - https://github.com/hkchengrex/XMem
   - video segmentation
@@ -23,11 +25,11 @@ Jeston docker settings for LLMs
   - https://github.com/Megvii-BaseDetection/YOLOX
   - object detection
 ## policy in this repository
-- Each folder does not contain original repository. 
+- Each folder does NOT contain original repository. 
 - In some folders model are converted into TensorRT.
 
 ## Troubleshooting
-- If you use torch2trt in Dockerfile, you must modify /etc/docker/daemon.json
+- If you execute `torch2trt` in `Dockerfile`, you must modify `/etc/docker/daemon.json`
 ```
 "default-runtime": "nvidia",
 ```
