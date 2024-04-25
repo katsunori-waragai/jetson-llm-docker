@@ -22,7 +22,7 @@ Jeston docker settings for LLMs
 - yolox-docker
   - https://github.com/Megvii-BaseDetection/YOLOX
   - object detection
-## Note
+## policy in this repository
 - Each folder does not contain original repository. 
 - In some folders model are converted into TensorRT.
 
