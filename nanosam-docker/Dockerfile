@@ -41,8 +41,8 @@ RUN cd /root/nanosam/data && \
 RUN cd /root/nanosam/data && \
 	gdown --fuzzy https://drive.google.com/open?id=13FkJkx7evQ1WwP54UmdiDXWyFMY1OxDU
 
-# RUN cd /root/nanosam/ && trtexec \
-#     --onnx=data/resnet18_image_encoder.onnx \
-#    --saveEngine=data/resnet18_image_encoder.engine \
-#    --fp16
+RUN cd /root/nanosam/ && trtexec \
+    --onnx=data/resnet18_image_encoder.onnx \
+    --saveEngine=data/resnet18_image_encoder.engine \
+    --fp16
 
