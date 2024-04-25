@@ -20,7 +20,7 @@ RUN python3 -m pip install opencv-python==3.4.18.65
 
 
 COPY [1-9]*.sh /root/nanosam/
-COPY my_*.py /root/nanosam/ 
+COPY my_*.py cvpil.py /root/nanosam/ 
 
 RUN cd /root/nanosam/ && mkdir -v data
 RUN cd /root/nanosam/ && python3 -m nanosam.tools.export_sam_mask_decoder_onnx \
