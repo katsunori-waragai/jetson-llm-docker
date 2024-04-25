@@ -15,6 +15,7 @@
 
 from pathlib import Path
 
+import cv2
 import PIL.Image
 import matplotlib.pyplot as plt
 from nanosam.utils.trt_pose import PoseDetector, pose_to_sam_points
@@ -104,7 +105,7 @@ if __name__ == "__main__":
 
     pose_model = PoseDetector(
         str(POSE_MODEL),
-        POSE_JSON
+        str(POSE_JSON)
     )
 
     image = PIL.Image.open(args.image)
