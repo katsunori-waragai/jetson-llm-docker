@@ -81,6 +81,8 @@ def subplot_notick(a, b, c):
     ax.axis('off')
 
 def predict_and_show(N, index, pose, fg_points, bg_points):
+    global image
+    global sam_predictor
     subplot_notick(2, N, index + 1)
     points, point_labels = pose_to_sam_points(pose, fg_points, bg_points)
     mask, _, _ = sam_predictor.predict(points, point_labels)
@@ -89,7 +91,11 @@ def predict_and_show(N, index, pose, fg_points, bg_points):
     plt.plot(points[point_labels != 1, 0], points[point_labels != 1, 1], 'r.')
     subplot_notick(2, N, N + index + 1)
     plt.imshow(image)
-    plt.imshow(mask[0, 0].detach().cpu() > 0, alpha=0.5)
+    print(f"{mask.shape=}")
+    tmpimg = mask[0, 0].detach().cpu() > 0
+    print(f"{tmpimg.shape=}")  # torch.Size
+    print(f"{tmpimg.dtype=}")  # torch.bool
+    plt.imshow(mask[0, 0].detach().cpu() > 0, alpha=0.5 * (index + 1) / 4) # alpha blend
 
 if __name__ == "__main__":
     import argparse
@@ -101,7 +107,7 @@ if __name__ == "__main__":
     DST_DIR = PROJECT_ROOT / "data"
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--image", default=DEFAULT_IMAGE, help="image to segment")
+    parser.add_argument("--image", default=str(DEFAULT_IMAGE), help="image to segment")
     args = parser.parse_args()
 
     pose_model = PoseDetector(
@@ -109,10 +115,11 @@ if __name__ == "__main__":
         str(POSE_JSON)
     )
 
-    image = PIL.Image.open(args.image)
+    global image
     image = cvpil.cv2pil(cv2.imread(args.image))
     detections = pose_model.predict(image)
 
+    global sam_predictor
     sam_predictor = Predictor(
         str(RESNET_ENGINE),
         str(SAM_ENGINE)
