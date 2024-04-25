@@ -14,13 +14,6 @@ RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/trt_pose
 RUN cd /root/trt_pose/ && python3 setup.py develop
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/nanosam
 RUN cd /root/nanosam/ && python3 setup.py develop
-RUN python3 -m pip uninstall opencv-python
-RUN python3 -m pip uninstall opencv-python-headless
-RUN python3 -m pip install opencv-python==3.4.18.65
-
-
-COPY [1-9]*.sh /root/nanosam/
-COPY my_*.py cvpil.py /root/nanosam/ 
 
 RUN cd /root/nanosam/ && mkdir -v data
 RUN cd /root/nanosam/ && python3 -m nanosam.tools.export_sam_mask_decoder_onnx \
@@ -49,4 +42,11 @@ RUN cd /root/nanosam/ && trtexec \
     --onnx=data/resnet18_image_encoder.onnx \
     --saveEngine=data/resnet18_image_encoder.engine \
     --fp16
+
+RUN python3 -m pip uninstall opencv-python
+RUN python3 -m pip uninstall opencv-python-headless
+RUN python3 -m pip install opencv-python==3.4.18.65
+
+COPY [1-9]*.sh /root/nanosam/
+COPY my_*.py cvpil.py /root/nanosam/ 
 
