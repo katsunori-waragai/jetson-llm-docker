@@ -98,6 +98,7 @@ if __name__ == "__main__":
     POSE_JSON = PROJECT_ROOT / "assets/human_pose.json"
     RESNET_ENGINE = PROJECT_ROOT / "data/resnet18_image_encoder.engine"
     SAM_ENGINE = PROJECT_ROOT / "data/mobile_sam_mask_decoder.engine"
+    DST_DIR = PROJECT_ROOT / "data"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--image", default=DEFAULT_IMAGE, help="image to segment")
@@ -149,8 +150,9 @@ if __name__ == "__main__":
     )
 
     plt.subplots_adjust(wspace=0, hspace=0)
-    plt.savefig("data/segment_from_pose_out.png", bbox_inches="tight")
+    pngname = str(DST_DIR / "segment_from_pose_out.png")
+    plt.savefig(pngname, bbox_inches="tight")
 
-    outimg = cv2.imread("data/segment_from_pose_out.png")
-    cv2.imshow("data/segment_from_pose_out", outimg)
+    outimg = cv2.imread(pngname)
+    cv2.imshow(pngname, outimg)
     cv2.waitKey(-1)
