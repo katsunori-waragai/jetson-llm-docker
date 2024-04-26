@@ -1,8 +1,12 @@
 from pathlib import Path
 import json
-import os
-import inspect
-import shutil
+
+"""
+In case torch2trt failed in your environment,
+Be sure to check "/etc/docker/daemon.json"
+SEE:
+    https://github.com/NVIDIA-AI-IOT/torch2trt/issues/483
+"""
 
 if __name__ == "__main__":
     file = Path("/etc/docker/daemon.json")
