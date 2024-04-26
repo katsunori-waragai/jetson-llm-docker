@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from pathlib import Path
+from typing import Tuple
 
 import cv2
 import numpy as np
@@ -105,6 +106,23 @@ def predict_and_show(N, index, pose, fg_points, bg_points):
     print(f"{tmpimg.dtype=}")  # torch.bool
     plt.imshow(mask[0, 0].detach().cpu() > 0, alpha=0.5 * (index + 1) / 4) # alpha blend
     return mask[0, 0].detach().cpu()
+
+def paste(mask0, cvimg: np.ndarray, color: Tuple) -> np.ndarray:
+    """
+    mask0 == True の領域で、cvimg をcolorで置き換える。
+    :param mask0:
+    :param cvimg:
+    :param color:
+    :return:
+    """
+    assert len(color) ==3
+    mask0d = (mask0 > 0).numpy()
+    print(f"{mask0d.shape}")
+    h, w =  mask0d.shape[:2]
+    merged = np.zeros((h, w, 3), dtype=np.bool_)
+    for i in range(3):
+        merged[:, :, i] = mask0d
+    return np.where(merged, color, cvimg)
 
 if __name__ == "__main__":
     import argparse
@@ -198,16 +216,6 @@ if __name__ == "__main__":
     plt.savefig("masks_2.png")
 
     cvimg = cvpil.pil2cv(image)
-
-    def paste(mask0, cvimg, color):
-        assert len(color) ==3
-        mask0d = (mask0 > 0).numpy()
-        print(f"{mask0d.shape}")
-        h, w =  mask0d.shape[:2]
-        merged = np.zeros((h, w, 3), dtype=np.bool_)
-        for i in range(3):
-            merged[:, :, i] = mask0d
-        return np.where(merged, color, cvimg)
 
     pasted_cvimg = cvimg.copy()
     pasted_cvimg = paste(mask0, pasted_cvimg, (255, 0, 0))
