@@ -82,14 +82,13 @@ def subplot_notick(a, b, c):
     ax.set_yticklabels([])
     ax.axis('off')
 
-def predict_and_show(N, index, pose, fg_points, bg_points):
+def predict_and_show(image, N, index, pose, fg_points, bg_points):
     """
     index: 0 to N-1
     pose: detection by pose_model
     fg_points: keys for foreground points
     bg_points: keys for background points
     """
-    global image
     global sam_predictor
     subplot_notick(2, N, index + 1)
     points, point_labels = pose_to_sam_points(pose, fg_points, bg_points)
@@ -147,8 +146,8 @@ if __name__ == "__main__":
         str(SAM_ENGINE)
     )
 
-    global image
-    image = cvpil.cv2pil(cv2.imread(args.image))
+    cvimg = cv2.imread(args.image)
+    image = cvpil.cv2pil(cvimg)
     detections = pose_model.predict(image)
     pose = detections[0]
     points, point_labels = get_pants_points(detections[0])
@@ -159,21 +158,25 @@ if __name__ == "__main__":
     AR = image.width / image.height
     plt.figure(figsize=(10/AR, 10))
     mask0 = predict_and_show(
+        image,
         N, 0, pose,
         ["left_shoulder", "right_shoulder"],
         ["nose", "left_knee", "right_knee", "left_hip", "right_hip"]
     )
     mask1 = predict_and_show(
+        image,
         N, 1, pose,
         ["left_eye", "right_eye", "nose", "left_ear", "right_ear"],
         ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"]
     )
     mask2 = predict_and_show(
+        image,
         N, 2, pose,
         ["left_hip", "right_hip"],
         ["left_shoulder", "right_shoulder"]
     )
     mask3 = predict_and_show(
+        image,
         N, 3, pose,
         ["nose", "left_wrist", "right_wrist", "left_ankle", "right_ankle"],
         ["left_shoulder", "right_shoulder", "left_hip", "right_hip"]
@@ -183,9 +186,6 @@ if __name__ == "__main__":
     pngname = str(DST_DIR / "segment_from_pose_out.png")
     plt.savefig(pngname, bbox_inches="tight")
 
-    # outimg = cv2.imread(pngname)
-    # cv2.imshow(pngname, outimg)
-    # cv2.waitKey(-1)
     cvimg = cvpil.pil2cv(image)
 
     pasted_cvimg = cvimg.copy()
