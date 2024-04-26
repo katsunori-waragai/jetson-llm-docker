@@ -27,60 +27,85 @@ import cvpil
 
 PROJECT_ROOT = Path(__name__).resolve().parent
 
+
 def get_torso_points(pose):
     return pose_to_sam_points(
         pose,
         ["left_shoulder", "right_shoulder"],
-        ["nose", "left_ear", "right_ear", "right_wrist", "left_wrist", "left_knee", "right_knee"]
+        [
+            "nose",
+            "left_ear",
+            "right_ear",
+            "right_wrist",
+            "left_wrist",
+            "left_knee",
+            "right_knee",
+        ],
     )
+
 
 def get_face_points(pose):
     return pose_to_sam_points(
         pose,
         ["left_eye", "right_eye", "nose", "left_ear", "right_ear"],
-        ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"]
+        ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"],
     )
+
 
 def get_pants_points(pose):
     return pose_to_sam_points(
-        pose,
-        ["left_hip", "right_hip"],
-        ["left_shoulder", "right_shoulder"]
+        pose, ["left_hip", "right_hip"], ["left_shoulder", "right_shoulder"]
     )
+
 
 def get_right_hand_points(pose):
     return pose_to_sam_points(
         pose,
         ["right_wrist"],
-        ["left_wrist", "left_ankle", "right_ankle", "nose", "left_shoulder", "right_shoulder"]
+        [
+            "left_wrist",
+            "left_ankle",
+            "right_ankle",
+            "nose",
+            "left_shoulder",
+            "right_shoulder",
+        ],
     )
+
 
 def get_left_hand_points(pose):
     return pose_to_sam_points(
         pose,
         ["left_wrist"],
-        ["right_wrist", "right_ankle", "left_ankle", "nose", "left_shoulder", "right_shoulder"]
+        [
+            "right_wrist",
+            "right_ankle",
+            "left_ankle",
+            "nose",
+            "left_shoulder",
+            "right_shoulder",
+        ],
     )
+
 
 def get_left_leg_points(pose):
     return pose_to_sam_points(
-        pose,
-        ["left_ankle"],
-        ["left_hip", "right_hip", "left_wrist", "right_wrist"]
+        pose, ["left_ankle"], ["left_hip", "right_hip", "left_wrist", "right_wrist"]
     )
+
 
 def get_right_leg_points(pose):
     return pose_to_sam_points(
-        pose,
-        ["right_ankle"],
-        ["left_hip", "right_hip", "left_wrist", "right_wrist"]
+        pose, ["right_ankle"], ["left_hip", "right_hip", "left_wrist", "right_wrist"]
     )
+
 
 def subplot_notick(a, b, c):
     ax = plt.subplot(a, b, c)
     ax.set_xticklabels([])
     ax.set_yticklabels([])
-    ax.axis('off')
+    ax.axis("off")
+
 
 def predict_and_show(image, N, index, pose, fg_points, bg_points, enable_plot=False):
     """
@@ -95,8 +120,8 @@ def predict_and_show(image, N, index, pose, fg_points, bg_points, enable_plot=Fa
     mask, _, _ = sam_predictor.predict(points, point_labels)
     if enable_plot:
         plt.imshow(image)
-        plt.plot(points[point_labels == 1, 0], points[point_labels == 1, 1], 'g.')
-        plt.plot(points[point_labels != 1, 0], points[point_labels != 1, 1], 'r.')
+        plt.plot(points[point_labels == 1, 0], points[point_labels == 1, 1], "g.")
+        plt.plot(points[point_labels != 1, 0], points[point_labels != 1, 1], "r.")
         subplot_notick(2, N, N + index + 1)
         plt.imshow(image)
         print(f"{image.size=}")
@@ -104,8 +129,11 @@ def predict_and_show(image, N, index, pose, fg_points, bg_points, enable_plot=Fa
         tmpimg = mask[0, 0].detach().cpu() > 0
         print(f"{tmpimg.shape=}")  # torch.Size
         print(f"{tmpimg.dtype=}")  # torch.bool
-        plt.imshow(mask[0, 0].detach().cpu() > 0, alpha=0.5 * (index + 1) / 4) # alpha blend
+        plt.imshow(
+            mask[0, 0].detach().cpu() > 0, alpha=0.5 * (index + 1) / 4
+        )  # alpha blend
     return mask[0, 0].detach().cpu()
+
 
 def paste(mask0, cvimg: np.ndarray, color: Tuple) -> np.ndarray:
     """
@@ -117,7 +145,7 @@ def paste(mask0, cvimg: np.ndarray, color: Tuple) -> np.ndarray:
     """
     assert len(color) == 3
     mask0d = (mask0 > 0).numpy()
-    h, w =  mask0d.shape[:2]
+    h, w = mask0d.shape[:2]
     merged = np.zeros((h, w, 3), dtype=np.bool_)
     for i in range(3):
         merged[:, :, i] = mask0d
@@ -137,31 +165,39 @@ def process_frame(cvimg: np.ndarray) -> np.ndarray:
     plt.figure(figsize=(10 / AR, 10))
     mask0 = predict_and_show(
         image,
-        N, 0, pose,
+        N,
+        0,
+        pose,
         ["left_shoulder", "right_shoulder"],
         ["nose", "left_knee", "right_knee", "left_hip", "right_hip"],
-        enable_plot=True
+        enable_plot=True,
     )
     mask1 = predict_and_show(
         image,
-        N, 1, pose,
+        N,
+        1,
+        pose,
         ["left_eye", "right_eye", "nose", "left_ear", "right_ear"],
         ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"],
-        enable_plot=True
+        enable_plot=True,
     )
     mask2 = predict_and_show(
         image,
-        N, 2, pose,
+        N,
+        2,
+        pose,
         ["left_hip", "right_hip"],
         ["left_shoulder", "right_shoulder"],
-        enable_plot=True
+        enable_plot=True,
     )
     mask3 = predict_and_show(
         image,
-        N, 3, pose,
+        N,
+        3,
+        pose,
         ["nose", "left_wrist", "right_wrist", "left_ankle", "right_ankle"],
         ["left_shoulder", "right_shoulder", "left_hip", "right_hip"],
-        enable_plot=True
+        enable_plot=True,
     )
     if enable_plot:
         plt.subplots_adjust(wspace=0, hspace=0)
@@ -178,6 +214,7 @@ def process_frame(cvimg: np.ndarray) -> np.ndarray:
 
 if __name__ == "__main__":
     import argparse
+
     DEFAULT_IMAGE = PROJECT_ROOT / "assets/john_1.jpg"
     POSE_MODEL = PROJECT_ROOT / "data/densenet121_baseline_att_256x256_B_epoch_160.pth"
     POSE_JSON = PROJECT_ROOT / "assets/human_pose.json"
@@ -189,15 +226,9 @@ if __name__ == "__main__":
     parser.add_argument("--image", default=str(DEFAULT_IMAGE), help="image to segment")
     args = parser.parse_args()
 
-    pose_model = PoseDetector(
-        str(POSE_MODEL),
-        str(POSE_JSON)
-    )
+    pose_model = PoseDetector(str(POSE_MODEL), str(POSE_JSON))
     global sam_predictor
-    sam_predictor = Predictor(
-        str(RESNET_ENGINE),
-        str(SAM_ENGINE)
-    )
+    sam_predictor = Predictor(str(RESNET_ENGINE), str(SAM_ENGINE))
 
     # cvimg = cv2.imread(args.image)
     cap = cv2.VideoCapture(0)

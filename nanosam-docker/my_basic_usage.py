@@ -23,16 +23,17 @@ from nanosam.utils.predictor import Predictor
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--image_encoder", type=str, default="data/resnet18_image_encoder.engine")
-    parser.add_argument("--mask_decoder", type=str, default="data/mobile_sam_mask_decoder.engine")
+    parser.add_argument(
+        "--image_encoder", type=str, default="data/resnet18_image_encoder.engine"
+    )
+    parser.add_argument(
+        "--mask_decoder", type=str, default="data/mobile_sam_mask_decoder.engine"
+    )
     parser.add_argument("--image", default="assets/dogs.jpg", help="image to segment")
     args = parser.parse_args()
-        
+
     # Instantiate TensorRT predictor
-    predictor = Predictor(
-        args.image_encoder,
-        args.mask_decoder
-    )
+    predictor = Predictor(args.image_encoder, args.mask_decoder)
 
     # Read image and run image encoder
     image = PIL.Image.open(args.image)
@@ -41,10 +42,7 @@ if __name__ == "__main__":
     # Segment using bounding box
     bbox = [100, 100, 850, 759]  # x0, y0, x1, y1
 
-    points = np.array([
-        [bbox[0], bbox[1]],
-        [bbox[2], bbox[3]]
-    ])
+    points = np.array([[bbox[0], bbox[1]], [bbox[2], bbox[3]]])
 
     point_labels = np.array([2, 3])
 
@@ -57,6 +55,5 @@ if __name__ == "__main__":
     plt.imshow(mask, alpha=0.5)
     x = [bbox[0], bbox[2], bbox[2], bbox[0], bbox[0]]
     y = [bbox[1], bbox[1], bbox[3], bbox[3], bbox[1]]
-    plt.plot(x, y, 'g-')
+    plt.plot(x, y, "g-")
     plt.savefig("data/basic_usage_out.jpg")
-
