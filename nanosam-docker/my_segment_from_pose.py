@@ -124,7 +124,7 @@ def paste(mask0, cvimg: np.ndarray, color: Tuple) -> np.ndarray:
     return np.where(merged, color, cvimg)
 
 
-def process_frame(cvimg):
+def process_frame(cvimg: np.ndarray) -> np.ndarray:
     enable_plot = True
     image = cvpil.cv2pil(cvimg)
     detections = pose_model.predict(image)
@@ -171,7 +171,7 @@ def process_frame(cvimg):
     pasted_cvimg = paste(mask1, pasted_cvimg, (0, 255, 0))
     pasted_cvimg = paste(mask2, pasted_cvimg, (0, 0, 255))
     pasted_cvimg = paste(mask3, pasted_cvimg, (128, 128, 0))
-    cv2.imwrite("masks_3.png", pasted_cvimg)
+    return pasted_cvimg
 
 
 if __name__ == "__main__":
@@ -201,7 +201,14 @@ if __name__ == "__main__":
     cap = cv2.VideoCapture(0)
     while True:
         r, cvimg = cap.read()
-        if r:
+        if not r:
+            continue
+        print("captured")
+        pasted_cvimg = process_frame(cvimg)
+        pasted_cvimg = pasted_cvimg.astype(np.uint8)
+        cv2.imshow("segmented", pasted_cvimg)
+        key = cv2.waitKey(10)
+        if key == ord("s"):
+            cv2.imwrite("masks_3.png", pasted_cvimg)
+        elif key == ord("q"):
             break
-    print("captured")
-    process_frame(cvimg)
