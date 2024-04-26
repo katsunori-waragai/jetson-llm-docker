@@ -16,6 +16,7 @@
 from pathlib import Path
 
 import cv2
+import numpy as np
 import PIL.Image
 import matplotlib.pyplot as plt
 from nanosam.utils.trt_pose import PoseDetector, pose_to_sam_points
@@ -195,3 +196,22 @@ if __name__ == "__main__":
     plt.imshow(mask3 > 0)
     print("going to save")
     plt.savefig("masks_2.png")
+
+    cvimg = cvpil.pil2cv(image)
+
+    def paste(mask0, cvimg, color):
+        assert len(color) ==3
+        mask0d = (mask0 > 0).numpy()
+        print(f"{mask0d.shape}")
+        h, w =  mask0d.shape[:2]
+        merged = np.zeros((h, w, 3), dtype=np.bool_)
+        for i in range(3):
+            merged[:, :, i] = mask0d
+        return np.where(merged, color, cvimg)
+
+    pasted_cvimg = cvimg.copy()
+    pasted_cvimg = paste(mask0, pasted_cvimg, (255, 0, 0))
+    pasted_cvimg = paste(mask1, pasted_cvimg, (0, 255, 0))
+    pasted_cvimg = paste(mask2, pasted_cvimg, (0, 0, 255))
+    pasted_cvimg = paste(mask3, pasted_cvimg, (128, 128, 0))
+    cv2.imwrite("masks_3.png", pasted_cvimg)
