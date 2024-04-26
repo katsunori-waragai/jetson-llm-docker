@@ -28,85 +28,6 @@ import cvpil
 PROJECT_ROOT = Path(__name__).resolve().parent
 
 
-def get_torso_points(pose):
-    return pose_to_sam_points(
-        pose,
-        ["left_shoulder", "right_shoulder"],
-        [
-            "nose",
-            "left_ear",
-            "right_ear",
-            "right_wrist",
-            "left_wrist",
-            "left_knee",
-            "right_knee",
-        ],
-    )
-
-
-def get_face_points(pose):
-    return pose_to_sam_points(
-        pose,
-        ["left_eye", "right_eye", "nose", "left_ear", "right_ear"],
-        ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"],
-    )
-
-
-def get_pants_points(pose):
-    return pose_to_sam_points(
-        pose, ["left_hip", "right_hip"], ["left_shoulder", "right_shoulder"]
-    )
-
-
-def get_right_hand_points(pose):
-    return pose_to_sam_points(
-        pose,
-        ["right_wrist"],
-        [
-            "left_wrist",
-            "left_ankle",
-            "right_ankle",
-            "nose",
-            "left_shoulder",
-            "right_shoulder",
-        ],
-    )
-
-
-def get_left_hand_points(pose):
-    return pose_to_sam_points(
-        pose,
-        ["left_wrist"],
-        [
-            "right_wrist",
-            "right_ankle",
-            "left_ankle",
-            "nose",
-            "left_shoulder",
-            "right_shoulder",
-        ],
-    )
-
-
-def get_left_leg_points(pose):
-    return pose_to_sam_points(
-        pose, ["left_ankle"], ["left_hip", "right_hip", "left_wrist", "right_wrist"]
-    )
-
-
-def get_right_leg_points(pose):
-    return pose_to_sam_points(
-        pose, ["right_ankle"], ["left_hip", "right_hip", "left_wrist", "right_wrist"]
-    )
-
-
-def subplot_notick(a, b, c):
-    ax = plt.subplot(a, b, c)
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
-    ax.axis("off")
-
-
 def predict_and_show(image, N, index, pose, fg_points, bg_points, enable_plot=False):
     """
     index: 0 to N-1
@@ -230,8 +151,8 @@ if __name__ == "__main__":
     global sam_predictor
     sam_predictor = Predictor(str(RESNET_ENGINE), str(SAM_ENGINE))
 
-    # cvimg = cv2.imread(args.image)
     cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     while True:
         r, cvimg = cap.read()
         if not r:
