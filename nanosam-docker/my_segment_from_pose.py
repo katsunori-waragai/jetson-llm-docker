@@ -148,7 +148,10 @@ if __name__ == "__main__":
 
     # cvimg = cv2.imread(args.image)
     cap = cv2.VideoCapture()
-    r, cvimg = cap.read()
+    while True:
+        r, cvimg = cap.read()
+        if r:
+            break
     image = cvpil.cv2pil(cvimg)
     detections = pose_model.predict(image)
     pose = detections[0]
