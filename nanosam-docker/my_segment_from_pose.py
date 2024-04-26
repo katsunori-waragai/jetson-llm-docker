@@ -146,7 +146,9 @@ if __name__ == "__main__":
         str(SAM_ENGINE)
     )
 
-    cvimg = cv2.imread(args.image)
+    # cvimg = cv2.imread(args.image)
+    cap = cv2.VideoCapture()
+    r, cvimg = cap.read()
     image = cvpil.cv2pil(cvimg)
     detections = pose_model.predict(image)
     pose = detections[0]
