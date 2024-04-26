@@ -103,6 +103,7 @@ def predict_and_show(N, index, pose, fg_points, bg_points):
     print(f"{tmpimg.shape=}")  # torch.Size
     print(f"{tmpimg.dtype=}")  # torch.bool
     plt.imshow(mask[0, 0].detach().cpu() > 0, alpha=0.5 * (index + 1) / 4) # alpha blend
+    return mask[0, 0].detach().cpu()
 
 if __name__ == "__main__":
     import argparse
@@ -142,22 +143,22 @@ if __name__ == "__main__":
     N = 4
     AR = image.width / image.height
     plt.figure(figsize=(10/AR, 10))
-    predict_and_show(
+    mask0 = predict_and_show(
         N, 0, pose,
         ["left_shoulder", "right_shoulder"],
         ["nose", "left_knee", "right_knee", "left_hip", "right_hip"]
     )
-    predict_and_show(
+    mask1 = predict_and_show(
         N, 1, pose,
         ["left_eye", "right_eye", "nose", "left_ear", "right_ear"],
         ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"]
     )
-    predict_and_show(
+    mask2 = predict_and_show(
         N, 2, pose,
         ["left_hip", "right_hip"],
         ["left_shoulder", "right_shoulder"]
     )
-    predict_and_show(
+    mask3 = predict_and_show(
         N, 3, pose,
         ["nose", "left_wrist", "right_wrist", "left_ankle", "right_ankle"],
         ["left_shoulder", "right_shoulder", "left_hip", "right_hip"]
@@ -170,3 +171,27 @@ if __name__ == "__main__":
     outimg = cv2.imread(pngname)
     cv2.imshow(pngname, outimg)
     cv2.waitKey(-1)
+
+    plt.figure()
+    plt.subplot(2, 2, 1)
+    plt.imshow(mask0)
+    plt.subplot(2, 2, 2)
+    plt.imshow(mask1)
+    plt.subplot(2, 2, 3)
+    plt.imshow(mask2)
+    plt.subplot(2, 2, 4)
+    plt.imshow(mask3)
+    print("going to save")
+    plt.savefig("masks.png")
+
+    plt.figure()
+    plt.subplot(2, 2, 1)
+    plt.imshow(mask0 > 0)
+    plt.subplot(2, 2, 2)
+    plt.imshow(mask1 > 0)
+    plt.subplot(2, 2, 3)
+    plt.imshow(mask2 > 0)
+    plt.subplot(2, 2, 4)
+    plt.imshow(mask3 > 0)
+    print("going to save")
+    plt.savefig("masks_2.png")
