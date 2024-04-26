@@ -22,15 +22,21 @@ cd /root/nanosam
 
 
 # デモプログラムの実行
+```commandline
 sh 5_demo.sh
 ```
 
 
 ## exmaple
+```commandline
 python3 examples/basic_usage.py \
     --image_encoder=data/resnet18_image_encoder.engine \
     --mask_decoder=data/mobile_sam_mask_decoder.engine
+```
 
+## 改変なしの便利なデモ
+- nanosam/examples/demo_pose_tshirt.py
+  Tshirt領域をセグメンテーションする。入力はカメラ入力。
 ## 改変したスクリプト
 入力ファイルを変更したい。
 - my_basic_usage.py  
