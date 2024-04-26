@@ -28,7 +28,7 @@ import cvpil
 PROJECT_ROOT = Path(__name__).resolve().parent
 
 
-def predict_and_show(image, N, index, pose, fg_points, bg_points, enable_plot=False):
+def predict_and_show(pose, fg_points, bg_points):
     """
     index: 0 to N-1
     pose: detection by pose_model
@@ -36,23 +36,8 @@ def predict_and_show(image, N, index, pose, fg_points, bg_points, enable_plot=Fa
     bg_points: keys for background points
     """
     global sam_predictor
-    subplot_notick(2, N, index + 1)
     points, point_labels = pose_to_sam_points(pose, fg_points, bg_points)
     mask, _, _ = sam_predictor.predict(points, point_labels)
-    if enable_plot:
-        plt.imshow(image)
-        plt.plot(points[point_labels == 1, 0], points[point_labels == 1, 1], "g.")
-        plt.plot(points[point_labels != 1, 0], points[point_labels != 1, 1], "r.")
-        subplot_notick(2, N, N + index + 1)
-        plt.imshow(image)
-        print(f"{image.size=}")
-        print(f"{mask.shape=}")
-        tmpimg = mask[0, 0].detach().cpu() > 0
-        print(f"{tmpimg.shape=}")  # torch.Size
-        print(f"{tmpimg.dtype=}")  # torch.bool
-        plt.imshow(
-            mask[0, 0].detach().cpu() > 0, alpha=0.5 * (index + 1) / 4
-        )  # alpha blend
     return mask[0, 0].detach().cpu()
 
 
@@ -74,7 +59,6 @@ def paste(mask0, cvimg: np.ndarray, color: Tuple) -> np.ndarray:
 
 
 def process_frame(cvimg: np.ndarray) -> np.ndarray:
-    enable_plot = False
     image = cvpil.cv2pil(cvimg)
     detections = pose_model.predict(image)
     if len(detections) == 0:
@@ -82,48 +66,26 @@ def process_frame(cvimg: np.ndarray) -> np.ndarray:
     pose = detections[0]
     sam_predictor.set_image(image)
     N = 4
-    AR = image.width / image.height
-    plt.figure(figsize=(10 / AR, 10))
     mask0 = predict_and_show(
-        image,
-        N,
-        0,
         pose,
         ["left_shoulder", "right_shoulder"],
         ["nose", "left_knee", "right_knee", "left_hip", "right_hip"],
-        enable_plot=True,
     )
     mask1 = predict_and_show(
-        image,
-        N,
-        1,
         pose,
         ["left_eye", "right_eye", "nose", "left_ear", "right_ear"],
         ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"],
-        enable_plot=True,
     )
     mask2 = predict_and_show(
-        image,
-        N,
-        2,
         pose,
         ["left_hip", "right_hip"],
         ["left_shoulder", "right_shoulder"],
-        enable_plot=True,
     )
     mask3 = predict_and_show(
-        image,
-        N,
-        3,
         pose,
         ["nose", "left_wrist", "right_wrist", "left_ankle", "right_ankle"],
         ["left_shoulder", "right_shoulder", "left_hip", "right_hip"],
-        enable_plot=True,
     )
-    if enable_plot:
-        plt.subplots_adjust(wspace=0, hspace=0)
-        pngname = str(DST_DIR / "segment_from_pose_out.png")
-        plt.savefig(pngname, bbox_inches="tight")
     cvimg = cvpil.pil2cv(image)
     pasted_cvimg = cvimg.copy()
     pasted_cvimg = paste(mask0, pasted_cvimg, (255, 0, 0))
