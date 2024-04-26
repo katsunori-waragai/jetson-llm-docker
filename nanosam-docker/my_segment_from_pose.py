@@ -123,6 +123,53 @@ def paste(mask0, cvimg: np.ndarray, color: Tuple) -> np.ndarray:
         merged[:, :, i] = mask0d
     return np.where(merged, color, cvimg)
 
+
+def process_frame(cvimg):
+    global image
+    image = cvpil.cv2pil(cvimg)
+    detections = pose_model.predict(image)
+    pose = detections[0]
+    points, point_labels = get_pants_points(detections[0])
+    sam_predictor.set_image(image)
+    N = 4
+    AR = image.width / image.height
+    plt.figure(figsize=(10 / AR, 10))
+    mask0 = predict_and_show(
+        image,
+        N, 0, pose,
+        ["left_shoulder", "right_shoulder"],
+        ["nose", "left_knee", "right_knee", "left_hip", "right_hip"]
+    )
+    mask1 = predict_and_show(
+        image,
+        N, 1, pose,
+        ["left_eye", "right_eye", "nose", "left_ear", "right_ear"],
+        ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"]
+    )
+    mask2 = predict_and_show(
+        image,
+        N, 2, pose,
+        ["left_hip", "right_hip"],
+        ["left_shoulder", "right_shoulder"]
+    )
+    mask3 = predict_and_show(
+        image,
+        N, 3, pose,
+        ["nose", "left_wrist", "right_wrist", "left_ankle", "right_ankle"],
+        ["left_shoulder", "right_shoulder", "left_hip", "right_hip"]
+    )
+    plt.subplots_adjust(wspace=0, hspace=0)
+    pngname = str(DST_DIR / "segment_from_pose_out.png")
+    plt.savefig(pngname, bbox_inches="tight")
+    cvimg = cvpil.pil2cv(image)
+    pasted_cvimg = cvimg.copy()
+    pasted_cvimg = paste(mask0, pasted_cvimg, (255, 0, 0))
+    pasted_cvimg = paste(mask1, pasted_cvimg, (0, 255, 0))
+    pasted_cvimg = paste(mask2, pasted_cvimg, (0, 0, 255))
+    pasted_cvimg = paste(mask3, pasted_cvimg, (128, 128, 0))
+    cv2.imwrite("masks_3.png", pasted_cvimg)
+
+
 if __name__ == "__main__":
     import argparse
     DEFAULT_IMAGE = PROJECT_ROOT / "assets/john_1.jpg"
@@ -153,50 +200,4 @@ if __name__ == "__main__":
         if r:
             break
     print("captured")
-    image = cvpil.cv2pil(cvimg)
-    detections = pose_model.predict(image)
-    pose = detections[0]
-    points, point_labels = get_pants_points(detections[0])
-
-    sam_predictor.set_image(image)
-
-    N = 4
-    AR = image.width / image.height
-    plt.figure(figsize=(10/AR, 10))
-    mask0 = predict_and_show(
-        image,
-        N, 0, pose,
-        ["left_shoulder", "right_shoulder"],
-        ["nose", "left_knee", "right_knee", "left_hip", "right_hip"]
-    )
-    mask1 = predict_and_show(
-        image,
-        N, 1, pose,
-        ["left_eye", "right_eye", "nose", "left_ear", "right_ear"],
-        ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"]
-    )
-    mask2 = predict_and_show(
-        image,
-        N, 2, pose,
-        ["left_hip", "right_hip"],
-        ["left_shoulder", "right_shoulder"]
-    )
-    mask3 = predict_and_show(
-        image,
-        N, 3, pose,
-        ["nose", "left_wrist", "right_wrist", "left_ankle", "right_ankle"],
-        ["left_shoulder", "right_shoulder", "left_hip", "right_hip"]
-    )
-
-    plt.subplots_adjust(wspace=0, hspace=0)
-    pngname = str(DST_DIR / "segment_from_pose_out.png")
-    plt.savefig(pngname, bbox_inches="tight")
-
-    cvimg = cvpil.pil2cv(image)
-
-    pasted_cvimg = cvimg.copy()
-    pasted_cvimg = paste(mask0, pasted_cvimg, (255, 0, 0))
-    pasted_cvimg = paste(mask1, pasted_cvimg, (0, 255, 0))
-    pasted_cvimg = paste(mask2, pasted_cvimg, (0, 0, 255))
-    pasted_cvimg = paste(mask3, pasted_cvimg, (128, 128, 0))
-    cv2.imwrite("masks_3.png", pasted_cvimg)
+    process_frame(cvimg)
