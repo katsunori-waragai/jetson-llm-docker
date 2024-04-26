@@ -147,7 +147,7 @@ if __name__ == "__main__":
     )
 
     # cvimg = cv2.imread(args.image)
-    cap = cv2.VideoCapture()
+    cap = cv2.VideoCapture(0)
     while True:
         r, cvimg = cap.read()
         if r:
