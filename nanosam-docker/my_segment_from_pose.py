@@ -125,9 +125,11 @@ def paste(mask0, cvimg: np.ndarray, color: Tuple) -> np.ndarray:
 
 
 def process_frame(cvimg: np.ndarray) -> np.ndarray:
-    enable_plot = True
+    enable_plot = False
     image = cvpil.cv2pil(cvimg)
     detections = pose_model.predict(image)
+    if len(detections) == 0:
+        return cvimg
     pose = detections[0]
     sam_predictor.set_image(image)
     N = 4
