@@ -152,6 +152,7 @@ if __name__ == "__main__":
         r, cvimg = cap.read()
         if r:
             break
+    print("captured")
     image = cvpil.cv2pil(cvimg)
     detections = pose_model.predict(image)
     pose = detections[0]
