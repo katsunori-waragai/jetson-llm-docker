@@ -60,8 +60,11 @@ def paste(mask0, cvimg: np.ndarray, color: Tuple) -> np.ndarray:
 
 def process_frame(cvimg: np.ndarray) -> np.ndarray:
     image = cvpil.cv2pil(cvimg)
+    t0 = cv2.getTickCount()
     detections = pose_model.predict(image)
     if len(detections) == 0:
+        t1 = cv2.getTickCount()
+        used = (t1 - t0) / cv2.getTickFrequency()
         return cvimg
     pose = detections[0]
     sam_predictor.set_image(image)
@@ -86,12 +89,19 @@ def process_frame(cvimg: np.ndarray) -> np.ndarray:
         ["nose", "left_wrist", "right_wrist", "left_ankle", "right_ankle"],
         ["left_shoulder", "right_shoulder", "left_hip", "right_hip"],
     )
+    t1 = cv2.getTickCount()
+    used = (t1 - t0) / cv2.getTickFrequency()
+
     cvimg = cvpil.pil2cv(image)
     pasted_cvimg = cvimg.copy()
     pasted_cvimg = paste(mask0, pasted_cvimg, (255, 0, 0))
     pasted_cvimg = paste(mask1, pasted_cvimg, (0, 255, 0))
     pasted_cvimg = paste(mask2, pasted_cvimg, (0, 0, 255))
     pasted_cvimg = paste(mask3, pasted_cvimg, (128, 128, 0))
+    pasted_cvimg = pasted_cvimg.astype(np.uint8)
+    print(f"{used=:3f} [s]")
+    cv2.putText(pasted_cvimg, f"{used:3f} [s]", (30, 30), cv2.FONT_HERSHEY_PLAIN, 2.0,
+               (0, 255, 0), 2, cv2.LINE_AA)
     return pasted_cvimg
 
 
