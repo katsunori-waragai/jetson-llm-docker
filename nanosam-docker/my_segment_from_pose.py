@@ -81,6 +81,12 @@ def subplot_notick(a, b, c):
     ax.axis('off')
 
 def predict_and_show(N, index, pose, fg_points, bg_points):
+    """
+    index: 0 to N-1
+    pose: detection by pose_model
+    fg_points: keys for foreground points
+    bg_points: keys for background points
+    """
     global image
     global sam_predictor
     subplot_notick(2, N, index + 1)
@@ -91,6 +97,7 @@ def predict_and_show(N, index, pose, fg_points, bg_points):
     plt.plot(points[point_labels != 1, 0], points[point_labels != 1, 1], 'r.')
     subplot_notick(2, N, N + index + 1)
     plt.imshow(image)
+    print(f"{image.size=}")
     print(f"{mask.shape=}")
     tmpimg = mask[0, 0].detach().cpu() > 0
     print(f"{tmpimg.shape=}")  # torch.Size
