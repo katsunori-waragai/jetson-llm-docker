@@ -82,14 +82,13 @@ def subplot_notick(a, b, c):
     ax.set_yticklabels([])
     ax.axis('off')
 
-def predict_and_show(N, index, pose, fg_points, bg_points):
+def predict_and_show(image, N, index, pose, fg_points, bg_points):
     """
     index: 0 to N-1
     pose: detection by pose_model
     fg_points: keys for foreground points
     bg_points: keys for background points
     """
-    global image
     global sam_predictor
     subplot_notick(2, N, index + 1)
     points, point_labels = pose_to_sam_points(pose, fg_points, bg_points)
@@ -124,6 +123,53 @@ def paste(mask0, cvimg: np.ndarray, color: Tuple) -> np.ndarray:
         merged[:, :, i] = mask0d
     return np.where(merged, color, cvimg)
 
+
+def process_frame(cvimg):
+    global image
+    image = cvpil.cv2pil(cvimg)
+    detections = pose_model.predict(image)
+    pose = detections[0]
+    points, point_labels = get_pants_points(detections[0])
+    sam_predictor.set_image(image)
+    N = 4
+    AR = image.width / image.height
+    plt.figure(figsize=(10 / AR, 10))
+    mask0 = predict_and_show(
+        image,
+        N, 0, pose,
+        ["left_shoulder", "right_shoulder"],
+        ["nose", "left_knee", "right_knee", "left_hip", "right_hip"]
+    )
+    mask1 = predict_and_show(
+        image,
+        N, 1, pose,
+        ["left_eye", "right_eye", "nose", "left_ear", "right_ear"],
+        ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"]
+    )
+    mask2 = predict_and_show(
+        image,
+        N, 2, pose,
+        ["left_hip", "right_hip"],
+        ["left_shoulder", "right_shoulder"]
+    )
+    mask3 = predict_and_show(
+        image,
+        N, 3, pose,
+        ["nose", "left_wrist", "right_wrist", "left_ankle", "right_ankle"],
+        ["left_shoulder", "right_shoulder", "left_hip", "right_hip"]
+    )
+    plt.subplots_adjust(wspace=0, hspace=0)
+    pngname = str(DST_DIR / "segment_from_pose_out.png")
+    plt.savefig(pngname, bbox_inches="tight")
+    cvimg = cvpil.pil2cv(image)
+    pasted_cvimg = cvimg.copy()
+    pasted_cvimg = paste(mask0, pasted_cvimg, (255, 0, 0))
+    pasted_cvimg = paste(mask1, pasted_cvimg, (0, 255, 0))
+    pasted_cvimg = paste(mask2, pasted_cvimg, (0, 0, 255))
+    pasted_cvimg = paste(mask3, pasted_cvimg, (128, 128, 0))
+    cv2.imwrite("masks_3.png", pasted_cvimg)
+
+
 if __name__ == "__main__":
     import argparse
     DEFAULT_IMAGE = PROJECT_ROOT / "assets/john_1.jpg"
@@ -141,85 +187,17 @@ if __name__ == "__main__":
         str(POSE_MODEL),
         str(POSE_JSON)
     )
-
-    global image
-    image = cvpil.cv2pil(cv2.imread(args.image))
-    detections = pose_model.predict(image)
-
     global sam_predictor
     sam_predictor = Predictor(
         str(RESNET_ENGINE),
         str(SAM_ENGINE)
     )
 
-    pose = detections[0]
-
-    points, point_labels = get_pants_points(detections[0])
-
-    sam_predictor.set_image(image)
-
-
-    N = 4
-    AR = image.width / image.height
-    plt.figure(figsize=(10/AR, 10))
-    mask0 = predict_and_show(
-        N, 0, pose,
-        ["left_shoulder", "right_shoulder"],
-        ["nose", "left_knee", "right_knee", "left_hip", "right_hip"]
-    )
-    mask1 = predict_and_show(
-        N, 1, pose,
-        ["left_eye", "right_eye", "nose", "left_ear", "right_ear"],
-        ["left_shoulder", "right_shoulder", "neck", "left_wrist", "right_wrist"]
-    )
-    mask2 = predict_and_show(
-        N, 2, pose,
-        ["left_hip", "right_hip"],
-        ["left_shoulder", "right_shoulder"]
-    )
-    mask3 = predict_and_show(
-        N, 3, pose,
-        ["nose", "left_wrist", "right_wrist", "left_ankle", "right_ankle"],
-        ["left_shoulder", "right_shoulder", "left_hip", "right_hip"]
-    )
-
-    plt.subplots_adjust(wspace=0, hspace=0)
-    pngname = str(DST_DIR / "segment_from_pose_out.png")
-    plt.savefig(pngname, bbox_inches="tight")
-
-    outimg = cv2.imread(pngname)
-    cv2.imshow(pngname, outimg)
-    cv2.waitKey(-1)
-
-    plt.figure()
-    plt.subplot(2, 2, 1)
-    plt.imshow(mask0)
-    plt.subplot(2, 2, 2)
-    plt.imshow(mask1)
-    plt.subplot(2, 2, 3)
-    plt.imshow(mask2)
-    plt.subplot(2, 2, 4)
-    plt.imshow(mask3)
-    print("going to save")
-    plt.savefig("masks.png")
-
-    plt.figure()
-    plt.subplot(2, 2, 1)
-    plt.imshow(mask0 > 0)
-    plt.subplot(2, 2, 2)
-    plt.imshow(mask1 > 0)
-    plt.subplot(2, 2, 3)
-    plt.imshow(mask2 > 0)
-    plt.subplot(2, 2, 4)
-    plt.imshow(mask3 > 0)
-    print("going to save")
-    plt.savefig("masks_2.png")
-
-    cvimg = cvpil.pil2cv(image)
-
-    pasted_cvimg = cvimg.copy()
-    pasted_cvimg = paste(mask0, pasted_cvimg, (255, 0, 0))
-    pasted_cvimg = paste(mask1, pasted_cvimg, (0, 255, 0))
-    pasted_cvimg = paste(mask2, pasted_cvimg, (0, 0, 255))
-    pasted_cvimg = paste(mask3, pasted_cvimg, (128, 128, 0))
-    cv2.imwrite("masks_3.png", pasted_cvimg)
+    # cvimg = cv2.imread(args.image)
+    cap = cv2.VideoCapture(0)
+    while True:
+        r, cvimg = cap.read()
+        if r:
+            break
+    print("captured")
+    process_frame(cvimg)
