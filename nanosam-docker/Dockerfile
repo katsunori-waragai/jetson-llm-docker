@@ -50,3 +50,7 @@ RUN python3 -m pip install opencv-python==3.4.18.65
 COPY [1-9]*.sh /root/nanosam/
 COPY my_*.py cvpil.py /root/nanosam/ 
 
+# image file viwewer
+RUN apt-get update
+RUN apt-get install -y eog
+
