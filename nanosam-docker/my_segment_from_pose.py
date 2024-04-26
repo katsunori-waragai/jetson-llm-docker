@@ -141,23 +141,19 @@ if __name__ == "__main__":
         str(POSE_MODEL),
         str(POSE_JSON)
     )
-
-    global image
-    image = cvpil.cv2pil(cv2.imread(args.image))
-    detections = pose_model.predict(image)
-
     global sam_predictor
     sam_predictor = Predictor(
         str(RESNET_ENGINE),
         str(SAM_ENGINE)
     )
 
+    global image
+    image = cvpil.cv2pil(cv2.imread(args.image))
+    detections = pose_model.predict(image)
     pose = detections[0]
-
     points, point_labels = get_pants_points(detections[0])
 
     sam_predictor.set_image(image)
-
 
     N = 4
     AR = image.width / image.height
@@ -187,34 +183,9 @@ if __name__ == "__main__":
     pngname = str(DST_DIR / "segment_from_pose_out.png")
     plt.savefig(pngname, bbox_inches="tight")
 
-    outimg = cv2.imread(pngname)
-    cv2.imshow(pngname, outimg)
-    cv2.waitKey(-1)
-
-    plt.figure()
-    plt.subplot(2, 2, 1)
-    plt.imshow(mask0)
-    plt.subplot(2, 2, 2)
-    plt.imshow(mask1)
-    plt.subplot(2, 2, 3)
-    plt.imshow(mask2)
-    plt.subplot(2, 2, 4)
-    plt.imshow(mask3)
-    print("going to save")
-    plt.savefig("masks.png")
-
-    plt.figure()
-    plt.subplot(2, 2, 1)
-    plt.imshow(mask0 > 0)
-    plt.subplot(2, 2, 2)
-    plt.imshow(mask1 > 0)
-    plt.subplot(2, 2, 3)
-    plt.imshow(mask2 > 0)
-    plt.subplot(2, 2, 4)
-    plt.imshow(mask3 > 0)
-    print("going to save")
-    plt.savefig("masks_2.png")
-
+    # outimg = cv2.imread(pngname)
+    # cv2.imshow(pngname, outimg)
+    # cv2.waitKey(-1)
     cvimg = cvpil.pil2cv(image)
 
     pasted_cvimg = cvimg.copy()
