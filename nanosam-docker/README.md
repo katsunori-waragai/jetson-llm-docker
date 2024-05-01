@@ -21,13 +21,16 @@ cd /root/nanosam
   - densenet121_baseline_att_256x256_B_epoch_160.pth
 
 
-# デモプログラムの実行
+# 動作検証用のデモプログラムの実行
 ```commandline
 sh 5_demo.sh
 ```
 
+- シェルスクリプトにハードコードされたように、TRTに変換済みのモデルを用いて、セグメンテーションを実行する。
+- 入力静止画のpathと出力先は、examples/basic_usage.py の中にハードコーディングされている。
 
-## exmaple
+
+## example
 ```commandline
 python3 examples/basic_usage.py \
     --image_encoder=data/resnet18_image_encoder.engine \
@@ -38,16 +41,32 @@ python3 examples/basic_usage.py \
 - nanosam/examples/demo_pose_tshirt.py
   Tshirt領域をセグメンテーションする。入力はカメラ入力。
 ## 改変したスクリプト
-入力ファイルを変更したい。
-- my_basic_usage.py  
-- my_segment_from_pose.py
+### my_basic_usage.py  
+```commandline
+python3 my_basic_usage.py -h
+usage: my_basic_usage.py [-h] [--image_encoder IMAGE_ENCODER]
+                         [--mask_decoder MASK_DECODER] [--image IMAGE]
 
-## TODO
-- 入力ファイルを変更できること
-- 入力をファイルではなく、webcam にできること
-- TRT済みのモデルを使うようになっているかの確認
-- なっていなければTRTに変更する
+optional arguments:
+  -h, --help            show this help message and exit
+  --image_encoder IMAGE_ENCODER
+  --mask_decoder MASK_DECODER
+  --image IMAGE         image to segment
+```
+- 引数で指定した静止画について指定のencoderを用いてセグメンテーションするスクリプト
 
+### my_segment_from_pose.py
+```commandline
+python3 my_segment_from_pose.py -h
+usage: my_segment_from_pose.py [-h] [--camid CAMID]
+
+optional arguments:
+  -h, --help     show this help message and exit
+  --camid CAMID  camera to segment
+```
+- webcamの画像から1人について、セグメンテーションを実施するスクリプト
+- 上半身の衣類、下半身の衣類、肌色に見えている領域のセグメンテーションを実施する。
+- そのためのヒントとして、人物のpose推定による関節の位置を利用している。
 
 ## 以下のモデルファイルのダウンロード
 - trt-pose を使うセグメンテーションの実行時に利用する。

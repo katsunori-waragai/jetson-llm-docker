@@ -1,25 +1,8 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-# SPDX-License-Identifier: Apache-2.0
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 from pathlib import Path
 from typing import Tuple
 
 import cv2
 import numpy as np
-import PIL.Image
-import matplotlib.pyplot as plt
 from nanosam.utils.trt_pose import PoseDetector, pose_to_sam_points
 from nanosam.utils.predictor import Predictor
 
@@ -30,7 +13,6 @@ PROJECT_ROOT = Path(__name__).resolve().parent
 
 def predict_and_show(pose, fg_points, bg_points):
     """
-    index: 0 to N-1
     pose: detection by pose_model
     fg_points: keys for foreground points
     bg_points: keys for background points
@@ -108,7 +90,7 @@ def process_frame(cvimg: np.ndarray) -> np.ndarray:
 if __name__ == "__main__":
     import argparse
 
-    DEFAULT_IMAGE = PROJECT_ROOT / "assets/john_1.jpg"
+    # DEFAULT_IMAGE = PROJECT_ROOT / "assets/john_1.jpg"
     POSE_MODEL = PROJECT_ROOT / "data/densenet121_baseline_att_256x256_B_epoch_160.pth"
     POSE_JSON = PROJECT_ROOT / "assets/human_pose.json"
     RESNET_ENGINE = PROJECT_ROOT / "data/resnet18_image_encoder.engine"
@@ -116,14 +98,14 @@ if __name__ == "__main__":
     DST_DIR = PROJECT_ROOT / "data"
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--image", default=str(DEFAULT_IMAGE), help="image to segment")
+    parser.add_argument("--camid", default=0, help="camera to segment")
     args = parser.parse_args()
 
     pose_model = PoseDetector(str(POSE_MODEL), str(POSE_JSON))
     global sam_predictor
     sam_predictor = Predictor(str(RESNET_ENGINE), str(SAM_ENGINE))
-
-    cap = cv2.VideoCapture(0)
+    camid = int(args.camid)
+    cap = cv2.VideoCapture(camid)
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     while True:
         r, cvimg = cap.read()
@@ -135,6 +117,6 @@ if __name__ == "__main__":
         cv2.imshow("segmented", pasted_cvimg)
         key = cv2.waitKey(10)
         if key == ord("s"):
-            cv2.imwrite("masks_3.png", pasted_cvimg)
+            cv2.imwrite("segment_pose.png", pasted_cvimg)
         elif key == ord("q"):
             break
