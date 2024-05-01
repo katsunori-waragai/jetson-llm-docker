@@ -57,12 +57,13 @@ optional arguments:
 
 ### my_segment_from_pose.py
 ```commandline
-python3 my_segment_from_pose.py -h
-usage: my_segment_from_pose.py [-h] [--camid CAMID]
+python3 my_segment_from_pose.py -h 
+usage: my_segment_from_pose.py [-h] [--camid CAMID] [--movie MOVIE]
 
 optional arguments:
   -h, --help     show this help message and exit
   --camid CAMID  camera to segment
+  --movie MOVIE  movie to segment
 ```
 - webcamの画像から1人について、セグメンテーションを実施するスクリプト
 - 上半身の衣類、下半身の衣類、肌色に見えている領域のセグメンテーションを実施する。
