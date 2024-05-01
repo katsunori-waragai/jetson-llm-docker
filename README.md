@@ -1,5 +1,5 @@
 # Jetson LLM Docker
-Jeston docker settings for LLMs
+Jeston docker settings for LLMs(Large Language Models)
 
 ## Tested Environment
 - NVIDIA Jetson AGX Orin
@@ -15,6 +15,7 @@ Jeston docker settings for LLMs
   - open vocabulary object detection
 - nanosam-docker
   - https://github.com/NVIDIA-AI-IOT/nanosam
+  - Segment Anything for Jetson 
 - xmem-docker
   - https://github.com/hkchengrex/XMem
   - video segmentation
@@ -26,7 +27,8 @@ Jeston docker settings for LLMs
   - object detection
 ## policy in this repository
 - Each folder does NOT contain original repository. 
-- In some folders model are converted into TensorRT.
+- In some folders models are converted into TensorRT.
+	*.engine
 
 ## Troubleshooting
 - If you execute `torch2trt` in `Dockerfile`, you must modify `/etc/docker/daemon.json`
@@ -52,4 +54,7 @@ https://github.com/NVIDIA-AI-IOT/torch2trt/issues/483
 - 推論の際に、実際にGPUを用いているかを確認すること
   - jtop 
   - https://www.fabshop.jp/jetson-nano-jtop/#google_vignette
+
+## Network requirement
+- Inference script downloads model files in execution.
 
