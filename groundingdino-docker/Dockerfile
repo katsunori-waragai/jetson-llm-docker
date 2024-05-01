@@ -23,7 +23,7 @@ RUN cd /root/GroundingDINO && sed -i 's/^opencv-python.*$/opencv-python==3.4.18.
 RUN cd /root/GroundingDINO && sed -i '/opencv/d' environment.yaml 
 RUN cd /root/GroundingDINO && python3 -m pip install -e .
 RUN python3 -m pip uninstall -y opencv-python-headless
-# RUN python3 -m pip install opencv-python==3.4.18.65
+RUN python3 -m pip install opencv-python==3.4.18.65
 RUN python3 -m pip uninstall gradio gradio_client
 RUN python3 -m pip install gradio==3.50.2
 RUN cd /root/GroundingDINO && mkdir -p weights
