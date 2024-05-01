@@ -121,6 +121,7 @@ if __name__ == "__main__":
     model = load_model(config_file, checkpoint_path, cpu_only=args.cpu_only)
 
     cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     while True:
         image_pil, image = capture_image(cap)
         # visualize raw image
@@ -133,9 +134,12 @@ if __name__ == "__main__":
 
 
         # run model
+        t0 = cv2.getTickCount()
         boxes_filt, pred_phrases = get_grounding_output(
             model, image, text_prompt, box_threshold, text_threshold, cpu_only=args.cpu_only, token_spans=eval(f"{token_spans}")
         )
+        t1 = cv2.getTickCount()
+        used = (t1 -t0) / cv2.getTickFrequency()
 
         # visualize pred
         size = image_pil.size
@@ -148,6 +152,8 @@ if __name__ == "__main__":
         image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
         # image_with_box.save(os.path.join(output_dir, "pred.jpg"))
         cvimg = pil2cv(image_with_box)
+        cv2.putText(cvimg, f"{used:3f} [s]", (30, 30), cv2.FONT_HERSHEY_PLAIN, 2.0,
+                    (0, 255, 0), 2, cv2.LINE_AA)
         cv2.imshow("groundingDINO", cvimg)
         key = cv2.waitKey(1)
         if key == ord("q"):
