@@ -88,7 +88,7 @@ def process_frame(cvimg: np.ndarray) -> np.ndarray:
 if __name__ == "__main__":
     import argparse
 
-    DEFAULT_IMAGE = PROJECT_ROOT / "assets/john_1.jpg"
+    # DEFAULT_IMAGE = PROJECT_ROOT / "assets/john_1.jpg"
     POSE_MODEL = PROJECT_ROOT / "data/densenet121_baseline_att_256x256_B_epoch_160.pth"
     POSE_JSON = PROJECT_ROOT / "assets/human_pose.json"
     RESNET_ENGINE = PROJECT_ROOT / "data/resnet18_image_encoder.engine"
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     DST_DIR = PROJECT_ROOT / "data"
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--image", default=str(DEFAULT_IMAGE), help="image to segment")
+    parser.add_argument("--camid", help="camera to segment")
     args = parser.parse_args()
 
     pose_model = PoseDetector(str(POSE_MODEL), str(POSE_JSON))
@@ -115,6 +115,6 @@ if __name__ == "__main__":
         cv2.imshow("segmented", pasted_cvimg)
         key = cv2.waitKey(10)
         if key == ord("s"):
-            cv2.imwrite("masks_3.png", pasted_cvimg)
+            cv2.imwrite("segment_pose.png", pasted_cvimg)
         elif key == ord("q"):
             break
