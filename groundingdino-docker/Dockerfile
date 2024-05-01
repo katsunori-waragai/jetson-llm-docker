@@ -24,7 +24,10 @@ RUN cd /root/GroundingDINO && sed -i '/opencv/d' environment.yaml
 RUN cd /root/GroundingDINO && python3 -m pip install -e .
 RUN python3 -m pip uninstall -y opencv-python-headless
 RUN python3 -m pip install opencv-python==3.4.18.65
+RUN python3 -m pip uninstall gradio gradio_client
+RUN python3 -m pip install gradio==3.50.2
+RUN /root/GroundingDINO && mkdir weights
+RUN /root/GroundingDINO/weights && wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 
 COPY [1-9]_*.sh /root/GroundingDINO/
 COPY inference_on_a_movie.py /root/GroundingDINO/demo
-
