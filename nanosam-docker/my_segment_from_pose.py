@@ -99,15 +99,20 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--camid", default=0, help="camera to segment")
+    parser.add_argument("--movie", default=None, help="movie to segment")
     args = parser.parse_args()
 
     pose_model = PoseDetector(str(POSE_MODEL), str(POSE_JSON))
     global sam_predictor
     sam_predictor = Predictor(str(RESNET_ENGINE), str(SAM_ENGINE))
-    camid = int(args.camid)
-    cap = cv2.VideoCapture(camid)
-    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-    while True:
+
+    if args.movie:
+        cap = cv2.VideoCapture(args.movie)
+    else:
+        camid = int(args.camid)
+        cap = cv2.VideoCapture(camid)
+        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+    while cap.isOpened():
         r, cvimg = cap.read()
         if not r:
             continue
