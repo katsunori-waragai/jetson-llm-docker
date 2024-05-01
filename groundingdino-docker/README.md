@@ -42,8 +42,6 @@ $ sh 4_detect_webcam.sh
 sed -i 's/pip /pip3 /g' demo/gradio_app.py 
 ```
 - こうしておかないと、デフォルトのpythonがpython2.xのシステムではスクリプト中のpipがpython2.xの方に入ってしまう。
-- gradio==3.50.2 として指定されている版を利用すること。
-- それより新しい版では、仕様が変更になっているので、動作しない。
 
 
 ```commandline
@@ -56,7 +54,10 @@ Running on local URL: http://0.0.0.0:7579/
 と表示されるので、ブラウザを開く。
 ##### トラブル
 - 検出結果が描画されていない。
-- 
+- 検出結果がないのか、検出結果が描画されていないのかの区別がついていない。
+- demo/gradio_app.py 中のあるos.system() の指定が、python3ではなくpython2の環境になってしまっているためかと疑った。
+- python3 になるように書き換えを実施しても、まだ検出結果の描画がされていないは解決していない。
+- 以下のエラーはgradioのバージョンが異なっているときのエラー 
 ```
 model loaded from /root/.cache/huggingface/hub/models--ShilongLiu--GroundingDINO/snapshots/a94c9b567a2a374598f05c584e96798a170c56fb/groundingdino_swint_ogc.pth 
  => _IncompatibleKeys(missing_keys=[], unexpected_keys=['label_enc.weight', 'bert.embeddings.position_ids'])
