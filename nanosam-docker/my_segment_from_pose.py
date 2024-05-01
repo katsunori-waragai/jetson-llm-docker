@@ -34,7 +34,9 @@ def paste(mask0, cvimg: np.ndarray, color: Tuple) -> np.ndarray:
     assert len(color) == 3
     mask0d = (mask0 > 0).numpy()
     h, w = mask0d.shape[:2]
-    merged = cv2.cvtColor(mask0d, cv2.COLOR_GRAY2RGB)
+    merged = np.zeros((h, w, 3), dtype=np.bool_)
+    for i in range(3):
+        merged[:, :, i] = mask0d
     return np.where(merged, color, cvimg)
 
 
