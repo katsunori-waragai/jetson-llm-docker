@@ -14,9 +14,6 @@ Docker environment for grounding DINO
 sh docker_build.sh
 sh docker_run.sh
 cd /root/GroundingDINO
-sh 1_install_groundingDino.sh 
-sh 2_reinstall-opencv.sh 
-sh 3_download_weights.sh 
 sh 4_detect.sh /root/data/dog.jpg
 ```
 
@@ -32,6 +29,7 @@ usb カメラが /dev/video0として認識されていることを前提とし�
 $ sh 4_detect_webcam.sh
 ```
 - [x] USBカメラ入力、GUIへの結果の描画の確認。
+- [x] -t "a woman with long hair" 
 - コマンドの実行開始後に各種データファイルがダウンロードされるので、１０分程度時間がかかります。
 - TensorRT化されていないので、推論の時間が余計にかかっています。
 
