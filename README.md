@@ -31,6 +31,10 @@ Jeston docker settings for LLMs(Large Language Models)
 	*.engine
 
 ## for disk space
+複数のdocker環境を使い分ける際には、たくさんのディスクスペースをキャッシュとして使います。
+Jetson AGX Orin のディスクスペースでは、docker のキャッシュが収まり切らなくなります。
+そこで、microSDカードを用いて、その領域にdockerのキャッシュをおくように変更することで、キャッシュが有効な状態でも、ルートのファイルシステムでのディスクスペースの枯渇を防ぐことができます。
+
 - Jetson AGX Orin でのdocker の際にディスクスペースの枯渇を生じないように対策をとること。
   - microSD カードをext4 でフォーマットする。
   - それをmountするようにfstab に記載する。
