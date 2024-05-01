@@ -96,14 +96,14 @@ if __name__ == "__main__":
     DST_DIR = PROJECT_ROOT / "data"
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--camid", help="camera to segment")
+    parser.add_argument("--camid", default=0, help="camera to segment")
     args = parser.parse_args()
 
     pose_model = PoseDetector(str(POSE_MODEL), str(POSE_JSON))
     global sam_predictor
     sam_predictor = Predictor(str(RESNET_ENGINE), str(SAM_ENGINE))
-
-    cap = cv2.VideoCapture(0)
+    camid = int(args.camid)
+    cap = cv2.VideoCapture(camid)
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     while True:
         r, cvimg = cap.read()
