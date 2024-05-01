@@ -30,4 +30,5 @@ RUN cd /root/GroundingDINO && mkdir -p weights
 RUN cd /root/GroundingDINO/weights && wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 
 COPY [1-9]_*.sh /root/GroundingDINO/
+RUN cd /root/GroundingDINO && sed -i -e 's/"pip /"pip3 /g' -e 's/"python setup.py /"python3 setup.py /g' demo/gradio_app.py
 COPY inference_on_a_movie.py /root/GroundingDINO/demo

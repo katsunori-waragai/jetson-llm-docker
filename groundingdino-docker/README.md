@@ -4,7 +4,7 @@ Docker environment for grounding DINO
 
 - https://github.com/IDEA-Research/GroundingDINO
 
-### 
+### purpose
 - 自然言語で指定した記述にそって物体検出ができる。
 - [文章で指定したものをなんでも検出できるAI Grounding DINO](https://qiita.com/john-rocky/items/2b62c70b606e3abc262f)
 
@@ -21,7 +21,9 @@ sh 4_detect.sh /root/data/dog.jpg
 結果は、-o で指定したディレクトリに書かれています。
 - [x] 出力の確認
 
-
+### note on Dockerfile
+- opencv-python==3.4.18.65 
+- gradio==3.50.2
 
 ## instruction for webcam
 usb カメラが /dev/video0として認識されていることを前提としています。
