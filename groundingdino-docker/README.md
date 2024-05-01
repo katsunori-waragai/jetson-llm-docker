@@ -4,7 +4,7 @@ Docker environment for grounding DINO
 
 - https://github.com/IDEA-Research/GroundingDINO
 
-### 
+### purpose
 - 自然言語で指定した記述にそって物体検出ができる。
 - [文章で指定したものをなんでも検出できるAI Grounding DINO](https://qiita.com/john-rocky/items/2b62c70b606e3abc262f)
 
@@ -14,9 +14,6 @@ Docker environment for grounding DINO
 sh docker_build.sh
 sh docker_run.sh
 cd /root/GroundingDINO
-sh 1_install_groundingDino.sh 
-sh 2_reinstall-opencv.sh 
-sh 3_download_weights.sh 
 sh 4_detect.sh /root/data/dog.jpg
 ```
 
@@ -24,7 +21,9 @@ sh 4_detect.sh /root/data/dog.jpg
 結果は、-o で指定したディレクトリに書かれています。
 - [x] 出力の確認
 
-
+### note on Dockerfile
+- opencv-python==3.4.18.65 
+- gradio==3.50.2
 
 ## instruction for webcam
 usb カメラが /dev/video0として認識されていることを前提としています。
@@ -32,6 +31,7 @@ usb カメラが /dev/video0として認識されていることを前提とし�
 $ sh 4_detect_webcam.sh
 ```
 - [x] USBカメラ入力、GUIへの結果の描画の確認。
+- [x] -t "a woman with long hair" 
 - コマンドの実行開始後に各種データファイルがダウンロードされるので、１０分程度時間がかかります。
 - TensorRT化されていないので、推論の時間が余計にかかっています。
 
@@ -42,8 +42,6 @@ $ sh 4_detect_webcam.sh
 sed -i 's/pip /pip3 /g' demo/gradio_app.py 
 ```
 - こうしておかないと、デフォルトのpythonがpython2.xのシステムではスクリプト中のpipがpython2.xの方に入ってしまう。
-- gradio==3.50.2 として指定されている版を利用すること。
-- それより新しい版では、仕様が変更になっているので、動作しない。
 
 
 ```commandline
@@ -56,7 +54,10 @@ Running on local URL: http://0.0.0.0:7579/
 と表示されるので、ブラウザを開く。
 ##### トラブル
 - 検出結果が描画されていない。
-- 
+- 検出結果がないのか、検出結果が描画されていないのかの区別がついていない。
+- demo/gradio_app.py 中のあるos.system() の指定が、python3ではなくpython2の環境になってしまっているためかと疑った。
+- python3 になるように書き換えを実施しても、まだ検出結果の描画がされていないは解決していない。
+- 以下のエラーはgradioのバージョンが異なっているときのエラー 
 ```
 model loaded from /root/.cache/huggingface/hub/models--ShilongLiu--GroundingDINO/snapshots/a94c9b567a2a374598f05c584e96798a170c56fb/groundingdino_swint_ogc.pth 
  => _IncompatibleKeys(missing_keys=[], unexpected_keys=['label_enc.weight', 'bert.embeddings.position_ids'])
