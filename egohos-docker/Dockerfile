@@ -13,3 +13,10 @@ COPY download_*.sh . /root/EgoHOS/
 ENV CUDA_HOME=/usr/local/cuda-11.4
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/cuda/bin
+RUN python3 -m pip install gdown
+RUN cd /root/EgoHOS && sh download_checkpoints.sh
+RUN cd /root/EgoHOS && sh download_datasets.sh
+RUN cd /root/EgoHOS && sh download_testimages.sh
+RUN cd /root/EgoHOS && sh download_testvideos.sh
+
+
