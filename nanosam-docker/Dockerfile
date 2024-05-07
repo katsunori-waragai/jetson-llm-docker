@@ -11,9 +11,9 @@ RUN python3 -m pip install gdown
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
 RUN cd /root/torch2trt/ && python3 setup.py install --plugins
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/trt_pose
-RUN cd /root/trt_pose/ && python3 setup.py develop
+RUN cd /root/trt_pose/ && python3 -m pip install --editable .
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/nanosam
-RUN cd /root/nanosam/ && python3 setup.py develop
+RUN cd /root/nanosam/ && python3 -m pip install --editable .
 
 RUN cd /root/nanosam/ && mkdir -v data
 RUN cd /root/nanosam/ && python3 -m nanosam.tools.export_sam_mask_decoder_onnx \
