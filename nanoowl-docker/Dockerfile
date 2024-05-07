@@ -30,7 +30,7 @@ ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local
 
 RUN cd /root/ && git clone https://github.com/NVIDIA-AI-IOT/torch2trt ;
 RUN cd /root/torch2trt && python3 setup.py install --plugins
-RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 setup.py develop --user
+RUN cd /root && git clone https://github.com/NVIDIA-AI-IOT/nanoowl ; cd nanoowl cd ; python3 -m pip install --editable .
 RUN cd /root/nanoowl && mkdir -p data
 RUN cd /root/nanoowl && python3 -m nanoowl.build_image_encoder_engine \
     data/owl_image_encoder_patch32.engine
