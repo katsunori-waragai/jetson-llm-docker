@@ -19,6 +19,18 @@ bash pred_all_obj1.sh
 
 ```
 
+### output 
+testimages
+testimages/images
+testimages/pred_cb
+testimages/pred_cb_vis
+testimages/pred_obj1
+testimages/pred_obj1_vis
+testimages/pred_obj2
+testimages/pred_obj2_vis
+testimages/pred_twohands
+testimages/pred_twohands_vis
+
 
 ## todo
 - conversion to TRT
