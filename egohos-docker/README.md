@@ -53,6 +53,10 @@ testimages/pred_obj2_vis
 testimages/pred_twohands
 testimages/pred_twohands_vis
 
+## 動画での推論
+- 動画はmp4のファイル形式をサポートしている。
+  - webmなどのファイルは事前にmp4に変換しておく。
+
 
 ## todo
 - conversion to TRT
