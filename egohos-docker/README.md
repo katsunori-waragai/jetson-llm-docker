@@ -11,8 +11,17 @@ sh docker_run.sh
 ## Dockerfile の中で実行していること
 - 一連のdownload の実行
 
-## 
+## docker 環境内での作業
+```commandline
+cd mmsegmentation # if you are not in this directory
+sed -i 's/python /python3 /g' pred_all_obj1.sh
+bash pred_all_obj1.sh
+
+```
+
 
 ## todo
 - conversion to TRT
 
+## troubleshooting
+- 検出結果を保存する際にastype(dtype=np.uint8)を指定すること。
