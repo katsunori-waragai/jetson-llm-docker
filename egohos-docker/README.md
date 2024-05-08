@@ -1,4 +1,7 @@
 # docker for EgoHOS
+- 自己視点画像での腕検出と対象物の検出
+- 対象物は1st orderと 2nd orderとがある。
+
 ## original repo
 https://github.com/owenzlz/EgoHOS
 
@@ -14,7 +17,10 @@ sh docker_run.sh
 ## docker 環境内での作業
 - シェルスクリプト内で起動するpythonはpython3と明示する。
 そうでないと、python2.7が起動してしまう。
-
+- python3を実行するようにすること。
+- 修正済みのscriptのgit clone 先への重ね書き
+- 自作scriptのgit clone 先への重ね書き
+  - 自前動画のダウンロードとその動画への推論の実行 
 
 ```commandline
 cd mmsegmentation # if you are not in this directory
