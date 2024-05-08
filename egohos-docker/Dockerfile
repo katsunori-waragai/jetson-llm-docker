@@ -18,5 +18,4 @@ RUN cd /root/EgoHOS && sh download_checkpoints.sh
 RUN cd /root/EgoHOS && sh download_datasets.sh
 RUN cd /root/EgoHOS && sh download_testimages.sh
 RUN cd /root/EgoHOS && sh download_testvideos.sh
-
-
+RUN cd /root/EgoHOS/mmsegmentation && sed -i 's/python /python3 /g' *.sh
