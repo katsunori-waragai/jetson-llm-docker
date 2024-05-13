@@ -34,13 +34,11 @@ alpha = 0.5
 cap = cv2.VideoCapture(0)
 while True:
     r, cvimg = cap.read()
-    cv2.imwrite("tmp.jpg", cvimg)
-    img = np.array(Image.open("tmp.jpg"))
+    file = "pred_twohands/tmp.png"
+    cv2.imwrite(file, cvimg)
+    # img = np.array(Image.open(file))
     # fileが引数になっている。
-    file = "tmp.jpg"
-    seg_result = inference_segmentor(model, file)[0]
+    seg_result = inference_segmentor(model, cvimg)[0]
     fname = file.split(".")[0]
     imsave(os.path.join(args.pred_seg_dir, fname + '.png'), seg_result.astype(np.uint8))
-
-
 
