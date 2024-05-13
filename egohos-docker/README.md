@@ -18,7 +18,13 @@ sh docker_run.sh
 - python3を実行するようにすること。
 - 修正済みのscriptのgit clone 先への重ね書き
 - 自作scriptのgit clone 先への重ね書き
-  - 自前動画のダウンロードとその動画への推論の実行 
+  - 自前動画のダウンロードとその動画への推論の実行
+
+## 足りないと感じているもの
+- 腕や手の関節の位置を出すことが含まれていない。
+- まして、その３D版もない。
+- これだけ、ハンドを動作させることはできない。
+- 1st, 2nd order interacting object が名何かを教えてくれない。 
 
 ```commandline
 cd mmsegmentation # if you are not in this directory
