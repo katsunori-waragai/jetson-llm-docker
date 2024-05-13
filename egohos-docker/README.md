@@ -24,7 +24,9 @@ sh docker_run.sh
 - 腕や手の関節の位置を出すことが含まれていない。
 - まして、その３D版もない。
 - これだけ、ハンドを動作させることはできない。
-- 1st, 2nd order interacting object が名何かを教えてくれない。 
+- 1st, 2nd order interacting object が何かを教えてくれない。 
+- 物体をハンドリングしている手の場合だと、手の一部が隠れている。
+  - その隠れている指の状態を予測することが大事となる。
 
 ```commandline
 cd mmsegmentation # if you are not in this directory
