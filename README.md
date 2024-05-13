@@ -7,15 +7,23 @@ Jeston docker settings for LLMs(Large Language Models)
 - python3.8
 
 ## folders
+- egoHOS
+  - https://github.com/owenzlz/EgoHOS
+  - Fine-Grained Egocentric Hand-Object Segmentation
+  - 左腕・右腕のsegmenation、1st, 2nd order interaction object の検出 
 - groundingdino-docker
   - https://github.com/IDEA-Research/GroundingDINO
   - open vocabulary object detection
+  - 検出対象の制約のない言葉を指定する物体検出
+  - text prompt によって指定されたものを検出する。
+  - “a woman with long hair” といった指定で検出ができる。
 - nanoowl-docker
   - https://github.com/NVIDIA-AI-IOT/nanoowl
   - open vocabulary object detection
 - nanosam-docker
   - https://github.com/NVIDIA-AI-IOT/nanosam
   - Segment Anything for Jetson 
+  - nanosam/examples/demo_pose_tshirt.py　Tシャツのセグメンテーション
 - xmem-docker
   - https://github.com/hkchengrex/XMem
   - video segmentation

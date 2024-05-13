@@ -1,3 +1,5 @@
+# No Original repogitory
+GroundingDINO/
 *.onnx
 *.pth
 *.engine
