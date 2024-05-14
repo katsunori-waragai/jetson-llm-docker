@@ -9,6 +9,7 @@ import numpy as np
 from skimage.io import imsave
 import pdb
 import cv2
+from pathlib import Path
 
 """
 https://mmsegmentation.readthedocs.io/en/latest/migration/package.html?highlight=inference_segmentor#mmseg-apis
@@ -37,16 +38,21 @@ alpha = 0.5
 cap = cv2.VideoCapture(0)
 while True:
     r, cvimg = cap.read()
-    cv2.imwrite("tmp.jpg", cvimg)
-    img = np.array(Image.open("tmp.jpg"))
+    if not r or cvimg is None:
+        continue
+    filename = Path("captured/01/tmp.jpg")
+    filename.parent.mkdir(exist_ok=True, parents=True)
+    cv2.imwrite(str(filename), cvimg)
+    img = np.array(Image.open(str(filename)))
     # fileが引数になっている。
-    file = "tmp.jpg"
+    
+    
     cv2.imshow("captured", cvimg)
     key = cv2.waitKey(10)
 #    continue
 
 #    seg_result = inference_segmentor(model, file)[0]
-    seg_result = inference_segmentor(model, cvimg)[0]
+    seg_result = inference_segmentor(model, str(filename))[0]
     fname = file.split(".")[0]
     imsave(os.path.join(args.pred_seg_dir, fname + '.png'), seg_result.astype(np.uint8))
 
