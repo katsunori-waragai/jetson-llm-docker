@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+from pathlib import Path
 
 import numpy as np
 import json
@@ -197,10 +198,9 @@ if __name__ == "__main__":
     )
 
     # initialize SAM
-    if use_sam_hq:
-        predictor = SamPredictor(sam_hq_model_registry[sam_version](checkpoint=sam_hq_checkpoint).to(device))
-    else:
-        predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_checkpoint).to(device))
+    sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
+    predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     predictor.set_image(image)
