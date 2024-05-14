@@ -1,29 +1,30 @@
-FROM nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
-ENV AM_I_DOCKER=False
-ENV BUILD_WITH_CUDA=True
+FROM pytorch/pytorch:1.13.1-cuda11.6-cudnn8-devel
 
-ENV CUDA_HOME=/usr/local/cuda-11.4
-RUN apt update
-RUN apt install sudo
-RUN apt-get install -y zip
-RUN apt-get install -y nano
-RUN python3 -m pip install -U pip
-RUN python3 -m pip install wheel
-RUN python3 -m pip uninstall -y opencv-python-headless
-RUN python3 -m pip install opencv-python==3.4.18.65
-RUN python3 -m pip install -e segment_anything
-RUN python3 -m pip install --no-build-isolation -e GroundingDINO
-RUN python3 -m pip install --upgrade diffusers[torch]
+# Arguments to build Docker Image using CUDA
+ARG USE_CUDA=0
+ARG TORCH_ARCH=
 
-RUN ldconfig
+ENV AM_I_DOCKER True
+ENV BUILD_WITH_CUDA "${USE_CUDA}"
+ENV TORCH_CUDA_ARCH_LIST "${TORCH_ARCH}"
+ENV CUDA_HOME /usr/local/cuda-11.6/
 
-RUN if [ -f /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo "File exists"; else echo "File does not exist"; fi
-RUN if [ -s /usr/lib/aarch64-linux-gnu/tegra/libnvdla_compiler.so ] ; then echo "File is not empty"; else echo "File is empty"; fi
+RUN mkdir -p /home/appuser/Grounded-Segment-Anything
+COPY . /home/appuser/Grounded-Segment-Anything/
 
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/cuda/bin
+RUN apt-get update && apt-get install --no-install-recommends wget ffmpeg=7:* \
+    libsm6=2:* libxext6=2:* git=1:* nano=2.* \
+    vim=2:* -y \
+    && apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
 
-RUN cd /root/ && git clone https://github.com/xinyu1205/recognize-anything.git
-RUN cd /root/ && python3 -m pip install -r ./recognize-anything/requirements.txt
-RUN cd /root/ && python3 pip install -e ./recognize-anything/
-RUN python3 -m pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
+WORKDIR /home/appuser/Grounded-Segment-Anything
+RUN python -m pip install --no-cache-dir -e segment_anything
+
+# When using build isolation, PyTorch with newer CUDA is installed and can't compile GroundingDINO
+RUN python -m pip install --no-cache-dir wheel
+RUN python -m pip install --no-cache-dir --no-build-isolation -e GroundingDINO
+
+WORKDIR /home/appuser
+RUN pip install --no-cache-dir diffusers[torch]==0.15.1 opencv-python==4.7.0.72 \
+    pycocotools==2.0.6 matplotlib==3.5.3 \
+    onnxruntime==1.14.1 onnx==1.13.1 ipykernel==6.16.2 scipy gradio openai
