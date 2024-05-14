@@ -16,6 +16,9 @@ https://mmsegmentation.readthedocs.io/en/latest/migration/package.html?highlight
        --config_file ./work_dirs/twohands_cb_to_obj2_ccda/twohands_cb_to_obj2_ccda.py \
        --checkpoint_file ./work_dirs/twohands_cb_to_obj2_ccda/best_mIoU_iter_32000.pth \
               --pred_seg_dir ../testimages/pred_obj2
+              
+      config ファイルの影響を強く受ける。
+      設定の多くがwork_dirsの中にあるので、それを読むこと。
 """
 
 parser = argparse.ArgumentParser(description="")
@@ -34,11 +37,18 @@ alpha = 0.5
 cap = cv2.VideoCapture(0)
 while True:
     r, cvimg = cap.read()
-    file = "pred_twohands/tmp.png"
-    cv2.imwrite(file, cvimg)
-    # img = np.array(Image.open(file))
+    cv2.imwrite("tmp.jpg", cvimg)
+    img = np.array(Image.open("tmp.jpg"))
     # fileが引数になっている。
+    file = "tmp.jpg"
+    cv2.imshow("captured", cvimg)
+    key = cv2.waitKey(10)
+#    continue
+
+#    seg_result = inference_segmentor(model, file)[0]
     seg_result = inference_segmentor(model, cvimg)[0]
     fname = file.split(".")[0]
     imsave(os.path.join(args.pred_seg_dir, fname + '.png'), seg_result.astype(np.uint8))
+
+
 
