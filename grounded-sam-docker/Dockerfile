@@ -1,17 +1,12 @@
 FROM nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
-# FROM pytorch/pytorch:1.13.1-cuda11.6-cudnn8-devel
 
 # Arguments to build Docker Image using CUDA
 ARG USE_CUDA=1
-# ARG TORCH_ARCH=
 
 ENV AM_I_DOCKER True
 ENV BUILD_WITH_CUDA "${USE_CUDA}"
 ENV TORCH_CUDA_ARCH_LIST "${TORCH_ARCH}"
 ENV CUDA_HOME /usr/local/cuda-11.4/
-
-# RUN mkdir -p /root/Grounded-Segment-Anything
-# COPY . /root/Grounded-Segment-Anything/
 RUN cd /root && git clone https://github.com/IDEA-Research/Grounded-Segment-Anything.git
 
 RUN apt update && apt install -y --no-install-recommends wget ffmpeg=7:* \
