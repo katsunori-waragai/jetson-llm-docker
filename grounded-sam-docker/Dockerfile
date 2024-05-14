@@ -14,10 +14,10 @@ ENV CUDA_HOME /usr/local/cuda-11.4/
 # COPY . /root/Grounded-Segment-Anything/
 RUN cd /root && git clone https://github.com/IDEA-Research/Grounded-Segment-Anything.git
 
-RUN apt-get update && apt-get install -y --no-install-recommends wget ffmpeg=7:* \
+RUN apt update && apt install -y --no-install-recommends wget ffmpeg=7:* \
     libsm6=2:* libxext6=2:* git=1:* \
-    vim=2:* -y \
-    && apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
+    vim=2:* 
+RUN apt clean -y && apt autoremove -y && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/Grounded-Segment-Anything
 RUN python3 -m pip install --no-cache-dir -e segment_anything
