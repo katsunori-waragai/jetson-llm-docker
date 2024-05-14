@@ -29,6 +29,4 @@ RUN python3 -m pip install gdown
 
 RUN cd /root/Grounded-Segment-Anything && wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 RUN cd /root/Grounded-Segment-Anything &&  wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
-
-RUN cd /root/data/ && gdown --fuzzy https://drive.google.com/drive/folders/14DgHOvSSjjs46cED6kng7k4y5q7Qdoeb?usp=drive_link
-
+COPY download-egocentric-images.sh /root/Grounded-Segment-Anything
