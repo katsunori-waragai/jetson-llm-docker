@@ -1,0 +1,30 @@
+FROM nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
+
+# Arguments to build Docker Image using CUDA
+ARG USE_CUDA=1
+
+ENV AM_I_DOCKER True
+ENV BUILD_WITH_CUDA "${USE_CUDA}"
+ENV TORCH_CUDA_ARCH_LIST "${TORCH_ARCH}"
+ENV CUDA_HOME /usr/local/cuda-11.4/
+RUN cd /root && git clone https://github.com/IDEA-Research/Grounded-Segment-Anything.git
+
+RUN apt update && apt install -y --no-install-recommends wget ffmpeg=7:* \
+    libsm6=2:* libxext6=2:* git=1:* \
+    vim=2:* 
+RUN apt clean -y && apt autoremove -y && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root/Grounded-Segment-Anything
+RUN python3 -m pip install --no-cache-dir -e segment_anything
+
+# When using build isolation, PyTorch with newer CUDA is installed and can't compile GroundingDINO
+RUN python3 -m pip install --no-cache-dir wheel
+RUN python3 -m pip install --no-cache-dir --no-build-isolation -e GroundingDINO
+
+WORKDIR /root
+RUN python3 -m pip install --no-cache-dir diffusers[torch]==0.15.1 opencv-python==3.4.18.65 \
+    pycocotools==2.0.6 matplotlib==3.5.3 \
+    onnxruntime==1.14.1 onnx==1.13.1 ipykernel==6.16.2 scipy gradio openai
+
+RUN cd /root/Grounded-Segment-Anything && wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+RUN cd /root/Grounded-Segment-Anything &&  wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
