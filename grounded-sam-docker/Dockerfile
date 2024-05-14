@@ -14,7 +14,7 @@ RUN mkdir -p /root/Grounded-Segment-Anything
 COPY . /root/Grounded-Segment-Anything/
 
 RUN apt-get update && apt-get install --no-install-recommends wget ffmpeg=7:* \
-    libsm6=2:* libxext6=2:* git=1:* nano=2.* \
+    libsm6=2:* libxext6=2:* git=1:* \
     vim=2:* -y \
     && apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
 
