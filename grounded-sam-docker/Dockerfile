@@ -10,10 +10,11 @@ ENV BUILD_WITH_CUDA "${USE_CUDA}"
 ENV TORCH_CUDA_ARCH_LIST "${TORCH_ARCH}"
 ENV CUDA_HOME /usr/local/cuda-11.4/
 
-RUN mkdir -p /root/Grounded-Segment-Anything
-COPY . /root/Grounded-Segment-Anything/
+# RUN mkdir -p /root/Grounded-Segment-Anything
+# COPY . /root/Grounded-Segment-Anything/
+RUN cd /root && git clone https://github.com/IDEA-Research/Grounded-Segment-Anything.git
 
-RUN apt-get update && apt-get install --no-install-recommends wget ffmpeg=7:* \
+RUN apt-get update && apt-get install -y --no-install-recommends wget ffmpeg=7:* \
     libsm6=2:* libxext6=2:* git=1:* \
     vim=2:* -y \
     && apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
