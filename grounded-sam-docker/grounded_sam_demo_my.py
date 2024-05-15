@@ -31,6 +31,29 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+def pil2cv(image):
+    ''' PIL型 -> OpenCV型 '''
+    new_image = np.array(image, dtype=np.uint8)
+    if new_image.ndim == 2:
+        pass
+    elif new_image.shape[2] == 3:
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR)
+    elif new_image.shape[2] == 4:
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_RGBA2BGRA)
+    return new_image
+
+def cv2pil(image):
+    ''' OpenCV型 -> PIL型 '''
+    new_image = image.copy()
+    if new_image.ndim == 2:
+        pass
+    elif new_image.shape[2] == 3:
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_BGR2RGB)
+    elif new_image.shape[2] == 4:
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_BGRA2RGBA)
+    new_image = Image.fromarray(new_image)
+    return new_image
+
 
 def load_image(image_path):
     # load image
@@ -240,17 +263,19 @@ if __name__ == "__main__":
     image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
 
     # run grounding dino model
+    t0 = cv2.getTickCount()
     boxes_filt, pred_phrases = get_grounding_output(
         model, image, text_prompt, box_threshold, text_threshold, device=device
     )
-
-    image = cv2.imread(image_path)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    t1 = cv2.getTickCount()
+    used1 = (t1 - t0) / cv2.getTickFrequency()
+    image = pil2cv(image_pil)
     predictor.set_image(image)
 
     size = image_pil.size
     H, W = size[1], size[0]
 
+    t2 = cv2.getTickCount()
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
@@ -260,9 +285,12 @@ if __name__ == "__main__":
         boxes = transformed_boxes.to(device),
         multimask_output = False,
     )
+    t3 = cv2.getTickCount()
+    used2 = (t3 - t2) / cv2.getTickFrequency()
 
     save_output(output_dir, masks, boxes_filt, pred_phrases, image)
     save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
+    print(f"{used1=} {used2}")
     # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
     # cv2.imshow("output", output_img)
     # key = cv2.waitKey(-1)
