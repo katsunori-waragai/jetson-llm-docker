@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 from pathlib import Path
+from dataclasses import dataclass
 
 import numpy as np
 import cv2
@@ -109,7 +110,7 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-def save_mask_data(output_dir, mask_list, box_list, label_list):
+def save_mask_data(output_dir, mask_list, box_list, label_list):  # save json file
     value = 0  # 0 for background
 
     mask_img = torch.zeros(mask_list.shape[-2:])
@@ -137,6 +138,23 @@ def save_mask_data(output_dir, mask_list, box_list, label_list):
     with open(os.path.join(output_dir, 'mask.json'), 'w') as f:
         json.dump(json_data, f)
 
+@dataclass
+class GroundedSAMPredictor:
+    # GroundingDino のPredictor
+    # SAMのPredictor
+
+    def __post_init__(self):
+        # 各modelの設定をする。
+        pass
+
+    def infer(self, image):
+        pass
+
+    def infer_file(self, image_file):
+        pass
+
+    def save(self):
+        pass
 
 if __name__ == "__main__":
 
@@ -224,20 +242,26 @@ if __name__ == "__main__":
     )
 
     # draw output image
-    plt.figure(figsize=(10, 10))
-    plt.imshow(image)
-    for mask in masks:
-        show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
-    for box, label in zip(boxes_filt, pred_phrases):
-        show_box(box.numpy(), plt.gca(), label)
+    # masks
+    # boxes_filt
+    # pred_phrases
+    # output_dir
+    def save_output(output_dir, masks, boxes_filt, pred_phrases, image):
+        plt.figure(figsize=(10, 10))
+        plt.imshow(image)
+        for mask in masks:
+            show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
+        for box, label in zip(boxes_filt, pred_phrases):
+            show_box(box.numpy(), plt.gca(), label)
 
-    plt.axis('off')
-    plt.savefig(
-        os.path.join(output_dir, "grounded_sam_output.jpg"),
-        bbox_inches="tight", dpi=300, pad_inches=0.0
-    )
+        plt.axis('off')
+        plt.savefig(
+            os.path.join(output_dir, "grounded_sam_output.jpg"),
+            bbox_inches="tight", dpi=300, pad_inches=0.0
+        )
 
+    save_output(output_dir, masks, boxes_filt, pred_phrases, image)
     save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
-    output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
-    cv2.imshow("output", output_img)
-    key = cv2.waitKey(-1)
+    # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
+    # cv2.imshow("output", output_img)
+    # key = cv2.waitKey(-1)
