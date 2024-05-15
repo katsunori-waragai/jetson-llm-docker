@@ -142,7 +142,7 @@ def save_mask_data(output_dir, mask_list, box_list, label_list):  # save json fi
     plt.figure(figsize=(10, 10))
     plt.imshow(mask_img.numpy())
     plt.axis('off')
-    plt.savefig(os.path.join(output_dir, 'mask.jpg'), bbox_inches="tight", dpi=300, pad_inches=0.0)
+    plt.savefig(output_dir / 'mask.jpg', bbox_inches="tight", dpi=300, pad_inches=0.0)
 
     json_data = [{
         'value': value,
@@ -158,7 +158,7 @@ def save_mask_data(output_dir, mask_list, box_list, label_list):  # save json fi
             'logit': float(logit),
             'box': box.numpy().tolist(),
         })
-    with open(os.path.join(output_dir, 'mask.json'), 'w') as f:
+    with open(output_dir / 'mask.json', 'w') as f:
         json.dump(json_data, f)
 
 def save_output(output_dir, masks, boxes_filt, pred_phrases, image):
@@ -171,7 +171,7 @@ def save_output(output_dir, masks, boxes_filt, pred_phrases, image):
 
     plt.axis('off')
     plt.savefig(
-        os.path.join(output_dir, "grounded_sam_output.jpg"),
+        output_dir / "grounded_sam_output.jpg",
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
 
@@ -243,13 +243,13 @@ if __name__ == "__main__":
     use_sam_hq = args.use_sam_hq
     image_path = args.input_image
     text_prompt = args.text_prompt
-    output_dir = args.output_dir
+    output_dir = Path(args.output_dir)
     box_threshold = args.box_threshold
     text_threshold = args.text_threshold
     device = args.device
 
     # make dir
-    os.makedirs(output_dir, exist_ok=True)
+    output_dir.mkdir(exist_ok=True)
     # load model
     model = load_model(config_file, grounded_checkpoint, device=device)
     # initialize SAM
@@ -260,7 +260,7 @@ if __name__ == "__main__":
     image_pil, image = load_image(image_path)
 
     # visualize raw image
-    image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
+    image_pil.save(output_dir / "raw_image.jpg")
 
     # run grounding dino model
     t0 = cv2.getTickCount()
