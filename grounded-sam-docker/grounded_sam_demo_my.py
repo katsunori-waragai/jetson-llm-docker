@@ -3,6 +3,7 @@ import os
 import sys
 from pathlib import Path
 from dataclasses import dataclass
+from typing import List, Dict
 
 import numpy as np
 import cv2
@@ -31,7 +32,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def pil2cv(image):
+def pil2cv(image) -> np.ndarray:
     ''' PIL型 -> OpenCV型 '''
     new_image = np.array(image, dtype=np.uint8)
     if new_image.ndim == 2:
@@ -42,7 +43,7 @@ def pil2cv(image):
         new_image = cv2.cvtColor(new_image, cv2.COLOR_RGBA2BGRA)
     return new_image
 
-def cv2pil(image):
+def cv2pil(image: np.ndarray):
     ''' OpenCV型 -> PIL型 '''
     new_image = image.copy()
     if new_image.ndim == 2:
@@ -133,7 +134,7 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-def save_mask_data(output_dir, mask_list, box_list, label_list):  # save json file
+def save_mask_data(output_dir: Path, mask_list, box_list, label_list):  # save json file
     value = 0  # 0 for background
 
     mask_img = torch.zeros(mask_list.shape[-2:])
@@ -161,7 +162,7 @@ def save_mask_data(output_dir, mask_list, box_list, label_list):  # save json fi
     with open(output_dir / 'mask.json', 'w') as f:
         json.dump(json_data, f)
 
-def save_output(output_dir, masks, boxes_filt, pred_phrases, image):
+def save_output(output_dir: Path, masks, boxes_filt, pred_phrases, image: np.ndarray):
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
     for mask in masks:
