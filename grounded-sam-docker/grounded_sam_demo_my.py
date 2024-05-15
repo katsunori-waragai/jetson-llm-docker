@@ -138,6 +138,30 @@ def save_mask_data(output_dir, mask_list, box_list, label_list):  # save json fi
     with open(os.path.join(output_dir, 'mask.json'), 'w') as f:
         json.dump(json_data, f)
 
+def save_output(output_dir, masks, boxes_filt, pred_phrases, image):
+    plt.figure(figsize=(10, 10))
+    plt.imshow(image)
+    for mask in masks:
+        show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
+    for box, label in zip(boxes_filt, pred_phrases):
+        show_box(box.numpy(), plt.gca(), label)
+
+    plt.axis('off')
+    plt.savefig(
+        os.path.join(output_dir, "grounded_sam_output.jpg"),
+        bbox_inches="tight", dpi=300, pad_inches=0.0
+    )
+
+def modify_boxes_filter(boxes_filt, H, W):
+    for i in range(boxes_filt.size(0)):
+        boxes_filt[i] = boxes_filt[i] * torch.Tensor([W, H, W, H])
+        boxes_filt[i][:2] -= boxes_filt[i][2:] / 2
+        boxes_filt[i][2:] += boxes_filt[i][:2]
+
+    boxes_filt = boxes_filt.cpu()
+    return boxes_filt
+
+
 @dataclass
 class GroundedSAMPredictor:
     # GroundingDino のPredictor
@@ -226,12 +250,8 @@ if __name__ == "__main__":
 
     size = image_pil.size
     H, W = size[1], size[0]
-    for i in range(boxes_filt.size(0)):
-        boxes_filt[i] = boxes_filt[i] * torch.Tensor([W, H, W, H])
-        boxes_filt[i][:2] -= boxes_filt[i][2:] / 2
-        boxes_filt[i][2:] += boxes_filt[i][:2]
 
-    boxes_filt = boxes_filt.cpu()
+    boxes_filt = modify_boxes_filter(boxes_filt, H, W)
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
     masks, _, _ = predictor.predict_torch(
@@ -240,25 +260,6 @@ if __name__ == "__main__":
         boxes = transformed_boxes.to(device),
         multimask_output = False,
     )
-
-    # draw output image
-    # masks
-    # boxes_filt
-    # pred_phrases
-    # output_dir
-    def save_output(output_dir, masks, boxes_filt, pred_phrases, image):
-        plt.figure(figsize=(10, 10))
-        plt.imshow(image)
-        for mask in masks:
-            show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
-        for box, label in zip(boxes_filt, pred_phrases):
-            show_box(box.numpy(), plt.gca(), label)
-
-        plt.axis('off')
-        plt.savefig(
-            os.path.join(output_dir, "grounded_sam_output.jpg"),
-            bbox_inches="tight", dpi=300, pad_inches=0.0
-        )
 
     save_output(output_dir, masks, boxes_filt, pred_phrases, image)
     save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
