@@ -27,6 +27,7 @@ RUN cd /root/GroundingDINO && python3 -m pip install -e .
 RUN python3 -m pip install --no-cache-dir diffusers[torch]==0.15.1 opencv-python==3.4.18.65 \
     pycocotools==2.0.6 matplotlib==3.5.3 \
     onnxruntime==1.14.1 onnx==1.13.1 ipykernel==6.16.2 scipy gradio openai
+RUN python3 -m pip uninstall -y opencv-python-headless
 RUN python3 -m pip install gdown
 
 # download pre-trained files
