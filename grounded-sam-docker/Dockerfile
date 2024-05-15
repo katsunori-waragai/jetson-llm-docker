@@ -31,6 +31,6 @@ RUN cd /root/Grounded-Segment-Anything && wget https://dl.fbaipublicfiles.com/se
 RUN cd /root/Grounded-Segment-Anything &&  wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 COPY download-egocentric-images.sh /root/Grounded-Segment-Anything/
 COPY grounded_sam_demo_my.py /root/Grounded-Segment-Anything/
-COPY grounded_sam_demo.sh test_demo1.sh /root/Grounded-Segment-Anything/
-
+COPY grounded_sam_demo.sh test_demo1*.sh /root/Grounded-Segment-Anything/
+RUN apt update
 RUN apt install -y eog nano
