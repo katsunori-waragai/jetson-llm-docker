@@ -270,8 +270,6 @@ if __name__ == "__main__":
     t1 = cv2.getTickCount()
     used1 = (t1 - t0) / cv2.getTickFrequency()
     image = pil2cv(image_pil)
-    # image = cv2.imread(image_path)
-    # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     predictor.set_image(image)
 
     size = image_pil.size
