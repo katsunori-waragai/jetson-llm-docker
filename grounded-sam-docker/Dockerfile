@@ -20,7 +20,6 @@ RUN python3 -m pip install wheel
 RUN cd /root/Grounded-Segment-Anything && sed -i 's/^opencv-python.*$/opencv-python==3.4.18.65/' requirements.txt
 RUN cd /root/Grounded-Segment-Anything && python3 -m pip install --no-cache-dir -e segment_anything
 
-# When using build isolation, PyTorch with newer CUDA is installed and can't compile GroundingDINO
 RUN cd /root/GroundingDINO && sed -i 's/^opencv-python.*$/opencv-python==3.4.18.65/' requirements.txt
 RUN cd /root/GroundingDINO && sed -i '/opencv/d' environment.yaml
 RUN cd /root/GroundingDINO && python3 -m pip install -e .
@@ -30,10 +29,12 @@ RUN python3 -m pip install --no-cache-dir diffusers[torch]==0.15.1 opencv-python
     onnxruntime==1.14.1 onnx==1.13.1 ipykernel==6.16.2 scipy gradio openai
 RUN python3 -m pip install gdown
 
+# download pre-trained files
 RUN cd /root/Grounded-Segment-Anything && wget --quiet https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 RUN cd /root/Grounded-Segment-Anything && wget --quiet https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 COPY download-egocentric-images.sh /root/Grounded-Segment-Anything/
 COPY grounded_sam_demo_my.py /root/Grounded-Segment-Anything/
 COPY grounded_sam_demo.sh test_demo1.sh /root/Grounded-Segment-Anything/
 
+# only for development
 RUN apt update && apt install -y eog nano
