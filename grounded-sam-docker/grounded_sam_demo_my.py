@@ -229,6 +229,10 @@ if __name__ == "__main__":
     os.makedirs(output_dir, exist_ok=True)
     # load model
     model = load_model(config_file, grounded_checkpoint, device=device)
+    # initialize SAM
+    sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
+    predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+
     # load image
     image_pil, image = load_image(image_path)
 
@@ -239,10 +243,6 @@ if __name__ == "__main__":
     boxes_filt, pred_phrases = get_grounding_output(
         model, image, text_prompt, box_threshold, text_threshold, device=device
     )
-
-    # initialize SAM
-    sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-    predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
