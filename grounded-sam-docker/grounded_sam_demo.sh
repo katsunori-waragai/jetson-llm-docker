@@ -7,6 +7,11 @@ case $# in
     echo "usage:$0 name text_prompt"
     exit 1;;
 esac
+
+if [ ! -f ${name} ] ; then
+   echo "not found ${name}"
+   exit
+fi
   
 echo python3 grounded_sam_demo.py   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
    --grounded_checkpoint groundingdino_swint_ogc.pth \
