@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import cv2
 import json
 import torch
 from PIL import Image
@@ -184,10 +185,10 @@ if __name__ == "__main__":
 
     # make dir
     os.makedirs(output_dir, exist_ok=True)
-    # load image
-    image_pil, image = load_image(image_path)
     # load model
     model = load_model(config_file, grounded_checkpoint, device=device)
+    # load image
+    image_pil, image = load_image(image_path)
 
     # visualize raw image
     image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
@@ -237,3 +238,6 @@ if __name__ == "__main__":
     )
 
     save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
+    output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
+    cv2.imshow("output", output_img)
+    key = cv2.waitKey(-1)
