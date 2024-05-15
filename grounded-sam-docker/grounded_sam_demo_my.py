@@ -32,7 +32,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def pil2cv(image) -> np.ndarray:
+def pil2cv(image: Image) -> np.ndarray:
     ''' PIL型 -> OpenCV型 '''
     new_image = np.array(image, dtype=np.uint8)
     if new_image.ndim == 2:
@@ -43,7 +43,7 @@ def pil2cv(image) -> np.ndarray:
         new_image = cv2.cvtColor(new_image, cv2.COLOR_RGBA2BGRA)
     return new_image
 
-def cv2pil(image: np.ndarray):
+def cv2pil(image: np.ndarray) -> Image:
     ''' OpenCV型 -> PIL型 '''
     new_image = image.copy()
     if new_image.ndim == 2:
@@ -270,15 +270,15 @@ if __name__ == "__main__":
     )
     t1 = cv2.getTickCount()
     used1 = (t1 - t0) / cv2.getTickFrequency()
-    image = pil2cv(image_pil)
-    predictor.set_image(image)
+    cvimage = pil2cv(image_pil)
+    predictor.set_image(cvimage)
 
     size = image_pil.size
     H, W = size[1], size[0]
 
     t2 = cv2.getTickCount()
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
-    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
+    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
 
     masks, _, _ = predictor.predict_torch(
         point_coords = None,
@@ -289,7 +289,7 @@ if __name__ == "__main__":
     t3 = cv2.getTickCount()
     used2 = (t3 - t2) / cv2.getTickFrequency()
 
-    save_output(output_dir, masks, boxes_filt, pred_phrases, image)
+    save_output(output_dir, masks, boxes_filt, pred_phrases, cvimage)
     save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
     print(f"{used1=} {used2}")
     # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
