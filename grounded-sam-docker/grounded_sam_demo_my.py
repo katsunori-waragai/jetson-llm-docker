@@ -185,7 +185,7 @@ def _save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: 
 def save_output_empty_detection(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
     assert len(pred_phrases) == 0
     oname = output_dir / "grounded_sam_output.jpg"
-    cv2.imsave(str(oname), image)
+    cv2.imwrite(str(oname), image)
 
 def modify_boxes_filter(boxes_filt, H, W):
     for i in range(boxes_filt.size(0)):
