@@ -217,7 +217,6 @@ class GroundedSAMPredictor:
         pass
 
 if __name__ == "__main__":
-    import inspect
 
     parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
     parser.add_argument("--config", type=str, required=True, help="path to config file")
