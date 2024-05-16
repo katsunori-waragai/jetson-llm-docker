@@ -310,8 +310,7 @@ if __name__ == "__main__":
     used2 = (t3 - t2) / cv2.getTickFrequency()
 
     save_output(output_dir, masks, boxes_filt, pred_phrases, cvimage)
-    if len(pred_phrases):
-        save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
+    save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
     print(f"{used1=} {used2}")
     # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
     # cv2.imshow("output", output_img)
