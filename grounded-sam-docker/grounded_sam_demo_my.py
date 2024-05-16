@@ -206,6 +206,7 @@ class GroundedSAMPredictor:
         pass
 
 if __name__ == "__main__":
+    import inspect
 
     parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
     parser.add_argument("--config", type=str, required=True, help="path to config file")
@@ -281,11 +282,11 @@ if __name__ == "__main__":
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
 
-    boxes = transformed_boxes.to(device)
-    assert boxes is not None
-    print(f"{boxes=}")
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
-    if boxes.size()[0] * boxes.size()[1] > 0:
+    print(f"{pred_phrases=}")
+    # for k, v in inspect.getmembers(boxes):
+    #     print(k, v)
+    if pred_phrases:
         masks, _, _ = predictor.predict_torch(
             point_coords = None,
             point_labels = None,
@@ -293,7 +294,7 @@ if __name__ == "__main__":
             multimask_output = False,
         )
         print(f"{masks}")
-        print(f"{masks[0]}")
+        print(f"{masks[0]}") # pytorch tensor data type
     else:
         # 検出対象物が見つからなかったときのmasksはどうあるべきか
         masks = []
