@@ -27,10 +27,13 @@ RUN python3 -m pip install --no-cache-dir diffusers[torch]==0.15.1 opencv-python
     onnxruntime==1.14.1 onnx==1.13.1 ipykernel==6.16.2 scipy gradio openai
 RUN python3 -m pip install gdown
 
-RUN cd /root/Grounded-Segment-Anything && wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
-RUN cd /root/Grounded-Segment-Anything &&  wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+# download pre-trained files
+RUN cd /root/Grounded-Segment-Anything && wget --quiet https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+RUN cd /root/Grounded-Segment-Anything && wget --quiet https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+
 COPY download-egocentric-images.sh /root/Grounded-Segment-Anything/
 COPY grounded_sam_demo_my.py /root/Grounded-Segment-Anything/
 COPY grounded_sam_demo.sh test_demo1*.sh /root/Grounded-Segment-Anything/
-RUN apt update
-RUN apt install -y eog nano
+
+# only for development
+RUN apt update && apt install -y eog nano
