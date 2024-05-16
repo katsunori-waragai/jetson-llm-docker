@@ -134,7 +134,7 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-def save_mask_data(output_dir: Path, mask_list, box_list, label_list):  # save json file
+def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List):  # save json file
     value = 0  # 0 for background
 
     mask_img = torch.zeros(mask_list.shape[-2:])
@@ -162,7 +162,7 @@ def save_mask_data(output_dir: Path, mask_list, box_list, label_list):  # save j
     with open(output_dir / 'mask.json', 'w') as f:
         json.dump(json_data, f)
 
-def save_output(output_dir: Path, masks, boxes_filt, pred_phrases, image: np.ndarray):
+def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
     for mask in masks:
@@ -193,13 +193,14 @@ class GroundedSAMPredictor:
 
     def __post_init__(self):
         # 各modelの設定をする。
-        pass
+        self.model = load_model(config_file, grounded_checkpoint, device=device)
+        # initialize SAM
+        sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
+        self.predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
-    def infer(self, image):
-        pass
-
-    def infer_file(self, image_file):
-        pass
+    def infer_file(self, image_path):
+        image_pil, image = load_image(image_path)
+        image_pil.save(output_dir / "raw_image.jpg")
 
     def save(self):
         pass
