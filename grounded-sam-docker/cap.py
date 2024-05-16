@@ -5,9 +5,13 @@ import cv2
 cap = cv2.VideoCapture(0)
 oname = Path("captured/capture.jpg")
 oname.parent.mkdir(exist_ok=True, parents=True)
+is_zed = True
 
 while True:
     r, image = cap.read()
+    if is_zed:
+        h, w = image.shape[:2]
+        image = image[:, :w//2, :]
     oimg = image.copy()
     cv2.putText(oimg, "s: save", (20, 20), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 255, 0))
     cv2.putText(oimg, "q: quit", (20, 40), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 255, 0))
