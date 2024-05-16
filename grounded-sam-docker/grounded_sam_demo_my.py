@@ -300,10 +300,7 @@ if __name__ == "__main__":
             boxes = transformed_boxes.to(device),
             multimask_output = False,
         )
-        print(f"{masks}")  # pytorch tensor [C, H, W] dtype=bool
-        print(f"{masks[0]}") # pytorch tensor data type
     else:
-        # 検出対象物が見つからなかったときのmasksはどうあるべきか
         C = len(pred_phrases)
         masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
     t3 = cv2.getTickCount()
