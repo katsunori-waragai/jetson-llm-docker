@@ -281,12 +281,19 @@ if __name__ == "__main__":
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
 
-    masks, _, _ = predictor.predict_torch(
-        point_coords = None,
-        point_labels = None,
-        boxes = transformed_boxes.to(device),
-        multimask_output = False,
-    )
+    boxes = transformed_boxes.to(device)
+    assert boxes is not None
+    print(f"{boxes=}")
+    boxes_filt = modify_boxes_filter(boxes_filt, H, W)
+    if boxes.size[0] * boxes.size[1] > 0:
+        masks, _, _ = predictor.predict_torch(
+            point_coords = None,
+            point_labels = None,
+            boxes = transformed_boxes.to(device),
+            multimask_output = False,
+        )
+    else:
+        masks = []
     t3 = cv2.getTickCount()
     used2 = (t3 - t2) / cv2.getTickFrequency()
 
