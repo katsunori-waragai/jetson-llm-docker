@@ -285,7 +285,7 @@ if __name__ == "__main__":
     assert boxes is not None
     print(f"{boxes=}")
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
-    if boxes.size[0] * boxes.size[1] > 0:
+    if boxes.size()[0] * boxes.size()[1] > 0:
         masks, _, _ = predictor.predict_torch(
             point_coords = None,
             point_labels = None,
