@@ -282,7 +282,6 @@ if __name__ == "__main__":
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
 
-    boxes_filt = modify_boxes_filter(boxes_filt, H, W)
     print(f"{pred_phrases=}")
     # for k, v in inspect.getmembers(boxes):
     #     print(k, v)
