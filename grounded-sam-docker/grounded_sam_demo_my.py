@@ -294,8 +294,6 @@ if __name__ == "__main__":
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
 
     print(f"{pred_phrases=}")
-    # for k, v in inspect.getmembers(boxes):
-    #     print(k, v)
     if pred_phrases:
         masks, _, _ = predictor.predict_torch(
             point_coords = None,
