@@ -22,12 +22,13 @@ RUN cd /root/Grounded-Segment-Anything && python3 -m pip install --no-cache-dir 
 
 RUN cd /root/GroundingDINO && sed -i 's/^opencv-python.*$/opencv-python==3.4.18.65/' requirements.txt
 RUN cd /root/GroundingDINO && sed -i '/opencv/d' environment.yaml
-RUN cd /root/GroundingDINO && python3 -m pip install -e .
+RUN cd /root/GroundingDINO && python3 -m pip install --no-build-isolation -e .
 
 RUN python3 -m pip install --no-cache-dir diffusers[torch]==0.15.1 opencv-python==3.4.18.65 \
     pycocotools==2.0.6 matplotlib==3.5.3 \
     onnxruntime==1.14.1 onnx==1.13.1 ipykernel==6.16.2 scipy gradio openai
 RUN python3 -m pip uninstall -y opencv-python-headless
+RUN python3 -m pip install opencv-python==3.4.18.65
 RUN python3 -m pip install gdown
 
 # download pre-trained files
