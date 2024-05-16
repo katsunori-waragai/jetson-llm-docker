@@ -163,6 +163,12 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
         json.dump(json_data, f)
 
 def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
+    if len(pred_phrases) == 0:
+        save_output_empty_detection(output_dir, masks, boxes_filt, pred_phrases, image)
+    else:
+        _save_output(output_dir, masks, boxes_filt, pred_phrases, image)
+
+def _save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
     for mask in masks:
@@ -175,6 +181,11 @@ def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: L
         output_dir / "grounded_sam_output.jpg",
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
+
+def save_output_empty_detection(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
+    assert len(pred_phrases) == 0
+    oname = output_dir / "grounded_sam_output.jpg"
+    cv2.imwrite(str(oname), image)
 
 def modify_boxes_filter(boxes_filt, H, W):
     for i in range(boxes_filt.size(0)):
@@ -274,19 +285,25 @@ if __name__ == "__main__":
     cvimage = pil2cv(image_pil)
     predictor.set_image(cvimage)
 
-    size = image_pil.size
-    H, W = size[1], size[0]
+    H, W = image_pil.size[:2]
 
     t2 = cv2.getTickCount()
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
 
-    masks, _, _ = predictor.predict_torch(
-        point_coords = None,
-        point_labels = None,
-        boxes = transformed_boxes.to(device),
-        multimask_output = False,
-    )
+    if pred_phrases:
+        masks, _, _ = predictor.predict_torch(
+            point_coords = None,
+            point_labels = None,
+            boxes = transformed_boxes.to(device),
+            multimask_output = False,
+        )
+        print(f"{masks.shape=}")
+        print(f"{image_pil.size[:2]=}")
+        # assert masks.shape[1] == H
+    else:
+        C = len(pred_phrases)
+        masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
     t3 = cv2.getTickCount()
     used2 = (t3 - t2) / cv2.getTickFrequency()
 
