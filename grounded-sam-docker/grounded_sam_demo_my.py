@@ -292,7 +292,10 @@ if __name__ == "__main__":
             boxes = transformed_boxes.to(device),
             multimask_output = False,
         )
+        print(f"{masks}")
+        print(f"{masks[0]}")
     else:
+        # 検出対象物が見つからなかったときのmasksはどうあるべきか
         masks = []
     t3 = cv2.getTickCount()
     used2 = (t3 - t2) / cv2.getTickFrequency()
