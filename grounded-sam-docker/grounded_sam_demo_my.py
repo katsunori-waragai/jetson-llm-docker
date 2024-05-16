@@ -305,7 +305,7 @@ if __name__ == "__main__":
     else:
         # 検出対象物が見つからなかったときのmasksはどうあるべきか
         C = len(pred_phrases)
-        masks = torch.from_numpy(np.full((C, H, W), dtype=np.bool))
+        masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
     t3 = cv2.getTickCount()
     used2 = (t3 - t2) / cv2.getTickFrequency()
 
