@@ -285,14 +285,12 @@ if __name__ == "__main__":
     cvimage = pil2cv(image_pil)
     predictor.set_image(cvimage)
 
-    size = image_pil.size
-    H, W = size[1], size[0]
+    H, W = image_pil.size[:2]
 
     t2 = cv2.getTickCount()
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
 
-    print(f"{pred_phrases=}")
     if pred_phrases:
         masks, _, _ = predictor.predict_torch(
             point_coords = None,
