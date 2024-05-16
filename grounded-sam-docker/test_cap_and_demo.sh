@@ -1,5 +1,5 @@
 #!/bin/bash
-python3 cap.py
+python3 cap.py --is_zed
 python3 grounded_sam_demo_my.py   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
    --grounded_checkpoint groundingdino_swint_ogc.pth \
    --sam_checkpoint sam_vit_h_4b8939.pth \

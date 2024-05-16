@@ -2,10 +2,16 @@ from pathlib import Path
 
 import cv2
 
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("--oname", default="captured/capture.jpg", help="captured file name")
+parser.add_argument("--is_zed", action="store_true", help="ZED2 stereo camera as USB camera")
+args = parser.parse_args()
+
 cap = cv2.VideoCapture(0)
-oname = Path("captured/capture.jpg")
+oname = Path(args.oname)
 oname.parent.mkdir(exist_ok=True, parents=True)
-is_zed = True
+is_zed = args.is_zed
 
 while True:
     r, image = cap.read()
