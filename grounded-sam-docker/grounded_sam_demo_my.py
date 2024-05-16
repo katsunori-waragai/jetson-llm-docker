@@ -298,6 +298,9 @@ if __name__ == "__main__":
             boxes = transformed_boxes.to(device),
             multimask_output = False,
         )
+        print(f"{masks.shape=}")
+        print(f"{image_pil.size[:2]=}")
+        # assert masks.shape[1] == H
     else:
         C = len(pred_phrases)
         masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
