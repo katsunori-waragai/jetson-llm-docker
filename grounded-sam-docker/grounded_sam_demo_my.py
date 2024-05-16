@@ -163,6 +163,12 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
         json.dump(json_data, f)
 
 def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
+    if len(pred_phrases) == 0:
+        save_output_empty_detection(output_dir, masks, boxes_filt, pred_phrases, image)
+    else:
+        _save_output(output_dir, masks, boxes_filt, pred_phrases, image)
+
+def _save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
     for mask in masks:
@@ -175,6 +181,11 @@ def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: L
         output_dir / "grounded_sam_output.jpg",
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
+
+def save_output_empty_detection(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
+    assert len(pred_phrases) == 0
+    oname = output_dir / "grounded_sam_output.jpg"
+    cv2.imsave(str(oname), image)
 
 def modify_boxes_filter(boxes_filt, H, W):
     for i in range(boxes_filt.size(0)):
@@ -301,7 +312,8 @@ if __name__ == "__main__":
     used2 = (t3 - t2) / cv2.getTickFrequency()
 
     save_output(output_dir, masks, boxes_filt, pred_phrases, cvimage)
-    save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
+    if len(pred_phrases):
+        save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
     print(f"{used1=} {used2}")
     # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
     # cv2.imshow("output", output_img)
