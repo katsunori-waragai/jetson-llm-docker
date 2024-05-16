@@ -3,6 +3,7 @@ import os
 import sys
 from pathlib import Path
 from dataclasses import dataclass
+from typing import List, Dict
 
 import numpy as np
 import cv2
@@ -31,7 +32,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def pil2cv(image):
+def pil2cv(image: Image) -> np.ndarray:
     ''' PIL型 -> OpenCV型 '''
     new_image = np.array(image, dtype=np.uint8)
     if new_image.ndim == 2:
@@ -42,7 +43,7 @@ def pil2cv(image):
         new_image = cv2.cvtColor(new_image, cv2.COLOR_RGBA2BGRA)
     return new_image
 
-def cv2pil(image):
+def cv2pil(image: np.ndarray) -> Image:
     ''' OpenCV型 -> PIL型 '''
     new_image = image.copy()
     if new_image.ndim == 2:
@@ -133,7 +134,7 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-def save_mask_data(output_dir, mask_list, box_list, label_list):  # save json file
+def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List):  # save json file
     value = 0  # 0 for background
 
     mask_img = torch.zeros(mask_list.shape[-2:])
@@ -142,7 +143,7 @@ def save_mask_data(output_dir, mask_list, box_list, label_list):  # save json fi
     plt.figure(figsize=(10, 10))
     plt.imshow(mask_img.numpy())
     plt.axis('off')
-    plt.savefig(os.path.join(output_dir, 'mask.jpg'), bbox_inches="tight", dpi=300, pad_inches=0.0)
+    plt.savefig(output_dir / 'mask.jpg', bbox_inches="tight", dpi=300, pad_inches=0.0)
 
     json_data = [{
         'value': value,
@@ -158,10 +159,10 @@ def save_mask_data(output_dir, mask_list, box_list, label_list):  # save json fi
             'logit': float(logit),
             'box': box.numpy().tolist(),
         })
-    with open(os.path.join(output_dir, 'mask.json'), 'w') as f:
+    with open(output_dir / 'mask.json', 'w') as f:
         json.dump(json_data, f)
 
-def save_output(output_dir, masks, boxes_filt, pred_phrases, image):
+def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
     for mask in masks:
@@ -171,7 +172,7 @@ def save_output(output_dir, masks, boxes_filt, pred_phrases, image):
 
     plt.axis('off')
     plt.savefig(
-        os.path.join(output_dir, "grounded_sam_output.jpg"),
+        output_dir / "grounded_sam_output.jpg",
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
 
@@ -192,13 +193,14 @@ class GroundedSAMPredictor:
 
     def __post_init__(self):
         # 各modelの設定をする。
-        pass
+        self.model = load_model(config_file, grounded_checkpoint, device=device)
+        # initialize SAM
+        sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
+        self.predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
-    def infer(self, image):
-        pass
-
-    def infer_file(self, image_file):
-        pass
+    def infer_file(self, image_path):
+        image_pil, image = load_image(image_path)
+        image_pil.save(output_dir / "raw_image.jpg")
 
     def save(self):
         pass
@@ -243,13 +245,13 @@ if __name__ == "__main__":
     use_sam_hq = args.use_sam_hq
     image_path = args.input_image
     text_prompt = args.text_prompt
-    output_dir = args.output_dir
+    output_dir = Path(args.output_dir)
     box_threshold = args.box_threshold
     text_threshold = args.text_threshold
     device = args.device
 
     # make dir
-    os.makedirs(output_dir, exist_ok=True)
+    output_dir.mkdir(exist_ok=True)
     # load model
     model = load_model(config_file, grounded_checkpoint, device=device)
     # initialize SAM
@@ -260,7 +262,7 @@ if __name__ == "__main__":
     image_pil, image = load_image(image_path)
 
     # visualize raw image
-    image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
+    image_pil.save(output_dir / "raw_image.jpg")
 
     # run grounding dino model
     t0 = cv2.getTickCount()
@@ -269,15 +271,15 @@ if __name__ == "__main__":
     )
     t1 = cv2.getTickCount()
     used1 = (t1 - t0) / cv2.getTickFrequency()
-    image = pil2cv(image_pil)
-    predictor.set_image(image)
+    cvimage = pil2cv(image_pil)
+    predictor.set_image(cvimage)
 
     size = image_pil.size
     H, W = size[1], size[0]
 
     t2 = cv2.getTickCount()
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
-    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
+    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
 
     masks, _, _ = predictor.predict_torch(
         point_coords = None,
@@ -288,7 +290,7 @@ if __name__ == "__main__":
     t3 = cv2.getTickCount()
     used2 = (t3 - t2) / cv2.getTickFrequency()
 
-    save_output(output_dir, masks, boxes_filt, pred_phrases, image)
+    save_output(output_dir, masks, boxes_filt, pred_phrases, cvimage)
     save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
     print(f"{used1=} {used2}")
     # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))

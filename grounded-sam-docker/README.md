@@ -2,6 +2,10 @@
 - docker environment for grounded SAM
 https://github.com/IDEA-Research/Grounded-Segment-Anything
 
+### Dockerファイル内での処理
+- GroundedSAMを使うための環境構築
+- GroundedSAMを使うためのpre-trained file のダウンロード
+- ユーザー作成ファイルのCOPY
 
 ### status
 sh docker_build.sh 
@@ -9,8 +13,11 @@ sh docker_run.sh
 succeeded.
 
 ## usage
-- download weight
-- 
+### test_cap_and_demo.sh
+USBカメラから1枚画像を取得して、その画像に対して、grounded-SAMのdemo相当の処理を行う。
+
+### grounded_sam_demo.py
+- 元からあるdemo スクリプト
 ```
 python3 grounded_sam_demo.py   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
    --grounded_checkpoint groundingdino_swint_ogc.pth \
