@@ -251,7 +251,7 @@ if __name__ == "__main__":
     sam_checkpoint = args.sam_checkpoint
     sam_hq_checkpoint = args.sam_hq_checkpoint
     use_sam_hq = args.use_sam_hq
-    image_path = Path(args.input_image)
+    image_dir = Path(args.image_dir)
     text_prompt = args.text_prompt
     output_dir = Path(args.output_dir)
     box_threshold = args.box_threshold
