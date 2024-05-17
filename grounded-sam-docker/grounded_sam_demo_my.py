@@ -251,7 +251,7 @@ if __name__ == "__main__":
     sam_checkpoint = args.sam_checkpoint
     sam_hq_checkpoint = args.sam_hq_checkpoint
     use_sam_hq = args.use_sam_hq
-    image_path = Path(args.input_image)
+    image_dir = Path(args.image_dir)
     text_prompt = args.text_prompt
     output_dir = Path(args.output_dir)
     box_threshold = args.box_threshold
@@ -266,7 +266,7 @@ if __name__ == "__main__":
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
     predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
-    for image_path in Path(image_dir).glob("demo*.jpg"):
+    for image_path in sorted(Path(image_dir).glob("demo*.jpg")):
         # load image
         image_pil, image = load_image(image_path)
         W, H = image_pil.size[:2]
@@ -306,4 +306,4 @@ if __name__ == "__main__":
         print(f"{used_time=}")
         output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
         cv2.imshow("output", output_img)
-        key = cv2.waitKey(-1)
+        key = cv2.waitKey(100)
