@@ -4,15 +4,16 @@ import cv2
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument("--oname", default="captured/capture.jpg", help="captured file name")
+parser.add_argument("--outdir", default="captured", help="captured file directory")
 parser.add_argument("--is_zed", action="store_true", help="ZED2 stereo camera as USB camera")
 args = parser.parse_args()
 
 cap = cv2.VideoCapture(0)
-oname = Path(args.oname)
-oname.parent.mkdir(exist_ok=True, parents=True)
+outdir = Path(args.outdir)
+outdir.mkdir(exist_ok=True, parents=True)
 is_zed = args.is_zed
 
+counter = 0
 while True:
     r, image = cap.read()
     if is_zed:
@@ -26,6 +27,7 @@ while True:
     if key == ord("q"):
         break
     elif key == ord("s"):
+        counter += 1
+        oname = outdir / f"cap_{counter:04d}.jpg"
         cv2.imwrite(str(oname), image)
         print(f"saved {oname}")
-        break
