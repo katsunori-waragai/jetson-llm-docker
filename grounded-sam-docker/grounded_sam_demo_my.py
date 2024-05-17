@@ -163,7 +163,7 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
         json.dump(json_data, f)
 
 def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
-    if len(pred_phrases) == 0:
+    if 0 and len(pred_phrases) == 0:
         save_output_empty_detection(output_dir, masks, boxes_filt, pred_phrases, image)
     else:
         _save_output(output_dir, masks, boxes_filt, pred_phrases, image)
