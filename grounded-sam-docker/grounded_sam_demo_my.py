@@ -187,7 +187,7 @@ def save_output_empty_detection(output_dir: Path, masks: List, boxes_filt: List,
     oname = output_dir / "grounded_sam_output.jpg"
     cv2.imwrite(str(oname), image)
 
-def modify_boxes_filter(boxes_filt, H, W):
+def modify_boxes_filter(boxes_filt, W, H):
     for i in range(boxes_filt.size(0)):
         boxes_filt[i] = boxes_filt[i] * torch.Tensor([W, H, W, H])
         boxes_filt[i][:2] -= boxes_filt[i][2:] / 2
