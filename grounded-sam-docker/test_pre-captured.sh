@@ -4,7 +4,7 @@ if [ ! -d ${CAPTURED_FOLDER} ]; then
   gdown --fuzzy --folder https://drive.google.com/drive/folders/1L1ZZPjTvswFxyNE5K75lAmMi-znHzfNx?usp=sharing
 else
   echo already downloaded ${CAPTURED_FOLDER}
-  echo ${CAPTURED_FOLDER}/*.jpg
+  echo ${CAPTURED_FOLDER}/*.jpg | sed 's/ /\n/g/'
 fi
 echo "start grounded Dino"
 python3 grounded_sam_demo_my.py   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
