@@ -285,17 +285,17 @@ if __name__ == "__main__":
     cvimage = pil2cv(image_pil)
     predictor.set_image(cvimage)
 
-    Wpil, Hpil = image_pil.size[:2]
+    W, H = image_pil.size[:2]
 
     tmp_cvimg = cv2.imread(str(image_path))
     Hcv, Wcv = tmp_cvimg.shape[:2]
-    print(f"{Wpil} {Hpil}")
+    print(f"{W} {H}")
     print(f"{Hcv} {Wcv}")
-    assert Wpil == Wcv
-    assert Hpil == Hcv
+    assert W == Wcv
+    assert H == Hcv
 
     t2 = cv2.getTickCount()
-    boxes_filt = modify_boxes_filter(boxes_filt, Wpil, Hpil)
+    boxes_filt = modify_boxes_filter(boxes_filt, W, H)
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
 
     if pred_phrases:
@@ -310,7 +310,7 @@ if __name__ == "__main__":
         # assert masks.shape[1] == H
     else:
         C = len(pred_phrases)
-        masks = torch.from_numpy(np.full((C, Hpil, Wpil), False, dtype=np.bool))
+        masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
     t3 = cv2.getTickCount()
     used2 = (t3 - t2) / cv2.getTickFrequency()
 
