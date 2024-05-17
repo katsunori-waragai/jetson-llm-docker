@@ -269,9 +269,9 @@ if __name__ == "__main__":
     # load image
     image_pil, image = load_image(image_path)
     W, H = image_pil.size[:2]
-
+    image_path_stem = image_path.stem.replace(" ", "_")
     # visualize raw image
-    image_pil.save(output_dir / f"{image_path.stem}_raw.jpg")
+    image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
 
     # run grounding dino model
     t0 = cv2.getTickCount()
@@ -300,8 +300,8 @@ if __name__ == "__main__":
     t3 = cv2.getTickCount()
     used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
-    save_output_jpg(output_dir / f"{image_path.stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
-    save_mask_data_jpg(output_dir / f"{image_path.stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+    save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
+    save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
     print(f"{used_time=}")
     # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
     # cv2.imshow("output", output_img)
