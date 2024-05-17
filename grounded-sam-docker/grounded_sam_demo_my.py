@@ -258,9 +258,8 @@ if __name__ == "__main__":
     text_threshold = args.text_threshold
     device = args.device
 
-    # make dir
     output_dir.mkdir(exist_ok=True)
-    # load model
+
     model = load_model(config_file, grounded_checkpoint, device=device)
     # initialize SAM
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
@@ -271,11 +270,9 @@ if __name__ == "__main__":
         print(p)
 
     for image_path in sorted(image_path_list):
-        # load image
         image_pil, image = load_image(image_path)
         W, H = image_pil.size[:2]
         image_path_stem = image_path.stem.replace(" ", "_")
-        # visualize raw image
         image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
 
         # run grounding dino model
@@ -304,10 +301,13 @@ if __name__ == "__main__":
             masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
         t3 = cv2.getTickCount()
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
-
+        t4 = cv2.getTickCount()
         save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
         save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        t5 = cv2.getTickCount()
+        used_time["post"] = (t5 - t4) / cv2.getTickFrequency()
+
         print(f"{used_time=}")
         output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
         cv2.imshow("output", output_img)
-        key = cv2.waitKey(100)
+        key = cv2.waitKey(10)
