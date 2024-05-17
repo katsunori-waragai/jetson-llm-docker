@@ -278,7 +278,8 @@ if __name__ == "__main__":
     )
     boxes_filt = modify_boxes_filter(boxes_filt, W, H)
     t1 = cv2.getTickCount()
-    used1 = (t1 - t0) / cv2.getTickFrequency()
+    used_time = {}
+    used_time["grounding"] = (t1 - t0) / cv2.getTickFrequency()
     cvimage = pil2cv(image_pil)
 
     t2 = cv2.getTickCount()
@@ -295,11 +296,11 @@ if __name__ == "__main__":
         C = len(pred_phrases)
         masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
     t3 = cv2.getTickCount()
-    used2 = (t3 - t2) / cv2.getTickFrequency()
+    used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
     save_output(output_dir, masks, boxes_filt, pred_phrases, cvimage)
     save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
-    print(f"{used1=} {used2}")
+    print(f"{used_time=}")
     # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
     # cv2.imshow("output", output_img)
     # key = cv2.waitKey(-1)
