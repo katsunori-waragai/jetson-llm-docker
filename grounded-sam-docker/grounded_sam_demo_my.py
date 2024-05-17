@@ -266,7 +266,11 @@ if __name__ == "__main__":
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
     predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
-    for image_path in sorted(Path(image_dir).glob("demo*.jpg")):
+    image_path_list = list(Path(image_dir).glob("*.jpg"))
+    for p in image_path_list:
+        print(p)
+
+    for image_path in sorted(image_path_list):
         # load image
         image_pil, image = load_image(image_path)
         W, H = image_pil.size[:2]
