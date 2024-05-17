@@ -163,8 +163,9 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
         json.dump(json_data, f)
 
 def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
+    bgrimage = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     plt.figure(figsize=(10, 10))
-    plt.imshow(image)
+    plt.imshow(bgrimage)
     for mask in masks:
         show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
     for box, label in zip(boxes_filt, pred_phrases):
