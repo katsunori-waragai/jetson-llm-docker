@@ -134,8 +134,9 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List):  # save json file
+def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List):  # save json file
     value = 0  # 0 for background
+    mask_json = output_mask_jpg.with_suffix(".json")
 
     mask_img = torch.zeros(mask_list.shape[-2:])
     for idx, mask in enumerate(mask_list):
@@ -143,7 +144,7 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
     plt.figure(figsize=(10, 10))
     plt.imshow(mask_img.numpy())
     plt.axis('off')
-    plt.savefig(output_dir / 'mask.jpg', bbox_inches="tight", dpi=300, pad_inches=0.0)
+    plt.savefig(output_mask_jpg, bbox_inches="tight", dpi=300, pad_inches=0.0)
 
     json_data = [{
         'value': value,
@@ -159,7 +160,7 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
             'logit': float(logit),
             'box': box.numpy().tolist(),
         })
-    with open(output_dir / 'mask.json', 'w') as f:
+    with mask_json.open("wt") as f:
         json.dump(json_data, f)
 
 def save_output_jpg(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
@@ -300,7 +301,7 @@ if __name__ == "__main__":
     used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
     save_output_jpg(output_dir / "grounded_sam_output.jpg", masks, boxes_filt, pred_phrases, cvimage)
-    save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
+    save_mask_data_jpg(output_dir / "mask.jpg", masks, boxes_filt, pred_phrases)
     print(f"{used_time=}")
     # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
     # cv2.imshow("output", output_img)
