@@ -163,6 +163,11 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
         json.dump(json_data, f)
 
 def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
+    """
+    save overlay image
+
+    Note: saved image size is not equal to original size.
+    """
     bgrimage = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     plt.figure(figsize=(10, 10))
     plt.imshow(bgrimage)
@@ -261,6 +266,7 @@ if __name__ == "__main__":
 
     # load image
     image_pil, image = load_image(image_path)
+    W, H = image_pil.size[:2]
 
     # visualize raw image
     image_pil.save(output_dir / "raw_image.jpg")
@@ -270,32 +276,21 @@ if __name__ == "__main__":
     boxes_filt, pred_phrases = get_grounding_output(
         model, image, text_prompt, box_threshold, text_threshold, device=device
     )
+    boxes_filt = modify_boxes_filter(boxes_filt, W, H)
     t1 = cv2.getTickCount()
     used1 = (t1 - t0) / cv2.getTickFrequency()
     cvimage = pil2cv(image_pil)
-    predictor.set_image(cvimage)
-
-    W, H = image_pil.size[:2]
-
-    tmp_cvimg = cv2.imread(str(image_path))
-    Hcv, Wcv = tmp_cvimg.shape[:2]
-    assert W == Wcv
-    assert H == Hcv
 
     t2 = cv2.getTickCount()
-    boxes_filt = modify_boxes_filter(boxes_filt, W, H)
-    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
-
     if pred_phrases:
+        predictor.set_image(cvimage)
+        transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
         masks, _, _ = predictor.predict_torch(
             point_coords = None,
             point_labels = None,
             boxes = transformed_boxes.to(device),
             multimask_output = False,
         )
-        print(f"{masks.shape=}")
-        print(f"{image_pil.size[:2]=}")
-        # assert masks.shape[1] == H
     else:
         C = len(pred_phrases)
         masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
