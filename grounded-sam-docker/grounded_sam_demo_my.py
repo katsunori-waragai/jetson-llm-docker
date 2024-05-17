@@ -289,8 +289,6 @@ if __name__ == "__main__":
 
     tmp_cvimg = cv2.imread(str(image_path))
     Hcv, Wcv = tmp_cvimg.shape[:2]
-    print(f"{W} {H}")
-    print(f"{Hcv} {Wcv}")
     assert W == Wcv
     assert H == Hcv
 
