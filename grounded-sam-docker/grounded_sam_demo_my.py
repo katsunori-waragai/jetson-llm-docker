@@ -56,7 +56,7 @@ def cv2pil(image: np.ndarray) -> Image:
     return new_image
 
 
-def load_image(image_path):
+def load_image(image_path: Path):
     # load image
     image_pil = Image.open(image_path).convert("RGB")  # load image
 
@@ -162,12 +162,13 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
     with open(output_dir / 'mask.json', 'w') as f:
         json.dump(json_data, f)
 
-def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
+def save_output_jpg(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
     """
     save overlay image
 
     Note: saved image size is not equal to original size.
     """
+    output_jpg.parent.mkdir(exist_ok=True, parents=True)
     bgrimage = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     plt.figure(figsize=(10, 10))
     plt.imshow(bgrimage)
@@ -178,11 +179,11 @@ def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: L
 
     plt.axis('off')
     plt.savefig(
-        output_dir / "grounded_sam_output.jpg",
+        output_jpg,
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
 
-def modify_boxes_filter(boxes_filt, W, H):
+def modify_boxes_filter(boxes_filt, W: int, H: int):
     for i in range(boxes_filt.size(0)):
         boxes_filt[i] = boxes_filt[i] * torch.Tensor([W, H, W, H])
         boxes_filt[i][:2] -= boxes_filt[i][2:] / 2
@@ -298,7 +299,7 @@ if __name__ == "__main__":
     t3 = cv2.getTickCount()
     used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
-    save_output(output_dir, masks, boxes_filt, pred_phrases, cvimage)
+    save_output_jpg(output_dir / "grounded_sam_output.jpg", masks, boxes_filt, pred_phrases, cvimage)
     save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
     print(f"{used_time=}")
     # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
