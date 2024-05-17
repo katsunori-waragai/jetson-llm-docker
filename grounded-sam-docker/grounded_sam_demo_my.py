@@ -232,7 +232,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
     )
-    parser.add_argument("--input_image", type=str, required=True, help="path to image file")
+    parser.add_argument("--image_dir", type=str, required=True, help="path to image file")
     parser.add_argument("--text_prompt", type=str, required=True, help="text prompt")
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
@@ -266,43 +266,44 @@ if __name__ == "__main__":
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
     predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
-    # load image
-    image_pil, image = load_image(image_path)
-    W, H = image_pil.size[:2]
-    image_path_stem = image_path.stem.replace(" ", "_")
-    # visualize raw image
-    image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
+    for image_path in Path(image_dir).glob("demo*.jpg"):
+        # load image
+        image_pil, image = load_image(image_path)
+        W, H = image_pil.size[:2]
+        image_path_stem = image_path.stem.replace(" ", "_")
+        # visualize raw image
+        image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
 
-    # run grounding dino model
-    t0 = cv2.getTickCount()
-    boxes_filt, pred_phrases = get_grounding_output(
-        model, image, text_prompt, box_threshold, text_threshold, device=device
-    )
-    boxes_filt = modify_boxes_filter(boxes_filt, W, H)
-    t1 = cv2.getTickCount()
-    used_time = {}
-    used_time["grounding"] = (t1 - t0) / cv2.getTickFrequency()
-    cvimage = pil2cv(image_pil)
-
-    t2 = cv2.getTickCount()
-    if pred_phrases:
-        predictor.set_image(cvimage)
-        transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
-        masks, _, _ = predictor.predict_torch(
-            point_coords = None,
-            point_labels = None,
-            boxes = transformed_boxes.to(device),
-            multimask_output = False,
+        # run grounding dino model
+        t0 = cv2.getTickCount()
+        boxes_filt, pred_phrases = get_grounding_output(
+            model, image, text_prompt, box_threshold, text_threshold, device=device
         )
-    else:
-        C = len(pred_phrases)
-        masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
-    t3 = cv2.getTickCount()
-    used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
+        boxes_filt = modify_boxes_filter(boxes_filt, W, H)
+        t1 = cv2.getTickCount()
+        used_time = {}
+        used_time["grounding"] = (t1 - t0) / cv2.getTickFrequency()
+        cvimage = pil2cv(image_pil)
 
-    save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
-    save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
-    print(f"{used_time=}")
-    output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
-    cv2.imshow("output", output_img)
-    key = cv2.waitKey(-1)
+        t2 = cv2.getTickCount()
+        if pred_phrases:
+            predictor.set_image(cvimage)
+            transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
+            masks, _, _ = predictor.predict_torch(
+                point_coords = None,
+                point_labels = None,
+                boxes = transformed_boxes.to(device),
+                multimask_output = False,
+            )
+        else:
+            C = len(pred_phrases)
+            masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
+        t3 = cv2.getTickCount()
+        used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
+
+        save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
+        save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        print(f"{used_time=}")
+        output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
+        cv2.imshow("output", output_img)
+        key = cv2.waitKey(-1)
