@@ -287,6 +287,13 @@ if __name__ == "__main__":
 
     H, W = image_pil.size[:2]
 
+    tmp_cvimg = cv2.imread(str(image_path))
+    Hcv, Wcv = tmp_cvimg.shape[:2]
+    print(f"{H} {W}")
+    print(f"{Hcv} {Wcv}")
+    assert H == Hcv
+    assert W == Wcv
+
     t2 = cv2.getTickCount()
     boxes_filt = modify_boxes_filter(boxes_filt, H, W)
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
