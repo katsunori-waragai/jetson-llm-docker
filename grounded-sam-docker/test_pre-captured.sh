@@ -1,5 +1,5 @@
 #!/bin/bash
-CAPTURED_FOLDER=captured_20240517
+export CAPTURED_FOLDER=captured_20240517
 if [ ! -d ${CAPTURED_FOLDER} ]; then
   gdown --fuzzy --folder https://drive.google.com/drive/folders/1L1ZZPjTvswFxyNE5K75lAmMi-znHzfNx?usp=sharing
 else
