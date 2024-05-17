@@ -187,7 +187,7 @@ def save_output_empty_detection(output_dir: Path, masks: List, boxes_filt: List,
     oname = output_dir / "grounded_sam_output.jpg"
     cv2.imwrite(str(oname), image)
 
-def modify_boxes_filter(boxes_filt, H, W):
+def modify_boxes_filter(boxes_filt, W, H):
     for i in range(boxes_filt.size(0)):
         boxes_filt[i] = boxes_filt[i] * torch.Tensor([W, H, W, H])
         boxes_filt[i][:2] -= boxes_filt[i][2:] / 2
@@ -285,10 +285,15 @@ if __name__ == "__main__":
     cvimage = pil2cv(image_pil)
     predictor.set_image(cvimage)
 
-    H, W = image_pil.size[:2]
+    W, H = image_pil.size[:2]
+
+    tmp_cvimg = cv2.imread(str(image_path))
+    Hcv, Wcv = tmp_cvimg.shape[:2]
+    assert W == Wcv
+    assert H == Hcv
 
     t2 = cv2.getTickCount()
-    boxes_filt = modify_boxes_filter(boxes_filt, H, W)
+    boxes_filt = modify_boxes_filter(boxes_filt, W, H)
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
 
     if pred_phrases:
