@@ -266,7 +266,7 @@ if __name__ == "__main__":
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
     predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
-    for image_path in Path(image_dir).glob("demo*.jpg"):
+    for image_path in sorted(Path(image_dir).glob("demo*.jpg")):
         # load image
         image_pil, image = load_image(image_path)
         W, H = image_pil.size[:2]
@@ -306,4 +306,4 @@ if __name__ == "__main__":
         print(f"{used_time=}")
         output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
         cv2.imshow("output", output_img)
-        key = cv2.waitKey(-1)
+        key = cv2.waitKey(100)
