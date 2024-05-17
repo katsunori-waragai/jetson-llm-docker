@@ -163,6 +163,11 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
         json.dump(json_data, f)
 
 def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
+    """
+    save overlay image
+
+    Note: saved image size is not equal to original size.
+    """
     bgrimage = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     plt.figure(figsize=(10, 10))
     plt.imshow(bgrimage)
@@ -286,9 +291,6 @@ if __name__ == "__main__":
             boxes = transformed_boxes.to(device),
             multimask_output = False,
         )
-        print(f"{masks.shape=}")
-        print(f"{image_pil.size[:2]=}")
-        # assert masks.shape[1] == H
     else:
         C = len(pred_phrases)
         masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
