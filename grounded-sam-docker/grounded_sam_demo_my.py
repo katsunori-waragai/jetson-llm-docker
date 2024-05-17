@@ -56,7 +56,7 @@ def cv2pil(image: np.ndarray) -> Image:
     return new_image
 
 
-def load_image(image_path):
+def load_image(image_path: Path):
     # load image
     image_pil = Image.open(image_path).convert("RGB")  # load image
 
@@ -134,8 +134,9 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List):  # save json file
+def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List):  # save json file
     value = 0  # 0 for background
+    mask_json = output_mask_jpg.with_suffix(".json")
 
     mask_img = torch.zeros(mask_list.shape[-2:])
     for idx, mask in enumerate(mask_list):
@@ -143,7 +144,7 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
     plt.figure(figsize=(10, 10))
     plt.imshow(mask_img.numpy())
     plt.axis('off')
-    plt.savefig(output_dir / 'mask.jpg', bbox_inches="tight", dpi=300, pad_inches=0.0)
+    plt.savefig(output_mask_jpg, bbox_inches="tight", dpi=300, pad_inches=0.0)
 
     json_data = [{
         'value': value,
@@ -159,15 +160,16 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
             'logit': float(logit),
             'box': box.numpy().tolist(),
         })
-    with open(output_dir / 'mask.json', 'w') as f:
+    with mask_json.open("wt") as f:
         json.dump(json_data, f)
 
-def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
+def save_output_jpg(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
     """
     save overlay image
 
     Note: saved image size is not equal to original size.
     """
+    output_jpg.parent.mkdir(exist_ok=True, parents=True)
     bgrimage = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     plt.figure(figsize=(10, 10))
     plt.imshow(bgrimage)
@@ -178,11 +180,11 @@ def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: L
 
     plt.axis('off')
     plt.savefig(
-        output_dir / "grounded_sam_output.jpg",
+        output_jpg,
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
 
-def modify_boxes_filter(boxes_filt, W, H):
+def modify_boxes_filter(boxes_filt, W: int, H: int):
     for i in range(boxes_filt.size(0)):
         boxes_filt[i] = boxes_filt[i] * torch.Tensor([W, H, W, H])
         boxes_filt[i][:2] -= boxes_filt[i][2:] / 2
@@ -278,7 +280,8 @@ if __name__ == "__main__":
     )
     boxes_filt = modify_boxes_filter(boxes_filt, W, H)
     t1 = cv2.getTickCount()
-    used1 = (t1 - t0) / cv2.getTickFrequency()
+    used_time = {}
+    used_time["grounding"] = (t1 - t0) / cv2.getTickFrequency()
     cvimage = pil2cv(image_pil)
 
     t2 = cv2.getTickCount()
@@ -295,11 +298,11 @@ if __name__ == "__main__":
         C = len(pred_phrases)
         masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
     t3 = cv2.getTickCount()
-    used2 = (t3 - t2) / cv2.getTickFrequency()
+    used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
-    save_output(output_dir, masks, boxes_filt, pred_phrases, cvimage)
-    save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
-    print(f"{used1=} {used2}")
+    save_output_jpg(output_dir / "grounded_sam_output.jpg", masks, boxes_filt, pred_phrases, cvimage)
+    save_mask_data_jpg(output_dir / "mask.jpg", masks, boxes_filt, pred_phrases)
+    print(f"{used_time=}")
     # output_img = cv2.imread(os.path.join(output_dir, "grounded_sam_output.jpg"))
     # cv2.imshow("output", output_img)
     # key = cv2.waitKey(-1)
