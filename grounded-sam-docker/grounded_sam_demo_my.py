@@ -163,12 +163,6 @@ def save_mask_data(output_dir: Path, mask_list, box_list: List, label_list: List
         json.dump(json_data, f)
 
 def save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
-    if len(pred_phrases) == 0:
-        save_output_empty_detection(output_dir, masks, boxes_filt, pred_phrases, image)
-    else:
-        _save_output(output_dir, masks, boxes_filt, pred_phrases, image)
-
-def _save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
     for mask in masks:
@@ -181,11 +175,6 @@ def _save_output(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: 
         output_dir / "grounded_sam_output.jpg",
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
-
-def save_output_empty_detection(output_dir: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
-    assert len(pred_phrases) == 0
-    oname = output_dir / "grounded_sam_output.jpg"
-    cv2.imwrite(str(oname), image)
 
 def modify_boxes_filter(boxes_filt, W, H):
     for i in range(boxes_filt.size(0)):
