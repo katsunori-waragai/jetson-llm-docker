@@ -217,7 +217,7 @@ def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: Lis
         cv2.rectangle(blend_image, (x1, y1), (x2, y2), color=(0, 255, 0), thickness=3)
         cv2.putText(blend_image, label, (x1, y1), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=1.0,
-                    color=(0, 2, 0),
+                    color=(255, 0, 255),
                     thickness=2, )
     cv2.imwrite(str(output_jpg), blend_image)
 
