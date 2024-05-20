@@ -137,3 +137,5 @@ if __name__ == "__main__":
         output_img = cv2.imread(str(output_dir / f"{filename_stem}_sam.jpg"))
         cv2.imshow("output", output_img)
         key = cv2.waitKey(10)
+        if key == ord("q"):
+            break
