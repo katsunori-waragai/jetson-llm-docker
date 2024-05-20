@@ -135,7 +135,7 @@ if __name__ == "__main__":
         used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
-        output_img = cv2.imread(str(output_dir / f"{filename_stem}_sam.jpg"))
+        output_img = cv2.imread(str(output_dir / f"{filename_stem}_sam_blend.jpg"))
         cv2.imshow("output", output_img)
         key = cv2.waitKey(10)
         if key == ord("q"):
