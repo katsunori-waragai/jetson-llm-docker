@@ -367,7 +367,7 @@ if __name__ == "__main__":
         assert colorized.shape[2] == 3
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
-        if 0:
+        if 1:
             t4 = cv2.getTickCount()
             # blend imageを作る。
             save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
