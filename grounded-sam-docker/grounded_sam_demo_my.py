@@ -353,6 +353,7 @@ if __name__ == "__main__":
         t10 = cv2.getTickCount()
         alpha = 0.5 * (mask_image > 0)
         alpha = 0.5
+        print(f"{colorized.shape=}")
         assert colorized.shape[:2] == 3
         blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=uint8)
         cv2.imwrite(str(output_dir / f"{image_path_stem}_sam_blend.jpg"), blend_image)
