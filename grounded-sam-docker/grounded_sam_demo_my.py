@@ -170,18 +170,8 @@ def show_box(box, ax, label):
 
 
 def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List):  # save json file
-    """
-    元画像のファイルサイズが必要
-    :param output_mask_jpg:
-    :param mask_list:
-    :param box_list:
-    :param label_list:
-    :return:
-    """
     value = 0  # 0 for background
     mask_json = output_mask_jpg.with_suffix(".json")
-    # 元画像のファイルサイズのzero行列を準備する。
-    # mask_array = np.zeros((H, W, 3), dtype=np.uint8)
 
     mask_img = torch.zeros(mask_list.shape[-2:])
     for idx, mask in enumerate(mask_list):
@@ -193,7 +183,7 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
     cv2.imwrite("mask_img.png", mask_img.numpy())
     colorized = colorize(mask_img.numpy())
     cv2.imwrite("output_mask_jpg", colorized)
-    def to_json(label_list, box_list, value):
+    def to_json(label_list: list[str], box_list: list, value: int) -> Dict:
         json_data = [{
             'value': value,
             'label': 'background'
