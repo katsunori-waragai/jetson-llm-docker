@@ -199,27 +199,6 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
         json.dump(to_json(label_list, box_list, value), f)
     return colorized, mask_img.numpy()
 
-def save_output_jpg(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
-    """
-    save overlay image
-
-    Note: saved image size is not equal to original size.
-    """
-    output_jpg.parent.mkdir(exist_ok=True, parents=True)
-    bgrimage = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    plt.figure(figsize=(10, 10))
-    plt.imshow(bgrimage)
-    for mask in masks:
-        show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
-    for box, label in zip(boxes_filt, pred_phrases):
-        show_box(box.numpy(), plt.gca(), label)
-
-    plt.axis('off')
-    plt.savefig(
-        output_jpg,
-        bbox_inches="tight", dpi=300, pad_inches=0.0
-    )
-
 def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray, colorized: np.ndarray):
     """
     save overlay image
@@ -367,12 +346,6 @@ if __name__ == "__main__":
         assert colorized.shape[2] == 3
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
-        if 1:
-            t4 = cv2.getTickCount()
-            # blend imageを作る。
-            save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
-            t5 = cv2.getTickCount()
-            used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
 
         t10 = cv2.getTickCount()
         save_output_jpg_no_matplotlib(output_dir / f"{image_path_stem}_sam_blend.jpg", masks, boxes_filt, pred_phrases, cvimage, colorized)
