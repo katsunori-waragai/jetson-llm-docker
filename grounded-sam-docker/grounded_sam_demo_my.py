@@ -358,6 +358,8 @@ if __name__ == "__main__":
         blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=np.uint8)
         for box, label in zip(boxes_filt, pred_phrases):
             print(f"{box=} {label=}")
+            x1, y1, x2, y2 = [int(a) for a in box]
+            cv2.rectangle(blend_image, (x1, y1), (x2, y2), color=(0, 255, 0), thickness=3)
         cv2.imwrite(str(output_dir / f"{image_path_stem}_sam_blend.jpg"), blend_image)
         t11 = cv2.getTickCount()
         used_time["save_sam_blend"] = (t11 - t10) / cv2.getTickFrequency()
