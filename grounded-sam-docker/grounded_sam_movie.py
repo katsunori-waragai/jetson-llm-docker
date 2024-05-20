@@ -72,6 +72,14 @@ if __name__ == "__main__":
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
     predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
+    transform = T.Compose(
+        [
+            T.RandomResize([800], max_size=1333),
+            T.ToTensor(),
+            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
+
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     counter = 0
@@ -84,13 +92,6 @@ if __name__ == "__main__":
         [h, w] = cvimg.shape[:2]
         cvimg = cvimg[:, : w //2,  :]
         image_pil = cv2pil(cvimg)
-        transform = T.Compose(
-            [
-                T.RandomResize([800], max_size=1333),
-                T.ToTensor(),
-                T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            ]
-        )
         image, _ = transform(image_pil, None)  # 3, h, w
 
 
