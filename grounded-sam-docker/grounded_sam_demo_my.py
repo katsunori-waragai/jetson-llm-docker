@@ -344,11 +344,12 @@ if __name__ == "__main__":
         assert colorized.shape[2] == 3
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
-        t4 = cv2.getTickCount()
-        # blend imageを作る。
-        save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
-        t5 = cv2.getTickCount()
-        used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
+        if 0:
+            t4 = cv2.getTickCount()
+            # blend imageを作る。
+            save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
+            t5 = cv2.getTickCount()
+            used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
 
         t10 = cv2.getTickCount()
         alpha = 0.5 * (mask_image > 0)
@@ -369,6 +370,6 @@ if __name__ == "__main__":
         used_time["save_sam_blend"] = (t11 - t10) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
-        output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
+        output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam_blend.jpg"))
         cv2.imshow("output", output_img)
         key = cv2.waitKey(10)
