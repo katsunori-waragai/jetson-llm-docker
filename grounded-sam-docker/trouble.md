@@ -6,9 +6,9 @@
 - [x] changed output file names as follows
 - [x] --image_dir を指定して入力フォルダ単位で処理するように改変した。
 - [x] cap.py も複数の画像を保存できるよう改変した。
+- [x] 後処理の時間がmatplotlibでかかりすぎているのを改善しよう。
 - [] sam が標準のsamを使っているのをnanoSAMを使うように改変して処理時間を減らそう。
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
-- [] 後処理の時間がmatplotlibでかかりすぎているのを改善しよう。
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
