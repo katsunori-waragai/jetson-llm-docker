@@ -186,13 +186,13 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
     mask_img = torch.zeros(mask_list.shape[-2:])
     for idx, mask in enumerate(mask_list):
         mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
-    plt.figure(figsize=(10, 10))
-    plt.imshow(mask_img.numpy())
-    plt.axis('off')
-    plt.savefig(output_mask_jpg, bbox_inches="tight", dpi=300, pad_inches=0.0)
+    # plt.figure(figsize=(10, 10))
+    # plt.imshow(mask_img.numpy())
+    # plt.axis('off')
+    # plt.savefig(output_mask_jpg, bbox_inches="tight", dpi=300, pad_inches=0.0)
     cv2.imwrite("mask_img.png", mask_img.numpy())
     colorized = colorize(mask_img.numpy())
-    cv2.imwrite("colorized.png", colorized)
+    cv2.imwrite("output_mask_jpg", colorized)
     def to_json(label_list, box_list, value):
         json_data = [{
             'value': value,
