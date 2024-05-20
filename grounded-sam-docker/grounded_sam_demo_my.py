@@ -184,14 +184,12 @@ def show_box(box, ax, label):
     ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor='green', facecolor=(0,0,0,0), lw=2))
     ax.text(x0, y0, label)
 
-
 def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List):  # save json file
     value = 0  # 0 for background
 
     mask_img = torch.zeros(mask_list.shape[-2:])
     for idx, mask in enumerate(mask_list):
         mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
-    cv2.imwrite("mask_img.png", mask_img.numpy())
     colorized = colorize(mask_img.numpy())
     cv2.imwrite(str(output_mask_jpg), colorized)
     mask_json = output_mask_jpg.with_suffix(".json")
@@ -199,32 +197,9 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
         json.dump(to_json(label_list, box_list, value), f)
     return colorized, mask_img.numpy()
 
-def save_output_jpg(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
-    """
-    save overlay image
-
-    Note: saved image size is not equal to original size.
-    """
-    output_jpg.parent.mkdir(exist_ok=True, parents=True)
-    bgrimage = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    plt.figure(figsize=(10, 10))
-    plt.imshow(bgrimage)
-    for mask in masks:
-        show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
-    for box, label in zip(boxes_filt, pred_phrases):
-        show_box(box.numpy(), plt.gca(), label)
-
-    plt.axis('off')
-    plt.savefig(
-        output_jpg,
-        bbox_inches="tight", dpi=300, pad_inches=0.0
-    )
-
 def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray, colorized: np.ndarray):
     """
     save overlay image
-
-    Note: saved image size is not equal to original size.
     """
     colorized.shape[2] == 3
     output_jpg.parent.mkdir(exist_ok=True, parents=True)
@@ -238,7 +213,7 @@ def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: Lis
         cv2.rectangle(blend_image, (x1, y1), (x2, y2), color=(0, 255, 0), thickness=3)
         cv2.putText(blend_image, label, (x1, y1), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=1.0,
-                    color=(0, 2, 0),
+                    color=(255, 0, 255),
                     thickness=2, )
     cv2.imwrite(str(output_jpg), blend_image)
 
@@ -360,26 +335,13 @@ if __name__ == "__main__":
             masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
         t3 = cv2.getTickCount()
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
-        t6 = cv2.getTickCount()
-        # mask image を先に作る。
-        output_dir.mkdir(exist_ok=True)
-        colorized, mask_image = save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
-        assert colorized.shape[2] == 3
-        t7 = cv2.getTickCount()
-        used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
-        if 1:
-            t4 = cv2.getTickCount()
-            # blend imageを作る。
-            save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
-            t5 = cv2.getTickCount()
-            used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
 
         t10 = cv2.getTickCount()
-        save_output_jpg_no_matplotlib(output_dir / f"{image_path_stem}_sam_blend.jpg", masks, boxes_filt, pred_phrases, cvimage, colorized)
+        save_output_jpg_no_matplotlib(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage, colorized)
         t11 = cv2.getTickCount()
-        used_time["save_sam_blend"] = (t11 - t10) / cv2.getTickFrequency()
+        used_time["save_sam"] = (t11 - t10) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
-        output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam_blend.jpg"))
+        output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
         cv2.imshow("output", output_img)
         key = cv2.waitKey(10)
