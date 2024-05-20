@@ -187,21 +187,17 @@ def show_box(box, ax, label):
 
 def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List):  # save json file
     value = 0  # 0 for background
-    mask_json = output_mask_jpg.with_suffix(".json")
 
     mask_img = torch.zeros(mask_list.shape[-2:])
     for idx, mask in enumerate(mask_list):
         mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
-    # plt.figure(figsize=(10, 10))
-    # plt.imshow(mask_img.numpy())
-    # plt.axis('off')
-    # plt.savefig(output_mask_jpg, bbox_inches="tight", dpi=300, pad_inches=0.0)
     cv2.imwrite("mask_img.png", mask_img.numpy())
     colorized = colorize(mask_img.numpy())
     cv2.imwrite(str(output_mask_jpg), colorized)
-    json_data = to_json(label_list, box_list, value)
+    mask_json = output_mask_jpg.with_suffix(".json")
     with mask_json.open("wt") as f:
-        json.dump(json_data, f)
+        json.dump(to_json(label_list, box_list, value), f)
+    return colorized, mask_img.numpy()
 
 def save_output_jpg(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
     """
@@ -344,7 +340,7 @@ if __name__ == "__main__":
         t6 = cv2.getTickCount()
         # mask image を先に作る。
         output_dir.mkdir(exist_ok=True)
-        save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        colorized, mask_image = save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
         t4 = cv2.getTickCount()
@@ -352,6 +348,12 @@ if __name__ == "__main__":
         save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
         t5 = cv2.getTickCount()
         used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
+
+        overwrapped = cvimage.copy()
+        alpha = 0.5 * (mask_image > 0)
+        pil_colorized = cv2pil(colorized)
+        blend_image = np.array(alpha * pil_colorized + (1 - alpha) * cvimage, dtype=uint8)
+        cv2.imwrite(str(output_dir / f"{image_path_stem}_sam_blend.jpg"), blend_image)
 
         print(f"{used_time=}")
         output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
