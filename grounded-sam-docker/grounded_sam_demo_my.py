@@ -32,6 +32,41 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+COLOR_MAP = {
+    0: [0, 0, 0],       # 黒
+    1: [0, 255, 0],     # 緑
+    2: [0, 0, 255],     # 青
+    3: [255, 0, 0],     # 赤
+    4: [255, 255, 0],   # 黄色
+    5: [255, 0, 255],   # マゼンタ
+    6: [0, 255, 255],   # シアン
+    7: [128, 128, 128], # グレー
+    8: [128, 0, 0],     # マルーン
+    9: [128, 128, 0],   # オリーブ
+    10: [0, 128, 0],  # ダークグリーン
+    11: [0, 128, 128],  # ティール
+    12: [0, 0, 128],  # ネイビー
+    13: [255, 165, 0],  # オレンジ
+    14: [255, 215, 0],  # ゴールド
+    15: [173, 216, 230],  # ライトブルー
+    16: [75, 0, 130],  # インディゴ
+    17: [240, 128, 128],  # ライトコーラル
+    18: [244, 164, 96],  # サドルブラウン
+    19: [60, 179, 113]  # ミディアムシーブルー
+}
+
+def colorize(segmentation_result: np.ndarray) -> np.ndarray:
+    # カラー画像の初期化
+    height, width = segmentation_result.shape
+    color_image = np.zeros((height, width, 3), dtype=np.uint8)
+    num_colors = len(COLOR_MAP)
+
+    maxint = np.max(segmentation_result.flatten())
+    # セグメンテーション結果をカラー画像にマッピング
+    for i in range(maxint):
+        color_image[segmentation_result == i] = COLOR_MAP[i % num_colors]
+    return color_image
+
 def pil2cv(image: Image) -> np.ndarray:
     ''' PIL型 -> OpenCV型 '''
     new_image = np.array(image, dtype=np.uint8)
@@ -145,7 +180,6 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
     """
     value = 0  # 0 for background
     mask_json = output_mask_jpg.with_suffix(".json")
-
     # 元画像のファイルサイズのzero行列を準備する。
     # mask_array = np.zeros((H, W, 3), dtype=np.uint8)
 
@@ -174,7 +208,7 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
             })
         return json_data
 
-    json_data = to_json(label_list, box_list)
+    json_data = to_json(label_list, box_list, value)
     with mask_json.open("wt") as f:
         json.dump(json_data, f)
 
