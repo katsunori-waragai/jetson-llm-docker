@@ -180,7 +180,7 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
     cv2.imwrite("mask_img.png", mask_img.numpy())
     colorized = colorize(mask_img.numpy())
     cv2.imwrite(str(output_mask_jpg), colorized)
-    def to_json(label_list: list[str], box_list: list, value: int) -> Dict:
+    def to_json(label_list: List[str], box_list: List, value: int) -> Dict:
         json_data = [{
             'value': value,
             'label': 'background'
