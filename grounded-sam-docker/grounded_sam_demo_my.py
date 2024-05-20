@@ -56,13 +56,10 @@ COLOR_MAP = {
 }
 
 def colorize(segmentation_result: np.ndarray) -> np.ndarray:
-    # カラー画像の初期化
     height, width = segmentation_result.shape
     color_image = np.zeros((height, width, 3), dtype=np.uint8)
     num_colors = len(COLOR_MAP)
-
     maxint = int(np.max(segmentation_result.flatten()))
-    # セグメンテーション結果をカラー画像にマッピング
     for i in range(maxint):
         color_image[segmentation_result == i] = COLOR_MAP[i % num_colors]
     return color_image
@@ -182,7 +179,7 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
     # plt.savefig(output_mask_jpg, bbox_inches="tight", dpi=300, pad_inches=0.0)
     cv2.imwrite("mask_img.png", mask_img.numpy())
     colorized = colorize(mask_img.numpy())
-    cv2.imwrite("output_mask_jpg", colorized)
+    cv2.imwrite(output_mask_jpg, colorized)
     def to_json(label_list: list[str], box_list: list, value: int) -> Dict:
         json_data = [{
             'value': value,
@@ -342,14 +339,16 @@ if __name__ == "__main__":
             masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
         t3 = cv2.getTickCount()
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
-        t4 = cv2.getTickCount()
-        save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
-        t5 = cv2.getTickCount()
-        used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
         t6 = cv2.getTickCount()
+        # mask image を先に作る。
         save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
+        t4 = cv2.getTickCount()
+        # blend imageを作る。
+        save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
+        t5 = cv2.getTickCount()
+        used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
         output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
