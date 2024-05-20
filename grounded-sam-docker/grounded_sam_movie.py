@@ -124,8 +124,15 @@ if __name__ == "__main__":
         t3 = cv2.getTickCount()
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
+        t4 = cv2.getTickCount()
         save_output_jpg(output_dir / f"{filename_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
+        t5 = cv2.getTickCount()
+        used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
+        t6 = cv2.getTickCount()
         save_mask_data_jpg(output_dir / f"{filename_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        t7 = cv2.getTickCount()
+        used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
+
         print(f"{used_time=}")
         output_img = cv2.imread(str(output_dir / f"{filename_stem}_sam.jpg"))
         cv2.imshow("output", output_img)
