@@ -73,6 +73,7 @@ if __name__ == "__main__":
     predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
     cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     counter = 0
     while True:
         r, cvimg = cap.read()
