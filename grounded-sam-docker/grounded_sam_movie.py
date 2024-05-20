@@ -125,7 +125,7 @@ if __name__ == "__main__":
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
         t6 = cv2.getTickCount()
-        colorized, mask_image = save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        colorized, mask_image = save_mask_data_jpg(output_dir / f"{filename_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
