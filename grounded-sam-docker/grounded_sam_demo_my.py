@@ -192,7 +192,7 @@ def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: Lis
 
 
 def overlaid_image(boxes_filt, pred_phrases, image, colorized):
-    colorized.shape[2] == 3
+    assert colorized.shape[2] == 3
     alpha = 0.5
     print(f"{colorized.shape=}")
     assert colorized.shape[2] == 3
@@ -332,11 +332,11 @@ if __name__ == "__main__":
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
         t10 = cv2.getTickCount()
-        save_output_jpg_no_matplotlib(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage, colorized)
+        blend_image = overlaid_image(boxes_filt, pred_phrases, image, colorized)
+        cv2.imwrite(str(output_dir / f"{image_path_stem}_sam.jpg"), blend_image)
         t11 = cv2.getTickCount()
         used_time["save_sam"] = (t11 - t10) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
-        output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
-        cv2.imshow("output", output_img)
+        cv2.imshow("output", blend_image)
         key = cv2.waitKey(10)
