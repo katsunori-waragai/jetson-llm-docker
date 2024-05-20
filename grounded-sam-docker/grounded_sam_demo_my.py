@@ -220,6 +220,29 @@ def save_output_jpg(output_jpg: Path, masks: List, boxes_filt: List, pred_phrase
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
 
+def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray, colorized: np.ndarray):
+    """
+    save overlay image
+
+    Note: saved image size is not equal to original size.
+    """
+    colorized.shape[2] == 3
+    output_jpg.parent.mkdir(exist_ok=True, parents=True)
+    alpha = 0.5
+    print(f"{colorized.shape=}")
+    assert colorized.shape[2] == 3
+    blend_image = np.array(alpha * colorized + (1 - alpha) * image, dtype=np.uint8)
+    for box, label in zip(boxes_filt, pred_phrases):
+        print(f"{box=} {label=}")
+        x1, y1, x2, y2 = [int(a) for a in box]
+        cv2.rectangle(blend_image, (x1, y1), (x2, y2), color=(0, 255, 0), thickness=3)
+        cv2.putText(blend_image, label, (x1, y1), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                    fontScale=1.0,
+                    color=(0, 2, 0),
+                    thickness=2, )
+    cv2.imwrite(str(output_jpg), blend_image)
+
+
 def modify_boxes_filter(boxes_filt, W: int, H: int):
     for i in range(boxes_filt.size(0)):
         boxes_filt[i] = boxes_filt[i] * torch.Tensor([W, H, W, H])
@@ -352,20 +375,7 @@ if __name__ == "__main__":
             used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
 
         t10 = cv2.getTickCount()
-        alpha = 0.5 * (mask_image > 0)
-        alpha = 0.5
-        print(f"{colorized.shape=}")
-        assert colorized.shape[2] == 3
-        blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=np.uint8)
-        for box, label in zip(boxes_filt, pred_phrases):
-            print(f"{box=} {label=}")
-            x1, y1, x2, y2 = [int(a) for a in box]
-            cv2.rectangle(blend_image, (x1, y1), (x2, y2), color=(0, 255, 0), thickness=3)
-            cv2.putText(blend_image, label, (x1, y1), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale=1.0,
-            color=(0, 2, 0),
-            thickness=2,)
-        cv2.imwrite(str(output_dir / f"{image_path_stem}_sam_blend.jpg"), blend_image)
+        save_output_jpg_no_matplotlib(output_dir / f"{image_path_stem}_sam_blend.jpg", masks, boxes_filt, pred_phrases, cvimage, colorized)
         t11 = cv2.getTickCount()
         used_time["save_sam_blend"] = (t11 - t10) / cv2.getTickFrequency()
 
