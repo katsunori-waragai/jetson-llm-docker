@@ -356,6 +356,8 @@ if __name__ == "__main__":
         print(f"{colorized.shape=}")
         assert colorized.shape[2] == 3
         blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=np.uint8)
+        for box, label in zip(boxes_filt, pred_phrases):
+            print(f"{box=} {label=}")
         cv2.imwrite(str(output_dir / f"{image_path_stem}_sam_blend.jpg"), blend_image)
         t11 = cv2.getTickCount()
         used_time["save_sam_blend"] = (t11 - t10) / cv2.getTickFrequency()
