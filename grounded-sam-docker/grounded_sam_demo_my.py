@@ -55,6 +55,25 @@ COLOR_MAP = {
     19: [60, 179, 113]  # ミディアムシーブルー
 }
 
+
+def to_json(label_list: List[str], box_list: List, value: int) -> Dict:
+    json_data = [{
+        'value': value,
+        'label': 'background'
+    }]
+    for label, box in zip(label_list, box_list):
+        value += 1
+        name, logit = label.split('(')
+        logit = logit[:-1]  # the last is ')'
+        json_data.append({
+            'value': value,
+            'label': name,
+            'logit': float(logit),
+            'box': box.numpy().tolist(),
+        })
+    return json_data
+
+
 def colorize(segmentation_result: np.ndarray) -> np.ndarray:
     height, width = segmentation_result.shape
     color_image = np.zeros((height, width, 3), dtype=np.uint8)
@@ -180,23 +199,6 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
     cv2.imwrite("mask_img.png", mask_img.numpy())
     colorized = colorize(mask_img.numpy())
     cv2.imwrite(str(output_mask_jpg), colorized)
-    def to_json(label_list: List[str], box_list: List, value: int) -> Dict:
-        json_data = [{
-            'value': value,
-            'label': 'background'
-        }]
-        for label, box in zip(label_list, box_list):
-            value += 1
-            name, logit = label.split('(')
-            logit = logit[:-1] # the last is ')'
-            json_data.append({
-                'value': value,
-                'label': name,
-                'logit': float(logit),
-                'box': box.numpy().tolist(),
-            })
-        return json_data
-
     json_data = to_json(label_list, box_list, value)
     with mask_json.open("wt") as f:
         json.dump(json_data, f)
