@@ -187,8 +187,12 @@ def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: Lis
     """
     save overlay image
     """
+    blend_image = overlaid_image(boxes_filt, pred_phrases, image, colorized)
+    cv2.imwrite(str(output_jpg), blend_image)
+
+
+def overlaid_image(boxes_filt, pred_phrases, image, colorized):
     colorized.shape[2] == 3
-    output_jpg.parent.mkdir(exist_ok=True, parents=True)
     alpha = 0.5
     print(f"{colorized.shape=}")
     assert colorized.shape[2] == 3
@@ -201,7 +205,7 @@ def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: Lis
                     fontScale=1.0,
                     color=(255, 0, 255),
                     thickness=2, )
-    cv2.imwrite(str(output_jpg), blend_image)
+    return blend_image
 
 
 def modify_boxes_filter(boxes_filt, W: int, H: int):
