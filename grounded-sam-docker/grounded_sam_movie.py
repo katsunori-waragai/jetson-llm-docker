@@ -15,6 +15,11 @@ from grounded_sam_demo_my import *
 sys.path.append(os.path.join(os.getcwd(), "GroundingDINO"))
 sys.path.append(os.path.join(os.getcwd(), "segment_anything"))
 
+"""
+まず namespace の問題の解決。
+次に、動画入力を受け付けるように改変する。
+"""
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
@@ -67,15 +72,30 @@ if __name__ == "__main__":
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
     predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
-    image_path_list = list(Path(image_dir).glob("*.jpg"))
-    for p in image_path_list:
-        print(p)
+    cap = cv2.VideoCapture(0)
+    counter = 0
+    while True:
+        r, cvimg = cap.read()
+        if cvimg is None:
+            continue
 
-    for image_path in sorted(image_path_list):
-        image_pil, image = load_image(image_path)
+        counter += 1
+        [h, w] = cvimg.shape[:2]
+        cvimg = cvimg[:, : w //2,  :]
+        image_pil = cv2pil(cvimg)
+        transform = T.Compose(
+            [
+                T.RandomResize([800], max_size=1333),
+                T.ToTensor(),
+                T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ]
+        )
+        image, _ = transform(image_pil, None)  # 3, h, w
+
+
         W, H = image_pil.size[:2]
-        image_path_stem = image_path.stem.replace(" ", "_")
-        image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
+        filename_stem = f"captured_{counter:04d}"
+        image_pil.save(output_dir / f"{filename_stem}_raw.jpg")
 
         # run grounding dino model
         t0 = cv2.getTickCount()
@@ -104,9 +124,9 @@ if __name__ == "__main__":
         t3 = cv2.getTickCount()
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
-        save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
-        save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        save_output_jpg(output_dir / f"{filename_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
+        save_mask_data_jpg(output_dir / f"{filename_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
         print(f"{used_time=}")
-        output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
+        output_img = cv2.imread(str(output_dir / f"{filename_stem}_sam.jpg"))
         cv2.imshow("output", output_img)
         key = cv2.waitKey(10)
