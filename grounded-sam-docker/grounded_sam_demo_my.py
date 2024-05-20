@@ -157,20 +157,24 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
     plt.axis('off')
     plt.savefig(output_mask_jpg, bbox_inches="tight", dpi=300, pad_inches=0.0)
     cv2.imwrite("mask_img.png", mask_img.numpy())
-    json_data = [{
-        'value': value,
-        'label': 'background'
-    }]
-    for label, box in zip(label_list, box_list):
-        value += 1
-        name, logit = label.split('(')
-        logit = logit[:-1] # the last is ')'
-        json_data.append({
+    def to_json(label_list, box_list):
+        json_data = [{
             'value': value,
-            'label': name,
-            'logit': float(logit),
-            'box': box.numpy().tolist(),
-        })
+            'label': 'background'
+        }]
+        for label, box in zip(label_list, box_list):
+            value += 1
+            name, logit = label.split('(')
+            logit = logit[:-1] # the last is ')'
+            json_data.append({
+                'value': value,
+                'label': name,
+                'logit': float(logit),
+                'box': box.numpy().tolist(),
+            })
+        return json_data
+
+    json_data = to_json(label_list, box_list)
     with mask_json.open("wt") as f:
         json.dump(json_data, f)
 
