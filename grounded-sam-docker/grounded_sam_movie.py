@@ -130,12 +130,12 @@ if __name__ == "__main__":
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
         t4 = cv2.getTickCount()
-        save_output_jpg_no_matplotlib(output_dir / f"{filename_stem}_sam_blend.jpg", masks, boxes_filt, pred_phrases, cvimage, colorized)
+        save_output_jpg_no_matplotlib(output_dir / f"{filename_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage, colorized)
         t5 = cv2.getTickCount()
         used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
-        output_img = cv2.imread(str(output_dir / f"{filename_stem}_sam_blend.jpg"))
+        output_img = cv2.imread(str(output_dir / f"{filename_stem}_sam.jpg"))
         cv2.imshow("output", output_img)
         key = cv2.waitKey(10)
         if key == ord("q"):
