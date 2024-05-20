@@ -32,6 +32,57 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+COLOR_MAP = {
+    0: [0, 0, 0],       # 黒
+    1: [0, 255, 0],     # 緑
+    2: [0, 0, 255],     # 青
+    3: [255, 0, 0],     # 赤
+    4: [255, 255, 0],   # 黄色
+    5: [255, 0, 255],   # マゼンタ
+    6: [0, 255, 255],   # シアン
+    7: [128, 128, 128], # グレー
+    8: [128, 0, 0],     # マルーン
+    9: [128, 128, 0],   # オリーブ
+    10: [0, 128, 0],  # ダークグリーン
+    11: [0, 128, 128],  # ティール
+    12: [0, 0, 128],  # ネイビー
+    13: [255, 165, 0],  # オレンジ
+    14: [255, 215, 0],  # ゴールド
+    15: [173, 216, 230],  # ライトブルー
+    16: [75, 0, 130],  # インディゴ
+    17: [240, 128, 128],  # ライトコーラル
+    18: [244, 164, 96],  # サドルブラウン
+    19: [60, 179, 113]  # ミディアムシーブルー
+}
+
+
+def to_json(label_list: List[str], box_list: List, value: int) -> Dict:
+    json_data = [{
+        'value': value,
+        'label': 'background'
+    }]
+    for label, box in zip(label_list, box_list):
+        value += 1
+        name, logit = label.split('(')
+        logit = logit[:-1]  # the last is ')'
+        json_data.append({
+            'value': value,
+            'label': name,
+            'logit': float(logit),
+            'box': box.numpy().tolist(),
+        })
+    return json_data
+
+
+def colorize(segmentation_result: np.ndarray) -> np.ndarray:
+    height, width = segmentation_result.shape
+    color_image = np.zeros((height, width, 3), dtype=np.uint8)
+    num_colors = len(COLOR_MAP)
+    maxint = int(np.max(segmentation_result.flatten()))
+    for i in range(maxint):
+        color_image[segmentation_result == i] = COLOR_MAP[i % num_colors]
+    return color_image
+
 def pil2cv(image: Image) -> np.ndarray:
     ''' PIL型 -> OpenCV型 '''
     new_image = np.array(image, dtype=np.uint8)
@@ -136,32 +187,17 @@ def show_box(box, ax, label):
 
 def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List):  # save json file
     value = 0  # 0 for background
-    mask_json = output_mask_jpg.with_suffix(".json")
 
     mask_img = torch.zeros(mask_list.shape[-2:])
     for idx, mask in enumerate(mask_list):
         mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
-    plt.figure(figsize=(10, 10))
-    plt.imshow(mask_img.numpy())
-    plt.axis('off')
-    plt.savefig(output_mask_jpg, bbox_inches="tight", dpi=300, pad_inches=0.0)
-
-    json_data = [{
-        'value': value,
-        'label': 'background'
-    }]
-    for label, box in zip(label_list, box_list):
-        value += 1
-        name, logit = label.split('(')
-        logit = logit[:-1] # the last is ')'
-        json_data.append({
-            'value': value,
-            'label': name,
-            'logit': float(logit),
-            'box': box.numpy().tolist(),
-        })
+    cv2.imwrite("mask_img.png", mask_img.numpy())
+    colorized = colorize(mask_img.numpy())
+    cv2.imwrite(str(output_mask_jpg), colorized)
+    mask_json = output_mask_jpg.with_suffix(".json")
     with mask_json.open("wt") as f:
-        json.dump(json_data, f)
+        json.dump(to_json(label_list, box_list, value), f)
+    return colorized, mask_img.numpy()
 
 def save_output_jpg(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray):
     """
@@ -183,6 +219,29 @@ def save_output_jpg(output_jpg: Path, masks: List, boxes_filt: List, pred_phrase
         output_jpg,
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
+
+def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray, colorized: np.ndarray):
+    """
+    save overlay image
+
+    Note: saved image size is not equal to original size.
+    """
+    colorized.shape[2] == 3
+    output_jpg.parent.mkdir(exist_ok=True, parents=True)
+    alpha = 0.5
+    print(f"{colorized.shape=}")
+    assert colorized.shape[2] == 3
+    blend_image = np.array(alpha * colorized + (1 - alpha) * image, dtype=np.uint8)
+    for box, label in zip(boxes_filt, pred_phrases):
+        print(f"{box=} {label=}")
+        x1, y1, x2, y2 = [int(a) for a in box]
+        cv2.rectangle(blend_image, (x1, y1), (x2, y2), color=(0, 255, 0), thickness=3)
+        cv2.putText(blend_image, label, (x1, y1), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                    fontScale=1.0,
+                    color=(0, 2, 0),
+                    thickness=2, )
+    cv2.imwrite(str(output_jpg), blend_image)
+
 
 def modify_boxes_filter(boxes_filt, W: int, H: int):
     for i in range(boxes_filt.size(0)):
@@ -301,16 +360,26 @@ if __name__ == "__main__":
             masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
         t3 = cv2.getTickCount()
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
-        t4 = cv2.getTickCount()
-        save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
-        t5 = cv2.getTickCount()
-        used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
         t6 = cv2.getTickCount()
-        save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        # mask image を先に作る。
+        output_dir.mkdir(exist_ok=True)
+        colorized, mask_image = save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        assert colorized.shape[2] == 3
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
+        if 1:
+            t4 = cv2.getTickCount()
+            # blend imageを作る。
+            save_output_jpg(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage)
+            t5 = cv2.getTickCount()
+            used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
+
+        t10 = cv2.getTickCount()
+        save_output_jpg_no_matplotlib(output_dir / f"{image_path_stem}_sam_blend.jpg", masks, boxes_filt, pred_phrases, cvimage, colorized)
+        t11 = cv2.getTickCount()
+        used_time["save_sam_blend"] = (t11 - t10) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
-        output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
+        output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam_blend.jpg"))
         cv2.imshow("output", output_img)
         key = cv2.waitKey(10)
