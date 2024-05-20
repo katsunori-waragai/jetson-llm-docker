@@ -185,20 +185,6 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List):  # save json file
-    value = 0  # 0 for background
-
-    mask_img = torch.zeros(mask_list.shape[-2:])
-    for idx, mask in enumerate(mask_list):
-        mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
-    cv2.imwrite("mask_img.png", mask_img.numpy())
-    colorized = colorize(mask_img.numpy())
-    cv2.imwrite(str(output_mask_jpg), colorized)
-    mask_json = output_mask_jpg.with_suffix(".json")
-    with mask_json.open("wt") as f:
-        json.dump(to_json(label_list, box_list, value), f)
-    return colorized, mask_img.numpy()
-
 def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray, colorized: np.ndarray):
     """
     save overlay image
@@ -339,13 +325,6 @@ if __name__ == "__main__":
             masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
         t3 = cv2.getTickCount()
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
-        t6 = cv2.getTickCount()
-        # mask image を先に作る。
-        output_dir.mkdir(exist_ok=True)
-        colorized, mask_image = save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
-        assert colorized.shape[2] == 3
-        t7 = cv2.getTickCount()
-        used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
         t10 = cv2.getTickCount()
         save_output_jpg_no_matplotlib(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage, colorized)
