@@ -341,6 +341,7 @@ if __name__ == "__main__":
         # mask image を先に作る。
         output_dir.mkdir(exist_ok=True)
         colorized, mask_image = save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        assert colorized.shape[2] == 3
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
         t4 = cv2.getTickCount()
@@ -349,11 +350,12 @@ if __name__ == "__main__":
         t5 = cv2.getTickCount()
         used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
 
-        overwrapped = cvimage.copy()
+        t10 = cv2.getTickCount()
         alpha = 0.5 * (mask_image > 0)
-        pil_colorized = cv2pil(colorized)
-        blend_image = np.array(alpha * pil_colorized + (1 - alpha) * cvimage, dtype=uint8)
+        blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=uint8)
         cv2.imwrite(str(output_dir / f"{image_path_stem}_sam_blend.jpg"), blend_image)
+        t11 = cv2.getTickCount()
+        used_time["save_sam_blend"] = (t11 - t10) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
         output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
