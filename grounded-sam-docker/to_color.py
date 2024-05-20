@@ -40,10 +40,12 @@ def colorize(segmentation_result: np.ndarray) -> np.ndarray:
     # カラー画像の初期化
     height, width = segmentation_result.shape
     color_image = np.zeros((height, width, 3), dtype=np.uint8)
+    num_colors = len(COLOR_MAP)
 
+    maxint = np.max(segmentation_result.flatten())
     # セグメンテーション結果をカラー画像にマッピング
-    for key, color in COLOR_MAP.items():
-        color_image[segmentation_result == key] = color
+    for i in range(maxint):
+        color_image[segmentation_result == i] = COLOR_MAP[i % num_colors]
     return color_image
 
 color_image = colorize(segmentation_result)
