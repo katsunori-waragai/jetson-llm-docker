@@ -156,7 +156,7 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
     plt.imshow(mask_img.numpy())
     plt.axis('off')
     plt.savefig(output_mask_jpg, bbox_inches="tight", dpi=300, pad_inches=0.0)
-    cv2.imwrite("mask_img.png", mask_img)
+    cv2.imwrite("mask_img.png", mask_img.numpy())
     json_data = [{
         'value': value,
         'label': 'background'
