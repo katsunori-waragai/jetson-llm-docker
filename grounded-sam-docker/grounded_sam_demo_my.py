@@ -184,12 +184,22 @@ def show_box(box, ax, label):
     ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor='green', facecolor=(0,0,0,0), lw=2))
     ax.text(x0, y0, label)
 
+def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List):  # save json file
+    value = 0  # 0 for background
+
+    mask_img = torch.zeros(mask_list.shape[-2:])
+    for idx, mask in enumerate(mask_list):
+        mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
+    colorized = colorize(mask_img.numpy())
+    cv2.imwrite(str(output_mask_jpg), colorized)
+    mask_json = output_mask_jpg.with_suffix(".json")
+    with mask_json.open("wt") as f:
+        json.dump(to_json(label_list, box_list, value), f)
+    return colorized, mask_img.numpy()
 
 def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray, colorized: np.ndarray):
     """
     save overlay image
-
-    Note: saved image size is not equal to original size.
     """
     colorized.shape[2] == 3
     output_jpg.parent.mkdir(exist_ok=True, parents=True)
