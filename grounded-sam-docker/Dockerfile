@@ -31,9 +31,8 @@ RUN python3 -m pip install gdown
 RUN cd /root/Grounded-Segment-Anything && wget --quiet https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 RUN cd /root/Grounded-Segment-Anything && wget --quiet https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 
-COPY download-egocentric-images.sh /root/Grounded-Segment-Anything/
-COPY grounded_sam_demo_my.py cap.py /root/Grounded-Segment-Anything/
-COPY grounded_sam_demo.sh test_*.sh /root/Grounded-Segment-Anything/
+COPY *.sh /root/Grounded-Segment-Anything/
+COPY *.py /root/Grounded-Segment-Anything/
 
 # only for development
 RUN apt update && apt install -y eog nano
