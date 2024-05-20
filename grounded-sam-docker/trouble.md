@@ -8,7 +8,9 @@
 - [x] cap.py も複数の画像を保存できるよう改変した。
 - [x] 後処理の時間がmatplotlibでかかりすぎているのを改善しよう。
 - [] sam が標準のsamを使っているのをnanoSAMを使うように改変して処理時間を減らそう。
+- [] ファイルへの保存なしという選択もできるようにAPIを変更しよう。
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
+- [] testをきちんとtestにしよう。
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
