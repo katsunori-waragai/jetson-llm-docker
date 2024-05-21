@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Dict
+import inspect
 
 import numpy as np
 import cv2
@@ -56,7 +57,8 @@ COLOR_MAP = {
 }
 
 
-def to_json(label_list: List[str], box_list: List, value: int) -> Dict:
+def to_json(label_list: List[str], box_list: List, background_value: int=0) -> Dict:
+    value = background_value
     json_data = [{
         'value': value,
         'label': 'background'
@@ -169,30 +171,32 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold, w
     return boxes_filt, pred_phrases
 
 
-
-def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List):  # save json file
-    value = 0  # 0 for background
-
+def gen_mask_img(mask_list: torch.Tensor, background_value=0) -> torch.Tensor:
+    print(f"{type(mask_list)=}")
     mask_img = torch.zeros(mask_list.shape[-2:])
+    print(f"{type(mask_img)=}")
     for idx, mask in enumerate(mask_list):
-        mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
+        mask_img[mask.cpu().numpy()[0] == True] = background_value + idx + 1
+    return mask_img
+
+def save_mask_data_jpg(output_mask_jpg: Path, mask_list: torch.Tensor, box_list: List, label_list: List[str]):  # save json file
+
+    mask_img = gen_mask_img(mask_list)
     colorized = colorize(mask_img.numpy())
     cv2.imwrite(str(output_mask_jpg), colorized)
     mask_json = output_mask_jpg.with_suffix(".json")
     with mask_json.open("wt") as f:
-        json.dump(to_json(label_list, box_list, value), f)
+        json.dump(to_json(label_list, box_list), f)
     return colorized, mask_img.numpy()
 
-def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray, colorized: np.ndarray):
-    """
-    save overlay image
-    """
-    colorized.shape[2] == 3
-    output_jpg.parent.mkdir(exist_ok=True, parents=True)
+
+
+def overlaid_image(boxes_filt: List, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray) -> np.ndarray:
+    assert colorized.shape[2] == 3
     alpha = 0.5
     print(f"{colorized.shape=}")
     assert colorized.shape[2] == 3
-    blend_image = np.array(alpha * colorized + (1 - alpha) * image, dtype=np.uint8)
+    blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=np.uint8)
     for box, label in zip(boxes_filt, pred_phrases):
         print(f"{box=} {label=}")
         x1, y1, x2, y2 = [int(a) for a in box]
@@ -201,7 +205,7 @@ def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: Lis
                     fontScale=1.0,
                     color=(255, 0, 255),
                     thickness=2, )
-    cv2.imwrite(str(output_jpg), blend_image)
+    return blend_image
 
 
 def modify_boxes_filter(boxes_filt, W: int, H: int):
@@ -328,11 +332,11 @@ if __name__ == "__main__":
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
         t10 = cv2.getTickCount()
-        save_output_jpg_no_matplotlib(output_dir / f"{image_path_stem}_sam.jpg", masks, boxes_filt, pred_phrases, cvimage, colorized)
+        blend_image = overlaid_image(boxes_filt, pred_phrases, cvimage, colorized)
+        cv2.imwrite(str(output_dir / f"{image_path_stem}_sam.jpg"), blend_image)
         t11 = cv2.getTickCount()
         used_time["save_sam"] = (t11 - t10) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
-        output_img = cv2.imread(str(output_dir / f"{image_path_stem}_sam.jpg"))
-        cv2.imshow("output", output_img)
+        cv2.imshow("output", blend_image)
         key = cv2.waitKey(10)
