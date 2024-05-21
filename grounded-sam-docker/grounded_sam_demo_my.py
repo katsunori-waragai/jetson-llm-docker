@@ -211,7 +211,7 @@ class GroundedSAMPredictor:
         # 各modelの設定をする。
         self.model = load_model(self.config_file, self.grounded_checkpoint, device=self.device)
         # initialize SAM
-        sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
+        sam_ckp = self.sam_hq_checkpoint if self.use_sam_hq else self.sam_checkpoint
         self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
         self.transorm = T.Compose(
         [
@@ -224,6 +224,7 @@ class GroundedSAMPredictor:
     def infer_all(self, cvimage: np.ndarray):
         used = {}
         image_pil = cv2pil(cvimage)
+        device = self.device
         H, W = cvimage.shape[:2]
         torch_image, _ = self.transform(image_pil, None)  # 3, h, w
         # Dinoによる検出
