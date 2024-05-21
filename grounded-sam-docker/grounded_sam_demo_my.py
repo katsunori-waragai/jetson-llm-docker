@@ -302,10 +302,10 @@ if __name__ == "__main__":
 
     output_dir.mkdir(exist_ok=True)
 
-    model = load_model(config_file, grounded_checkpoint, device=device)
+    # model = load_model(config_file, grounded_checkpoint, device=device)
     # initialize SAM
-    sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-    sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+    # sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
+    # sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
     gsam_predictor = GroundedSAMPredictor()
 
