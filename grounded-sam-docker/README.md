@@ -16,6 +16,13 @@ succeeded.
 ### test_cap_and_demo.sh
 USBカメラから1枚画像を取得して、その画像に対して、grounded-SAMのdemo相当の処理を行う。
 
+### run_usbcam.sh
+- USBカメラ　入力でのセグメンテーション
+
+
+### test_pre-captured.sh
+- capture済の画像をセグメンテーションする。
+
 ### grounded_sam_demo.py
 - 元からあるdemo スクリプト
 ```
