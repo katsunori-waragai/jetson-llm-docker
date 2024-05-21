@@ -294,7 +294,7 @@ if __name__ == "__main__":
         print(p)
 
     for image_path in sorted(image_path_list):
-        image_pil, image = load_image(image_path)
+        image_pil, torch_image = load_image(image_path)
         W, H = image_pil.size[:2]
         image_path_stem = image_path.stem.replace(" ", "_")
         image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
@@ -302,7 +302,7 @@ if __name__ == "__main__":
         # run grounding dino model
         t0 = cv2.getTickCount()
         boxes_filt, pred_phrases = get_grounding_output(
-            model, image, text_prompt, box_threshold, text_threshold, device=device
+            model, torch_image, text_prompt, box_threshold, text_threshold, device=device
         )
         boxes_filt = modify_boxes_filter(boxes_filt, W, H)
         t1 = cv2.getTickCount()
