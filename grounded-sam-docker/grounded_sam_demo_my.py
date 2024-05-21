@@ -109,21 +109,6 @@ def cv2pil(image: np.ndarray) -> Image:
     return new_image
 
 
-def load_image(image_path: Path):
-    # load image
-    image_pil = Image.open(image_path).convert("RGB")  # load image
-
-    transform = T.Compose(
-        [
-            T.RandomResize([800], max_size=1333),
-            T.ToTensor(),
-            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ]
-    )
-    torch_image, _ = transform(image_pil, None)  # 3, h, w
-    return image_pil, torch_image
-
-
 def load_model(model_config_path, model_checkpoint_path, device):
     args = SLConfig.fromfile(model_config_path)
     args.device = device
@@ -190,7 +175,6 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list: torch.Tensor, box_list:
     return colorized, mask_img.numpy()
 
 
-
 def overlaid_image(boxes_filt: List, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray) -> np.ndarray:
     assert colorized.shape[2] == 3
     alpha = 0.5
@@ -231,8 +215,7 @@ class GroundedSAMPredictor:
         self.predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
     def infer_file(self, image_path):
-        image_pil, image = load_image(image_path)
-        image_pil.save(output_dir / "raw_image.jpg")
+        pass
 
     def save(self):
         pass
@@ -294,7 +277,16 @@ if __name__ == "__main__":
         print(p)
 
     for image_path in sorted(image_path_list):
-        image_pil, torch_image = load_image(image_path)
+        image_pil = Image.open(image_path).convert("RGB")  # load image
+
+        transform = T.Compose(
+            [
+                T.RandomResize([800], max_size=1333),
+                T.ToTensor(),
+                T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ]
+        )
+        torch_image, _ = transform(image_pil, None)  # 3, h, w
         W, H = image_pil.size[:2]
         image_path_stem = image_path.stem.replace(" ", "_")
         image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
