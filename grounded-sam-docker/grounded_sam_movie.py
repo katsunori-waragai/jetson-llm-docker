@@ -132,7 +132,7 @@ if __name__ == "__main__":
         used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
-        cv2.imshow("output", output_img)
+        cv2.imshow("output", blend_image)
         key = cv2.waitKey(10)
         if key == ord("q"):
             break
