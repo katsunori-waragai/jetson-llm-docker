@@ -64,7 +64,7 @@ if __name__ == "__main__":
     model = load_model(config_file, grounded_checkpoint, device=device)
     # initialize SAM
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-    predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+    sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
     transform = T.Compose(
         [
@@ -106,9 +106,9 @@ if __name__ == "__main__":
 
         t2 = cv2.getTickCount()
         if pred_phrases:
-            predictor.set_image(cvimage)
-            transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
-            masks, _, _ = predictor.predict_torch(
+            sam_predictor.set_image(cvimage)
+            transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
+            masks, _, _ = sam_predictor.predict_torch(
                 point_coords = None,
                 point_labels = None,
                 boxes = transformed_boxes.to(device),
