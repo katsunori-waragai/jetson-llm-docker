@@ -121,8 +121,7 @@ if __name__ == "__main__":
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
         t6 = cv2.getTickCount()
-        mask_img = gen_mask_img(masks)
-        colorized = colorize(mask_img.numpy())
+        colorized = colorize(gen_mask_img(masks).numpy())
         output_mask_jpg = output_dir / f"{filename_stem}_mask.jpg"
         cv2.imwrite(str(output_mask_jpg), colorized)
         mask_json = output_mask_jpg.with_suffix(".json")

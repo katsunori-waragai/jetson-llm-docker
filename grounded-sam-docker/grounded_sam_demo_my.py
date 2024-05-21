@@ -211,9 +211,10 @@ class GroundedSAMPredictor:
         ]
     )
 
-    def infer_file(self, cvimage):
+    def infer_all(self, cvimage):
         # Dinoによる検出
         # その検出結果を用いたセグメンテーション
+        # 検出結果はデータメンバーとして保持する。
         pass
 
     def save(self):
@@ -322,8 +323,7 @@ if __name__ == "__main__":
 
 
         t6 = cv2.getTickCount()
-        mask_img = gen_mask_img(masks)
-        colorized = colorize(mask_img.numpy())
+        colorized = colorize(gen_mask_img(masks).numpy())
         output_mask_jpg = output_dir / f"{image_path_stem}_mask.jpg"
         cv2.imwrite(str(output_mask_jpg), colorized)
         mask_json = output_mask_jpg.with_suffix(".json")
