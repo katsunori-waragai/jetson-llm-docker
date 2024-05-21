@@ -109,21 +109,6 @@ def cv2pil(image: np.ndarray) -> Image:
     return new_image
 
 
-def load_image(image_path: Path):
-    # load image
-    image_pil = Image.open(image_path).convert("RGB")  # load image
-
-    transform = T.Compose(
-        [
-            T.RandomResize([800], max_size=1333),
-            T.ToTensor(),
-            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ]
-    )
-    torch_image, _ = transform(image_pil, None)  # 3, h, w
-    return image_pil, torch_image
-
-
 def load_model(model_config_path, model_checkpoint_path, device):
     args = SLConfig.fromfile(model_config_path)
     args.device = device
@@ -135,15 +120,15 @@ def load_model(model_config_path, model_checkpoint_path, device):
     return model
 
 
-def get_grounding_output(model, image, caption, box_threshold, text_threshold, with_logits=True, device="cpu"):
+def get_grounding_output(model, torch_image, caption, box_threshold, text_threshold, with_logits=True, device="cpu"):
     caption = caption.lower()
     caption = caption.strip()
     if not caption.endswith("."):
         caption = caption + "."
     model = model.to(device)
-    image = image.to(device)
+    torch_image = torch_image.to(device)
     with torch.no_grad():
-        outputs = model(image[None], captions=[caption])
+        outputs = model(torch_image[None], captions=[caption])
     logits = outputs["pred_logits"].cpu().sigmoid()[0]  # (nq, 256)
     boxes = outputs["pred_boxes"].cpu()[0]  # (nq, 4)
     logits.shape[0]
@@ -178,17 +163,6 @@ def gen_mask_img(mask_list: torch.Tensor, background_value=0) -> torch.Tensor:
     for idx, mask in enumerate(mask_list):
         mask_img[mask.cpu().numpy()[0] == True] = background_value + idx + 1
     return mask_img
-
-def save_mask_data_jpg(output_mask_jpg: Path, mask_list: torch.Tensor, box_list: List, label_list: List[str]):  # save json file
-
-    mask_img = gen_mask_img(mask_list)
-    colorized = colorize(mask_img.numpy())
-    cv2.imwrite(str(output_mask_jpg), colorized)
-    mask_json = output_mask_jpg.with_suffix(".json")
-    with mask_json.open("wt") as f:
-        json.dump(to_json(label_list, box_list), f)
-    return colorized, mask_img.numpy()
-
 
 
 def overlaid_image(boxes_filt: List, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray) -> np.ndarray:
@@ -229,10 +203,19 @@ class GroundedSAMPredictor:
         # initialize SAM
         sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
         self.predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+        self.transorm = T.Compose(
+        [
+            T.RandomResize([800], max_size=1333),
+            T.ToTensor(),
+            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
 
-    def infer_file(self, image_path):
-        image_pil, image = load_image(image_path)
-        image_pil.save(output_dir / "raw_image.jpg")
+    def infer_all(self, cvimage):
+        # Dinoによる検出
+        # その検出結果を用いたセグメンテーション
+        # 検出結果はデータメンバーとして保持する。
+        pass
 
     def save(self):
         pass
@@ -289,18 +272,30 @@ if __name__ == "__main__":
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
     predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
+    # 学習済みのモデルに依存することに注意
+    transform = T.Compose(
+        [
+            T.RandomResize([800], max_size=1333),
+            T.ToTensor(),
+            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
+
     image_path_list = list(Path(image_dir).glob("*.jpg"))
     for p in image_path_list:
         print(p)
 
     for image_path in sorted(image_path_list):
-        image_pil, torch_image = load_image(image_path)
+        # 入力をopencv に変更すること
+        image_pil = Image.open(image_path).convert("RGB")  # load image
+
         W, H = image_pil.size[:2]
         image_path_stem = image_path.stem.replace(" ", "_")
         image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
 
         # run grounding dino model
         t0 = cv2.getTickCount()
+        torch_image, _ = transform(image_pil, None)  # 3, h, w
         boxes_filt, pred_phrases = get_grounding_output(
             model, torch_image, text_prompt, box_threshold, text_threshold, device=device
         )
@@ -326,8 +321,14 @@ if __name__ == "__main__":
         t3 = cv2.getTickCount()
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
+
         t6 = cv2.getTickCount()
-        colorized, mask_image = save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        colorized = colorize(gen_mask_img(masks).numpy())
+        output_mask_jpg = output_dir / f"{image_path_stem}_mask.jpg"
+        cv2.imwrite(str(output_mask_jpg), colorized)
+        mask_json = output_mask_jpg.with_suffix(".json")
+        with mask_json.open("wt") as f:
+            json.dump(to_json(pred_phrases, boxes_filt), f)
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
