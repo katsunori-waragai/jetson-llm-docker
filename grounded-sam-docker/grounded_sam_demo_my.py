@@ -237,9 +237,9 @@ class GroundedSAMPredictor:
         # その検出結果を用いたセグメンテーション
         t2 = cv2.getTickCount()
         if pred_phrases:
-            sam_predictor.set_image(cvimage)
-            transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
-            masks, _, _ = sam_predictor.predict_torch(
+            self.sam_predictor.set_image(cvimage)
+            transformed_boxes = self.sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
+            masks, _, _ = self.sam_predictor.predict_torch(
                 point_coords = None,
                 point_labels = None,
                 boxes = transformed_boxes.to(device),
