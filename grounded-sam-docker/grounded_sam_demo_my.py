@@ -203,6 +203,9 @@ class GroundedSAMPredictor:
     use_sam_hq: bool = False
     sam_checkpoint: str = "sam_vit_h_4b8939.pth"
     sam_hq_checkpoint: str = "sam_vit_h_4b8939.pth"  # dummy
+    text_prompt: str = "arm . cup . keyboard . table . plate . bottle . PC . person"
+    box_threshold: float = 0.3
+    text_threshold: float = 0.25
 
     def __post_init__(self):
         # 各modelの設定をする。
@@ -226,7 +229,7 @@ class GroundedSAMPredictor:
         # Dinoによる検出
         t0 = cv2.getTickCount()
         boxes_filt, pred_phrases = get_grounding_output(
-            model, torch_image, text_prompt, box_threshold, text_threshold, device=device
+            self.model, torch_image, self.text_prompt, self.box_threshold, self.text_threshold, device=device
         )
         boxes_filt = modify_boxes_filter(boxes_filt, W, H)
         t1 = cv2.getTickCount()
@@ -308,15 +311,6 @@ if __name__ == "__main__":
     # sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
     gsam_predictor = GroundedSAMPredictor()
-
-    # 学習済みのモデルに依存することに注意
-    transform = T.Compose(
-        [
-            T.RandomResize([800], max_size=1333),
-            T.ToTensor(),
-            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ]
-    )
 
     image_path_list = list(Path(image_dir).glob("*.jpg"))
     for p in image_path_list:
