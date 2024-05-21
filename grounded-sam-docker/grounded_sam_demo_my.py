@@ -120,8 +120,8 @@ def load_image(image_path: Path):
             T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]
     )
-    image, _ = transform(image_pil, None)  # 3, h, w
-    return image_pil, image
+    torch_image, _ = transform(image_pil, None)  # 3, h, w
+    return image_pil, torch_image
 
 
 def load_model(model_config_path, model_checkpoint_path, device):

@@ -86,7 +86,7 @@ if __name__ == "__main__":
         [h, w] = cvimg.shape[:2]
         cvimg = cvimg[:, : w //2,  :]
         image_pil = cv2pil(cvimg)
-        image, _ = transform(image_pil, None)  # 3, h, w
+        torch_image, _ = transform(image_pil, None)  # 3, h, w
 
 
         W, H = image_pil.size[:2]
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         # run grounding dino model
         t0 = cv2.getTickCount()
         boxes_filt, pred_phrases = get_grounding_output(
-            model, image, text_prompt, box_threshold, text_threshold, device=device
+            model, torch_image, text_prompt, box_threshold, text_threshold, device=device
         )
         boxes_filt = modify_boxes_filter(boxes_filt, W, H)
         t1 = cv2.getTickCount()
