@@ -120,15 +120,15 @@ def load_model(model_config_path, model_checkpoint_path, device):
     return model
 
 
-def get_grounding_output(model, image, caption, box_threshold, text_threshold, with_logits=True, device="cpu"):
+def get_grounding_output(model, torch_image, caption, box_threshold, text_threshold, with_logits=True, device="cpu"):
     caption = caption.lower()
     caption = caption.strip()
     if not caption.endswith("."):
         caption = caption + "."
     model = model.to(device)
-    image = image.to(device)
+    torch_image = torch_image.to(device)
     with torch.no_grad():
-        outputs = model(image[None], captions=[caption])
+        outputs = model(torch_image[None], captions=[caption])
     logits = outputs["pred_logits"].cpu().sigmoid()[0]  # (nq, 256)
     boxes = outputs["pred_boxes"].cpu()[0]  # (nq, 4)
     logits.shape[0]
