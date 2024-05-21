@@ -126,7 +126,7 @@ if __name__ == "__main__":
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
         t4 = cv2.getTickCount()
-        blend_image = overlaid_image(boxes_filt, pred_phrases, image, colorized)
+        blend_image = overlaid_image(boxes_filt, pred_phrases, cvimage, colorized)
         cv2.imwrite(str(output_dir / f"{filename_stem}_sam.jpg"), blend_image)
         t5 = cv2.getTickCount()
         used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
