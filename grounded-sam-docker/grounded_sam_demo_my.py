@@ -322,7 +322,7 @@ if __name__ == "__main__":
 
 
         t6 = cv2.getTickCount()
-        mask_img = gen_mask_img(mask_list)
+        mask_img = gen_mask_img(masks)
         colorized = colorize(mask_img.numpy())
         output_mask_jpg = output_dir / f"{image_path_stem}_mask.jpg"
         cv2.imwrite(str(output_mask_jpg), colorized)
