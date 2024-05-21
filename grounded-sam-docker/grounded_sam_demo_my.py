@@ -244,6 +244,7 @@ class GroundedSAMPredictor:
         # 検出結果はデータメンバーとして保持する。
         self.pred_phrase = pred_phrases
         self.masks = masks
+        self.boxes_filt = boxes_filt
         self.colorized = colorize(gen_mask_img(masks).numpy())
 
 if __name__ == "__main__":
