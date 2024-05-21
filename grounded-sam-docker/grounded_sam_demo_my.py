@@ -170,7 +170,7 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold, w
     return boxes_filt, pred_phrases
 
 
-def gen_mask_img(mask_list: Tensor, background_value=0) -> Tensor:
+def gen_mask_img(mask_list: torch.Tensor, background_value=0) -> torch.Tensor:
     print(f"{type(mask_list)=}")
     mask_img = torch.zeros(mask_list.shape[-2:])
     print(f"{type(mask_img)=}")
@@ -178,7 +178,7 @@ def gen_mask_img(mask_list: Tensor, background_value=0) -> Tensor:
         mask_img[mask.cpu().numpy()[0] == True] = background_value + idx + 1
     return mask_img
 
-def save_mask_data_jpg(output_mask_jpg: Path, mask_list: Tensor, box_list: List, label_list: List[str]):  # save json file
+def save_mask_data_jpg(output_mask_jpg: Path, mask_list: torch.Tensor, box_list: List, label_list: List[str]):  # save json file
 
     background_value = 0  # 0 for background
     mask_img = gen_mask_img(mask_list, background_value=0)
