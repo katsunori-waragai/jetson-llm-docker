@@ -225,7 +225,7 @@ class GroundedSAMPredictor:
         used = {}
         image_pil = cv2pil(cvimage)
         H, W = cvimage.shape[:2]
-        torch_image, _ = transform(image_pil, None)  # 3, h, w
+        torch_image, _ = self.transform(image_pil, None)  # 3, h, w
         # Dinoによる検出
         t0 = cv2.getTickCount()
         boxes_filt, pred_phrases = get_grounding_output(
