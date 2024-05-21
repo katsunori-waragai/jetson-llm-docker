@@ -349,7 +349,7 @@ if __name__ == "__main__":
         #     masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
         t3 = cv2.getTickCount()
 
-        masks = sam_predictor.masks
+        masks = gsam_predictor.masks
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
 
@@ -358,6 +358,8 @@ if __name__ == "__main__":
         output_mask_jpg = output_dir / f"{image_path_stem}_mask.jpg"
         cv2.imwrite(str(output_mask_jpg), colorized)
         mask_json = output_mask_jpg.with_suffix(".json")
+        pred_phrase = gsam_predictor.pred_phrase
+        boxes_filt = gsam_predictor.boxes_filt
         with mask_json.open("wt") as f:
             json.dump(to_json(pred_phrases, boxes_filt), f)
         t7 = cv2.getTickCount()
