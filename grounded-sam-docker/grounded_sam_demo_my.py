@@ -57,7 +57,7 @@ COLOR_MAP = {
 }
 
 
-def to_json(label_list: List[str], box_list: List, value: int) -> Dict:
+def to_json(label_list: List[str], box_list: List, value: int=0) -> Dict:
     json_data = [{
         'value': value,
         'label': 'background'
@@ -170,23 +170,23 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold, w
     return boxes_filt, pred_phrases
 
 
-def gen_mask_img(mask_list, value=0):
+def gen_mask_img(mask_list: Tensor, background_value=0) -> Tensor:
     print(f"{type(mask_list)=}")
     mask_img = torch.zeros(mask_list.shape[-2:])
     print(f"{type(mask_img)=}")
     for idx, mask in enumerate(mask_list):
-        mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
+        mask_img[mask.cpu().numpy()[0] == True] = background_value + idx + 1
     return mask_img
 
-def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List[str]):  # save json file
+def save_mask_data_jpg(output_mask_jpg: Path, mask_list: Tensor, box_list: List, label_list: List[str]):  # save json file
 
-    value = 0  # 0 for background
-    mask_img = gen_mask_img(mask_list, value=0)
+    background_value = 0  # 0 for background
+    mask_img = gen_mask_img(mask_list, background_value=0)
     colorized = colorize(mask_img.numpy())
     cv2.imwrite(str(output_mask_jpg), colorized)
     mask_json = output_mask_jpg.with_suffix(".json")
     with mask_json.open("wt") as f:
-        json.dump(to_json(label_list, box_list, value), f)
+        json.dump(to_json(label_list, box_list, background_value), f)
     return colorized, mask_img.numpy()
 
 
