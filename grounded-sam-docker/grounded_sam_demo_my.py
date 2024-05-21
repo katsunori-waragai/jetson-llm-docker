@@ -208,7 +208,7 @@ class GroundedSAMPredictor:
         self.sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(self.device))
         self.transorm = T.Compose(
         [
-            T.RandomResize(grounded_checkpoint[800], max_size=1333),
+            T.RandomResize([800], max_size=1333),
             T.ToTensor(),
             T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]
@@ -238,8 +238,9 @@ class GroundedSAMPredictor:
             masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
 
         # 検出結果はデータメンバーとして保持する。
-        colorized = colorize(gen_mask_img(masks).numpy())
-        pass
+        self.pred_phrase = pred_phrases
+        self.masks = masks
+        self.colorized = colorize(gen_mask_img(masks).numpy())
 
 if __name__ == "__main__":
 
@@ -311,37 +312,40 @@ if __name__ == "__main__":
     for image_path in sorted(image_path_list):
         # 入力をopencv に変更すること
         cvimage = cv2.imread(str(image_path))
-        image_pil = cv2pil(cvimage)
+        gsam_predictor.infer_all(cvimage)
+        # H, W = cvimage.shape[:2]
+        # image_pil = cv2pil(cvimage)
 
-        W, H = image_pil.size[:2]
         image_path_stem = image_path.stem.replace(" ", "_")
         image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
 
         # run grounding dino model
         t0 = cv2.getTickCount()
-        torch_image, _ = transform(image_pil, None)  # 3, h, w
-        boxes_filt, pred_phrases = get_grounding_output(
-            model, torch_image, text_prompt, box_threshold, text_threshold, device=device
-        )
-        boxes_filt = modify_boxes_filter(boxes_filt, W, H)
+        # torch_image, _ = transform(image_pil, None)  # 3, h, w
+        # boxes_filt, pred_phrases = get_grounding_output(
+        #     model, torch_image, text_prompt, box_threshold, text_threshold, device=device
+        # )
+        # boxes_filt = modify_boxes_filter(boxes_filt, W, H)
         t1 = cv2.getTickCount()
         used_time = {}
         used_time["grounding"] = (t1 - t0) / cv2.getTickFrequency()
 
         t2 = cv2.getTickCount()
-        if pred_phrases:
-            sam_predictor.set_image(cvimage)
-            transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
-            masks, _, _ = sam_predictor.predict_torch(
-                point_coords = None,
-                point_labels = None,
-                boxes = transformed_boxes.to(device),
-                multimask_output = False,
-            )
-        else:
-            C = len(pred_phrases)
-            masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
+        # if pred_phrases:
+        #     sam_predictor.set_image(cvimage)
+        #     transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
+        #     masks, _, _ = sam_predictor.predict_torch(
+        #         point_coords = None,
+        #         point_labels = None,
+        #         boxes = transformed_boxes.to(device),
+        #         multimask_output = False,
+        #     )
+        # else:
+        #     C = len(pred_phrases)
+        #     masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
         t3 = cv2.getTickCount()
+
+        masks = sam_predictor.masks
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
 
