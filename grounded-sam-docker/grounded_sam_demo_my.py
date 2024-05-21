@@ -164,16 +164,6 @@ def gen_mask_img(mask_list: torch.Tensor, background_value=0) -> torch.Tensor:
         mask_img[mask.cpu().numpy()[0] == True] = background_value + idx + 1
     return mask_img
 
-def save_mask_data_jpg(output_mask_jpg: Path, mask_list: torch.Tensor, box_list: List, label_list: List[str]):  # save json file
-
-    mask_img = gen_mask_img(mask_list)
-    colorized = colorize(mask_img.numpy())
-    cv2.imwrite(str(output_mask_jpg), colorized)
-    mask_json = output_mask_jpg.with_suffix(".json")
-    with mask_json.open("wt") as f:
-        json.dump(to_json(label_list, box_list), f)
-    return colorized, mask_img.numpy()
-
 
 def overlaid_image(boxes_filt: List, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray) -> np.ndarray:
     assert colorized.shape[2] == 3
