@@ -271,6 +271,13 @@ if __name__ == "__main__":
     # initialize SAM
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
     predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+    transform = T.Compose(
+        [
+            T.RandomResize([800], max_size=1333),
+            T.ToTensor(),
+            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
 
     image_path_list = list(Path(image_dir).glob("*.jpg"))
     for p in image_path_list:
@@ -279,20 +286,13 @@ if __name__ == "__main__":
     for image_path in sorted(image_path_list):
         image_pil = Image.open(image_path).convert("RGB")  # load image
 
-        transform = T.Compose(
-            [
-                T.RandomResize([800], max_size=1333),
-                T.ToTensor(),
-                T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            ]
-        )
-        torch_image, _ = transform(image_pil, None)  # 3, h, w
         W, H = image_pil.size[:2]
         image_path_stem = image_path.stem.replace(" ", "_")
         image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
 
         # run grounding dino model
         t0 = cv2.getTickCount()
+        torch_image, _ = transform(image_pil, None)  # 3, h, w
         boxes_filt, pred_phrases = get_grounding_output(
             model, torch_image, text_prompt, box_threshold, text_threshold, device=device
         )
