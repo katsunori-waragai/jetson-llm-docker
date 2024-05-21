@@ -183,12 +183,6 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
         json.dump(to_json(label_list, box_list, value), f)
     return colorized, mask_img.numpy()
 
-def save_output_jpg_no_matplotlib(output_jpg: Path, masks: List, boxes_filt: List, pred_phrases: List[str], image: np.ndarray, colorized: np.ndarray):
-    """
-    save overlay image
-    """
-    blend_image = overlaid_image(boxes_filt, pred_phrases, image, colorized)
-    cv2.imwrite(str(output_jpg), blend_image)
 
 
 def overlaid_image(boxes_filt, pred_phrases, image, colorized):
