@@ -293,6 +293,8 @@ if __name__ == "__main__":
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
     sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
+    gsam_predictor = GroundedSAMPredictor()
+
     # 学習済みのモデルに依存することに注意
     transform = T.Compose(
         [
@@ -325,7 +327,6 @@ if __name__ == "__main__":
         t1 = cv2.getTickCount()
         used_time = {}
         used_time["grounding"] = (t1 - t0) / cv2.getTickFrequency()
-        # cvimage = pil2cv(image_pil)
 
         t2 = cv2.getTickCount()
         if pred_phrases:
