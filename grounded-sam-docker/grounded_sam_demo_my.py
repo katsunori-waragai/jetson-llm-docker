@@ -359,7 +359,7 @@ if __name__ == "__main__":
         output_mask_jpg = output_dir / f"{image_path_stem}_mask.jpg"
         cv2.imwrite(str(output_mask_jpg), colorized)
         mask_json = output_mask_jpg.with_suffix(".json")
-        pred_phrase = gsam_predictor.pred_phrase
+        pred_phrases = gsam_predictor.pred_phrases
         boxes_filt = gsam_predictor.boxes_filt
         with mask_json.open("wt") as f:
             json.dump(to_json(pred_phrases, boxes_filt), f)
