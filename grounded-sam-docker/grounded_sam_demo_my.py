@@ -219,15 +219,20 @@ class GroundedSAMPredictor:
     )
 
     def infer_all(self, cvimage: np.ndarray):
+        used = {}
         image_pil = cv2pil(cvimage)
+        H, W = cvimage.shape[:2]
         torch_image, _ = transform(image_pil, None)  # 3, h, w
-        W, H = image_pil.size[:2]
         # Dinoによる検出
+        t0 = cv2.getTickCount()
         boxes_filt, pred_phrases = get_grounding_output(
             model, torch_image, text_prompt, box_threshold, text_threshold, device=device
         )
         boxes_filt = modify_boxes_filter(boxes_filt, W, H)
+        t1 = cv2.getTickCount()
+        used["grounding"] = (t1 - t0) / cv2.getTickFrequency()
         # その検出結果を用いたセグメンテーション
+        t2 = cv2.getTickCount()
         if pred_phrases:
             sam_predictor.set_image(cvimage)
             transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
@@ -240,6 +245,9 @@ class GroundedSAMPredictor:
         else:
             C = len(pred_phrases)
             masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
+
+        t3 = cv2.getTickCount()
+        used["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
         # 検出結果はデータメンバーとして保持する。
         self.pred_phrases = pred_phrases
@@ -318,41 +326,14 @@ if __name__ == "__main__":
         # 入力をopencv に変更すること
         cvimage = cv2.imread(str(image_path))
         gsam_predictor.infer_all(cvimage)
-        # H, W = cvimage.shape[:2]
-        # image_pil = cv2pil(cvimage)
 
         image_path_stem = image_path.stem.replace(" ", "_")
         cv2.imwrite(str(output_dir / f"{image_path_stem}_raw.jpg"), cvimage)
 
         # run grounding dino model
-        t0 = cv2.getTickCount()
-        # torch_image, _ = transform(image_pil, None)  # 3, h, w
-        # boxes_filt, pred_phrases = get_grounding_output(
-        #     model, torch_image, text_prompt, box_threshold, text_threshold, device=device
-        # )
-        # boxes_filt = modify_boxes_filter(boxes_filt, W, H)
-        t1 = cv2.getTickCount()
         used_time = {}
-        used_time["grounding"] = (t1 - t0) / cv2.getTickFrequency()
-
-        t2 = cv2.getTickCount()
-        # if pred_phrases:
-        #     sam_predictor.set_image(cvimage)
-        #     transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
-        #     masks, _, _ = sam_predictor.predict_torch(
-        #         point_coords = None,
-        #         point_labels = None,
-        #         boxes = transformed_boxes.to(device),
-        #         multimask_output = False,
-        #     )
-        # else:
-        #     C = len(pred_phrases)
-        #     masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
-        t3 = cv2.getTickCount()
 
         masks = gsam_predictor.masks
-        used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
-
 
         t6 = cv2.getTickCount()
         colorized = colorize(gen_mask_img(masks).numpy())
