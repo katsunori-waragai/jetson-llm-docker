@@ -213,8 +213,17 @@ class GroundedSAMPredictor:
         # initialize SAM
         sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
         self.predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+        self.transorm = T.Compose(
+        [
+            T.RandomResize([800], max_size=1333),
+            T.ToTensor(),
+            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
 
-    def infer_file(self, image_path):
+    def infer_file(self, cvimage):
+        # Dinoによる検出
+        # その検出結果を用いたセグメンテーション
         pass
 
     def save(self):
@@ -271,6 +280,8 @@ if __name__ == "__main__":
     # initialize SAM
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
     predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+
+    # 学習済みのモデルに依存することに注意
     transform = T.Compose(
         [
             T.RandomResize([800], max_size=1333),
@@ -284,6 +295,7 @@ if __name__ == "__main__":
         print(p)
 
     for image_path in sorted(image_path_list):
+        # 入力をopencv に変更すること
         image_pil = Image.open(image_path).convert("RGB")  # load image
 
         W, H = image_pil.size[:2]
@@ -318,8 +330,15 @@ if __name__ == "__main__":
         t3 = cv2.getTickCount()
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
+
         t6 = cv2.getTickCount()
-        colorized, mask_image = save_mask_data_jpg(output_dir / f"{image_path_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        mask_img = gen_mask_img(mask_list)
+        colorized = colorize(mask_img.numpy())
+        output_mask_jpg = output_dir / f"{image_path_stem}_mask.jpg"
+        cv2.imwrite(str(output_mask_jpg), colorized)
+        mask_json = output_mask_jpg.with_suffix(".json")
+        with mask_json.open("wt") as f:
+            json.dump(to_json(label_list, box_list), f)
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 

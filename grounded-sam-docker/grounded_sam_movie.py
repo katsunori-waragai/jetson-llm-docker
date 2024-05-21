@@ -121,7 +121,13 @@ if __name__ == "__main__":
         used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
 
         t6 = cv2.getTickCount()
-        colorized, mask_image = save_mask_data_jpg(output_dir / f"{filename_stem}_mask.jpg", masks, boxes_filt, pred_phrases)
+        mask_img = gen_mask_img(mask_list)
+        colorized = colorize(mask_img.numpy())
+        output_mask_jpg = output_dir / f"{filename_stem}_mask.jpg"
+        cv2.imwrite(str(output_mask_jpg), colorized)
+        mask_json = output_mask_jpg.with_suffix(".json")
+        with mask_json.open("wt") as f:
+            json.dump(to_json(label_list, box_list), f)
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
