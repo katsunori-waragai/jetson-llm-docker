@@ -202,7 +202,7 @@ class GroundedSAMPredictor:
         self.model = load_model(config_file, grounded_checkpoint, device=device)
         # initialize SAM
         sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-        self.predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+        self.sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
         self.transorm = T.Compose(
         [
             T.RandomResize([800], max_size=1333),
@@ -270,7 +270,7 @@ if __name__ == "__main__":
     model = load_model(config_file, grounded_checkpoint, device=device)
     # initialize SAM
     sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-    predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+    sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
     # 学習済みのモデルに依存することに注意
     transform = T.Compose(
@@ -287,7 +287,9 @@ if __name__ == "__main__":
 
     for image_path in sorted(image_path_list):
         # 入力をopencv に変更すること
-        image_pil = Image.open(image_path).convert("RGB")  # load image
+        cvimage = cv2.imread(str(image_path))
+        image_pil = cv2pil(cvimage)
+#        image_pil = Image.open(image_path).convert("RGB")  # load image
 
         W, H = image_pil.size[:2]
         image_path_stem = image_path.stem.replace(" ", "_")
@@ -303,13 +305,13 @@ if __name__ == "__main__":
         t1 = cv2.getTickCount()
         used_time = {}
         used_time["grounding"] = (t1 - t0) / cv2.getTickFrequency()
-        cvimage = pil2cv(image_pil)
+        # cvimage = pil2cv(image_pil)
 
         t2 = cv2.getTickCount()
         if pred_phrases:
-            predictor.set_image(cvimage)
-            transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
-            masks, _, _ = predictor.predict_torch(
+            sam_predictor.set_image(cvimage)
+            transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
+            masks, _, _ = sam_predictor.predict_torch(
                 point_coords = None,
                 point_labels = None,
                 boxes = transformed_boxes.to(device),
