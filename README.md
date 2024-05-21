@@ -11,6 +11,11 @@ Jeston docker settings for LLMs(Large Language Models)
   - https://github.com/owenzlz/EgoHOS
   - Fine-Grained Egocentric Hand-Object Segmentation
   - 左腕・右腕のsegmenation、1st, 2nd order interaction object の検出 
+- grounded-sam-docker
+  - https://github.com/IDEA-Research/Grounded-Segment-Anything
+  - open vocabulary object segmentation
+  - 検出対象の制約のない言葉を指定するセグメンテーション
+  - text prompt によって指定されたものを検出する。
 - groundingdino-docker
   - https://github.com/IDEA-Research/GroundingDINO
   - open vocabulary object detection
