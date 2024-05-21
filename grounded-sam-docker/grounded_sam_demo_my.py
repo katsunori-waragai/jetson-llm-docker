@@ -185,12 +185,12 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
 
 
 
-def overlaid_image(boxes_filt, pred_phrases, image, colorized):
+def overlaid_image(boxes_filt, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray) -> np.ndarray:
     assert colorized.shape[2] == 3
     alpha = 0.5
     print(f"{colorized.shape=}")
     assert colorized.shape[2] == 3
-    blend_image = np.array(alpha * colorized + (1 - alpha) * image, dtype=np.uint8)
+    blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=np.uint8)
     for box, label in zip(boxes_filt, pred_phrases):
         print(f"{box=} {label=}")
         x1, y1, x2, y2 = [int(a) for a in box]
