@@ -199,13 +199,17 @@ class GroundedSAMPredictor:
     config_file: str = "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
     grounded_checkpoint: str = "groundingdino_swint_ogc.pth"
     device: str = "cuda"
+    sam_version: str = "vit_h"
+    use_sam_hq: bool = False
+    sam_checkpoint: str = "sam_vit_h_4b8939.pth"
+    sam_hq_checkpoint: str = "sam_vit_h_4b8939.pth"  # dummy
 
     def __post_init__(self):
         # 各modelの設定をする。
         self.model = load_model(self.config_file, self.grounded_checkpoint, device=self.device)
         # initialize SAM
         sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-        self.sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(self.device))
+        self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
         self.transorm = T.Compose(
         [
             T.RandomResize([800], max_size=1333),
@@ -317,7 +321,7 @@ if __name__ == "__main__":
         # image_pil = cv2pil(cvimage)
 
         image_path_stem = image_path.stem.replace(" ", "_")
-        image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
+        cv2.imwrite(str(output_dir / f"{image_path_stem}_raw.jpg"), cvimage)
 
         # run grounding dino model
         t0 = cv2.getTickCount()
