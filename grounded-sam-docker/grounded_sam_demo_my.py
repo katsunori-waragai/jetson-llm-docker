@@ -171,11 +171,14 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold, w
 
 
 def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List[str]):  # save json file
-    value = 0  # 0 for background
+    def gen_mask_img(mask_list, value=0):
+        mask_img = torch.zeros(mask_list.shape[-2:])
+        for idx, mask in enumerate(mask_list):
+            mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
+        return gen_mask_img
 
-    mask_img = torch.zeros(mask_list.shape[-2:])
-    for idx, mask in enumerate(mask_list):
-        mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
+    value = 0  # 0 for background
+    gen_mask_img(mask_list, value=0)
     colorized = colorize(mask_img.numpy())
     cv2.imwrite(str(output_mask_jpg), colorized)
     mask_json = output_mask_jpg.with_suffix(".json")
