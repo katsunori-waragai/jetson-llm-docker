@@ -170,7 +170,7 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold, w
 
 
 
-def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List):  # save json file
+def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_list: List[str]):  # save json file
     value = 0  # 0 for background
 
     mask_img = torch.zeros(mask_list.shape[-2:])
@@ -185,7 +185,7 @@ def save_mask_data_jpg(output_mask_jpg: Path, mask_list, box_list: List, label_l
 
 
 
-def overlaid_image(boxes_filt, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray) -> np.ndarray:
+def overlaid_image(boxes_filt: List, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray) -> np.ndarray:
     assert colorized.shape[2] == 3
     alpha = 0.5
     print(f"{colorized.shape=}")
