@@ -196,28 +196,49 @@ def modify_boxes_filter(boxes_filt, W: int, H: int):
 class GroundedSAMPredictor:
     # GroundingDino のPredictor
     # SAMのPredictor
+    config_file: str = "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
+    grounded_checkpoint: str = "groundingdino_swint_ogc.pth"
+    device: str = "cuda"
 
     def __post_init__(self):
         # 各modelの設定をする。
-        self.model = load_model(config_file, grounded_checkpoint, device=device)
+        self.model = load_model(self.config_file, self.grounded_checkpoint, device=self.device)
         # initialize SAM
         sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-        self.sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
+        self.sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(self.device))
         self.transorm = T.Compose(
         [
-            T.RandomResize([800], max_size=1333),
+            T.RandomResize(grounded_checkpoint[800], max_size=1333),
             T.ToTensor(),
             T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]
     )
 
-    def infer_all(self, cvimage):
+    def infer_all(self, cvimage: np.ndarray):
+        image_pil = cv2pil(cvimage)
+        torch_image, _ = transform(image_pil, None)  # 3, h, w
+        W, H = image_pil.size[:2]
         # Dinoによる検出
+        boxes_filt, pred_phrases = get_grounding_output(
+            model, torch_image, text_prompt, box_threshold, text_threshold, device=device
+        )
+        boxes_filt = modify_boxes_filter(boxes_filt, W, H)
         # その検出結果を用いたセグメンテーション
-        # 検出結果はデータメンバーとして保持する。
-        pass
+        if pred_phrases:
+            sam_predictor.set_image(cvimage)
+            transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
+            masks, _, _ = sam_predictor.predict_torch(
+                point_coords = None,
+                point_labels = None,
+                boxes = transformed_boxes.to(device),
+                multimask_output = False,
+            )
+        else:
+            C = len(pred_phrases)
+            masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
 
-    def save(self):
+        # 検出結果はデータメンバーとして保持する。
+        colorized = colorize(gen_mask_img(masks).numpy())
         pass
 
 if __name__ == "__main__":
@@ -289,7 +310,6 @@ if __name__ == "__main__":
         # 入力をopencv に変更すること
         cvimage = cv2.imread(str(image_path))
         image_pil = cv2pil(cvimage)
-#        image_pil = Image.open(image_path).convert("RGB")  # load image
 
         W, H = image_pil.size[:2]
         image_path_stem = image_path.stem.replace(" ", "_")
