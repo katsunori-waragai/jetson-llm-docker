@@ -213,7 +213,7 @@ class GroundedSAMPredictor:
         # initialize SAM
         sam_ckp = self.sam_hq_checkpoint if self.use_sam_hq else self.sam_checkpoint
         self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
-        self.transorm = T.Compose(
+        self.transform = T.Compose(
         [
             T.RandomResize([800], max_size=1333),
             T.ToTensor(),
