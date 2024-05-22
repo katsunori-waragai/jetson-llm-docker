@@ -1,12 +1,12 @@
 import argparse
 import os
 import sys
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List, Dict
 
-import numpy as np
 import cv2
+import numpy as np
 import json
 import torch
 from PIL import Image
@@ -118,7 +118,7 @@ def _load_dino_model(model_config_path, model_checkpoint_path, device):
     return model
 
 
-def _get_grounding_output(dino_model, torch_image, caption, box_threshold, text_threshold, with_logits=True, device="cpu"):
+def _get_grounding_output(dino_model, torch_image, caption, box_threshold, text_threshold, with_logits=True, device="cuda"):
     caption = caption.lower()
     caption = caption.strip()
     if not caption.endswith("."):
