@@ -11,6 +11,10 @@
 - [] torch.Tensor をわかりやすくする。
 - [] ファイルへの保存なしという選択もできるようにAPIを変更しよう。
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
+- [] dataclass　を実装する。
+- [] PIL.Image はAPIのインタフェースから外す。
+- [] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
+- [] `from some import *` はなくすこと。
 - [] testをきちんとtestにしよう。
 ```commandline
 outputs/demo1_mask.jpg

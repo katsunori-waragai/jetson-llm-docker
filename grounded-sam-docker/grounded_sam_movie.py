@@ -2,18 +2,11 @@ import argparse
 import os
 import sys
 from pathlib import Path
-from dataclasses import dataclass
 from typing import List, Dict
 
 import numpy as np
 import cv2
-import json
-import torch
-from PIL import Image
-from grounded_sam_demo_my import *
-
-sys.path.append(os.path.join(os.getcwd(), "GroundingDINO"))
-sys.path.append(os.path.join(os.getcwd(), "segment_anything"))
+from grounded_sam_demo_my import GroundedSAMPredictor
 
 
 if __name__ == "__main__":
@@ -61,80 +54,46 @@ if __name__ == "__main__":
 
     output_dir.mkdir(exist_ok=True)
 
-    model = load_model(config_file, grounded_checkpoint, device=device)
-    # initialize SAM
-    sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-    sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
-
-    transform = T.Compose(
-        [
-            T.RandomResize([800], max_size=1333),
-            T.ToTensor(),
-            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ]
-    )
+    gsam_predictor = GroundedSAMPredictor()
 
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     counter = 0
     while True:
-        r, cvimg = cap.read()
-        if cvimg is None:
+        r, cvimage = cap.read()
+        if cvimage is None:
             continue
 
         counter += 1
-        [h, w] = cvimg.shape[:2]
-        cvimg = cvimg[:, : w //2,  :]
-        image_pil = cv2pil(cvimg)
-        torch_image, _ = transform(image_pil, None)  # 3, h, w
+        [h, w] = cvimage.shape[:2]
+        cvimage = cvimage[:, : w //2,  :]
 
-
-        W, H = image_pil.size[:2]
+        gsam_predictor.infer_all(cvimage)
         filename_stem = f"captured_{counter:04d}"
-        image_pil.save(output_dir / f"{filename_stem}_raw.jpg")
+        cv2.imwrite(str(output_dir / f"{filename_stem}_raw.jpg"), cvimage)
 
         # run grounding dino model
-        t0 = cv2.getTickCount()
-        boxes_filt, pred_phrases = get_grounding_output(
-            model, torch_image, text_prompt, box_threshold, text_threshold, device=device
-        )
-        boxes_filt = modify_boxes_filter(boxes_filt, W, H)
-        t1 = cv2.getTickCount()
         used_time = {}
-        used_time["grounding"] = (t1 - t0) / cv2.getTickFrequency()
-        cvimage = pil2cv(image_pil)
 
-        t2 = cv2.getTickCount()
-        if pred_phrases:
-            sam_predictor.set_image(cvimage)
-            transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
-            masks, _, _ = sam_predictor.predict_torch(
-                point_coords = None,
-                point_labels = None,
-                boxes = transformed_boxes.to(device),
-                multimask_output = False,
-            )
-        else:
-            C = len(pred_phrases)
-            masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
-        t3 = cv2.getTickCount()
-        used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
+        masks = gsam_predictor.masks
 
         t6 = cv2.getTickCount()
         colorized = colorize(gen_mask_img(masks).numpy())
         output_mask_jpg = output_dir / f"{filename_stem}_mask.jpg"
         cv2.imwrite(str(output_mask_jpg), colorized)
         mask_json = output_mask_jpg.with_suffix(".json")
+        pred_phrases = gsam_predictor.pred_phrases
+        boxes_filt = gsam_predictor.boxes_filt
         with mask_json.open("wt") as f:
             json.dump(to_json(pred_phrases, boxes_filt), f)
         t7 = cv2.getTickCount()
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
-        t4 = cv2.getTickCount()
+        t10 = cv2.getTickCount()
         blend_image = overlaid_image(boxes_filt, pred_phrases, cvimage, colorized)
         cv2.imwrite(str(output_dir / f"{filename_stem}_sam.jpg"), blend_image)
-        t5 = cv2.getTickCount()
-        used_time["save_sam"] = (t5 - t4) / cv2.getTickFrequency()
+        t11 = cv2.getTickCount()
+        used_time["save_sam"] = (t11 - t10) / cv2.getTickFrequency()
 
         print(f"{used_time=}")
         cv2.imshow("output", blend_image)

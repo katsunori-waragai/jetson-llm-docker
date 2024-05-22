@@ -196,14 +196,24 @@ def modify_boxes_filter(boxes_filt, W: int, H: int):
 class GroundedSAMPredictor:
     # GroundingDino のPredictor
     # SAMのPredictor
+    config_file: str = "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
+    grounded_checkpoint: str = "groundingdino_swint_ogc.pth"
+    device: str = "cuda"
+    sam_version: str = "vit_h"
+    use_sam_hq: bool = False
+    sam_checkpoint: str = "sam_vit_h_4b8939.pth"
+    sam_hq_checkpoint: str = "sam_vit_h_4b8939.pth"  # dummy
+    text_prompt: str = "arm . cup . keyboard . table . plate . bottle . PC . person"
+    box_threshold: float = 0.3
+    text_threshold: float = 0.25
 
     def __post_init__(self):
         # 各modelの設定をする。
-        self.model = load_model(config_file, grounded_checkpoint, device=device)
+        self.model = load_model(self.config_file, self.grounded_checkpoint, device=self.device)
         # initialize SAM
-        sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-        self.sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
-        self.transorm = T.Compose(
+        sam_ckp = self.sam_hq_checkpoint if self.use_sam_hq else self.sam_checkpoint
+        self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
+        self.transform = T.Compose(
         [
             T.RandomResize([800], max_size=1333),
             T.ToTensor(),
@@ -211,14 +221,42 @@ class GroundedSAMPredictor:
         ]
     )
 
-    def infer_all(self, cvimage):
+    def infer_all(self, cvimage: np.ndarray):
+        used = {}
+        image_pil = cv2pil(cvimage)
+        H, W = cvimage.shape[:2]
+        torch_image, _ = self.transform(image_pil, None)  # 3, h, w
         # Dinoによる検出
+        t0 = cv2.getTickCount()
+        boxes_filt, pred_phrases = get_grounding_output(
+            self.model, torch_image, self.text_prompt, self.box_threshold, self.text_threshold, device=self.device
+        )
+        boxes_filt = modify_boxes_filter(boxes_filt, W, H)
+        t1 = cv2.getTickCount()
+        used["grounding"] = (t1 - t0) / cv2.getTickFrequency()
         # その検出結果を用いたセグメンテーション
-        # 検出結果はデータメンバーとして保持する。
-        pass
+        t2 = cv2.getTickCount()
+        if pred_phrases:
+            self.sam_predictor.set_image(cvimage)
+            transformed_boxes = self.sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(self.device)
+            masks, _, _ = self.sam_predictor.predict_torch(
+                point_coords = None,
+                point_labels = None,
+                boxes = transformed_boxes.to(self.device),
+                multimask_output = False,
+            )
+        else:
+            C = len(pred_phrases)
+            masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
 
-    def save(self):
-        pass
+        t3 = cv2.getTickCount()
+        used["sam"] = (t3 - t2) / cv2.getTickFrequency()
+
+        # 検出結果はデータメンバーとして保持する。
+        self.pred_phrases = pred_phrases
+        self.masks = masks
+        self.boxes_filt = boxes_filt
+        self.colorized = colorize(gen_mask_img(masks).numpy())
 
 if __name__ == "__main__":
 
@@ -267,19 +305,7 @@ if __name__ == "__main__":
 
     output_dir.mkdir(exist_ok=True)
 
-    model = load_model(config_file, grounded_checkpoint, device=device)
-    # initialize SAM
-    sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-    sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
-
-    # 学習済みのモデルに依存することに注意
-    transform = T.Compose(
-        [
-            T.RandomResize([800], max_size=1333),
-            T.ToTensor(),
-            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ]
-    )
+    gsam_predictor = GroundedSAMPredictor()
 
     image_path_list = list(Path(image_dir).glob("*.jpg"))
     for p in image_path_list:
@@ -288,47 +314,23 @@ if __name__ == "__main__":
     for image_path in sorted(image_path_list):
         # 入力をopencv に変更すること
         cvimage = cv2.imread(str(image_path))
-        image_pil = cv2pil(cvimage)
-#        image_pil = Image.open(image_path).convert("RGB")  # load image
+        gsam_predictor.infer_all(cvimage)
 
-        W, H = image_pil.size[:2]
         image_path_stem = image_path.stem.replace(" ", "_")
-        image_pil.save(output_dir / f"{image_path_stem}_raw.jpg")
+        cv2.imwrite(str(output_dir / f"{image_path_stem}_raw.jpg"), cvimage)
 
         # run grounding dino model
-        t0 = cv2.getTickCount()
-        torch_image, _ = transform(image_pil, None)  # 3, h, w
-        boxes_filt, pred_phrases = get_grounding_output(
-            model, torch_image, text_prompt, box_threshold, text_threshold, device=device
-        )
-        boxes_filt = modify_boxes_filter(boxes_filt, W, H)
-        t1 = cv2.getTickCount()
         used_time = {}
-        used_time["grounding"] = (t1 - t0) / cv2.getTickFrequency()
-        # cvimage = pil2cv(image_pil)
 
-        t2 = cv2.getTickCount()
-        if pred_phrases:
-            sam_predictor.set_image(cvimage)
-            transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
-            masks, _, _ = sam_predictor.predict_torch(
-                point_coords = None,
-                point_labels = None,
-                boxes = transformed_boxes.to(device),
-                multimask_output = False,
-            )
-        else:
-            C = len(pred_phrases)
-            masks = torch.from_numpy(np.full((C, H, W), False, dtype=np.bool))
-        t3 = cv2.getTickCount()
-        used_time["sam"] = (t3 - t2) / cv2.getTickFrequency()
-
+        masks = gsam_predictor.masks
 
         t6 = cv2.getTickCount()
         colorized = colorize(gen_mask_img(masks).numpy())
         output_mask_jpg = output_dir / f"{image_path_stem}_mask.jpg"
         cv2.imwrite(str(output_mask_jpg), colorized)
         mask_json = output_mask_jpg.with_suffix(".json")
+        pred_phrases = gsam_predictor.pred_phrases
+        boxes_filt = gsam_predictor.boxes_filt
         with mask_json.open("wt") as f:
             json.dump(to_json(pred_phrases, boxes_filt), f)
         t7 = cv2.getTickCount()
