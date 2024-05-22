@@ -80,13 +80,13 @@ if __name__ == "__main__":
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     counter = 0
     while True:
-        r, cvimg = cap.read()
-        if cvimg is None:
+        r, cvimage = cap.read()
+        if cvimage is None:
             continue
 
         counter += 1
-        [h, w] = cvimg.shape[:2]
-        cvimg = cvimg[:, : w //2,  :]
+        [h, w] = cvimage.shape[:2]
+        cvimage = cvimage[:, : w //2,  :]
 
         gsam_predictor.infer_all(cvimage)
         filename_stem = f"captured_{counter:04d}"
