@@ -2,18 +2,11 @@ import argparse
 import os
 import sys
 from pathlib import Path
-from dataclasses import dataclass
 from typing import List, Dict
 
 import numpy as np
 import cv2
-import json
-import torch
-from PIL import Image
-from grounded_sam_demo_my import *
-
-sys.path.append(os.path.join(os.getcwd(), "GroundingDINO"))
-sys.path.append(os.path.join(os.getcwd(), "segment_anything"))
+from grounded_sam_demo_my import GroundedSAMPredictor
 
 
 if __name__ == "__main__":
