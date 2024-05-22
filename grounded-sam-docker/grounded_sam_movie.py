@@ -7,7 +7,7 @@ import json
 
 import numpy as np
 import cv2
-from grounded_sam_demo_my import GroundedSAMPredictor, colorize, overlaid_image, gen_mask_img
+from grounded_sam_demo_my import GroundedSAMPredictor, colorize, overlaid_image, gen_mask_img, to_json
 
 
 if __name__ == "__main__":
