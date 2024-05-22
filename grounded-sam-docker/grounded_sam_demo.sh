@@ -13,7 +13,7 @@ if [ ! -f ${name} ] ; then
    exit
 fi
   
-echo python3 grounded_sam_demo.py \
+echo python3 gsam.py \
    --input_image ${name} \
    --output_dir "outputs" \
    --box_threshold 0.3   --text_threshold 0.25 \
