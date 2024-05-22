@@ -74,7 +74,7 @@ if __name__ == "__main__":
         cv2.imwrite(str(output_dir / f"{filename_stem}_raw.jpg"), cvimage)
 
         # run grounding dino model
-        used_time = {}
+        used_time = gsam_predictor.used.copy()
 
         masks = gsam_predictor.masks
 

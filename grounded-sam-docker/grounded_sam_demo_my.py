@@ -4,7 +4,6 @@ import sys
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Dict
-import inspect
 
 import numpy as np
 import cv2
@@ -157,9 +156,7 @@ def get_grounding_output(model, torch_image, caption, box_threshold, text_thresh
 
 
 def gen_mask_img(mask_list: torch.Tensor, background_value=0) -> torch.Tensor:
-    print(f"{type(mask_list)=}")
     mask_img = torch.zeros(mask_list.shape[-2:])
-    print(f"{type(mask_img)=}")
     for idx, mask in enumerate(mask_list):
         mask_img[mask.cpu().numpy()[0] == True] = background_value + idx + 1
     return mask_img
@@ -257,6 +254,7 @@ class GroundedSAMPredictor:
         self.masks = masks
         self.boxes_filt = boxes_filt
         self.colorized = colorize(gen_mask_img(masks).numpy())
+        self.used = used
 
 if __name__ == "__main__":
 
@@ -312,15 +310,13 @@ if __name__ == "__main__":
         print(p)
 
     for image_path in sorted(image_path_list):
-        # 入力をopencv に変更すること
         cvimage = cv2.imread(str(image_path))
         gsam_predictor.infer_all(cvimage)
 
         image_path_stem = image_path.stem.replace(" ", "_")
         cv2.imwrite(str(output_dir / f"{image_path_stem}_raw.jpg"), cvimage)
 
-        # run grounding dino model
-        used_time = {}
+        used_time = gsam_predictor.used.copy()
 
         masks = gsam_predictor.masks
 
