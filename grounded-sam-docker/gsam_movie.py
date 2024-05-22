@@ -20,14 +20,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
-
     parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
-
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
-
     output_dir.mkdir(exist_ok=True)
 
     gsam_predictor = GroundedSAMPredictor(text_prompt=args.text_prompt,
@@ -51,7 +48,6 @@ if __name__ == "__main__":
         filename_stem = f"captured_{counter:04d}"
         cv2.imwrite(str(output_dir / f"{filename_stem}_raw.jpg"), cvimage)
 
-        # run grounding dino model
         used_time = gsam_predictor.used.copy()
 
         masks = gsam_predictor.masks

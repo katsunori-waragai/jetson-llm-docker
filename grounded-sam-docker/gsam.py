@@ -218,7 +218,6 @@ class GroundedSAMPredictor:
         image_pil = cv2pil(cvimage)
         H, W = cvimage.shape[:2]
         torch_image, _ = self.transform(image_pil, None)  # 3, h, w
-        # Dinoによる検出
         t0 = cv2.getTickCount()
         boxes_filt, pred_phrases = _get_grounding_output(
             self.dino_model, torch_image, self.text_prompt, self.box_threshold, self.text_threshold, device=self.device
@@ -226,7 +225,6 @@ class GroundedSAMPredictor:
         boxes_filt = modify_boxes_filter(boxes_filt, W, H)
         t1 = cv2.getTickCount()
         used["grounding"] = (t1 - t0) / cv2.getTickFrequency()
-        # その検出結果を用いたセグメンテーション
         t2 = cv2.getTickCount()
         if pred_phrases:
             self.sam_predictor.set_image(cvimage)
@@ -262,15 +260,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
-
     parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
-
     args = parser.parse_args()
 
     image_dir = Path(args.image_dir)
     output_dir = Path(args.output_dir)
-
     output_dir.mkdir(exist_ok=True)
 
     gsam_predictor = GroundedSAMPredictor(text_prompt=args.text_prompt,
