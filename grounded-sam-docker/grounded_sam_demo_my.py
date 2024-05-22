@@ -195,13 +195,13 @@ def modify_boxes_filter(boxes_filt, W: int, H: int):
 class GroundedSAMPredictor:
     # GroundingDino のPredictor
     # SAMのPredictor
-    config_file: str = "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
-    grounded_checkpoint: str = "groundingdino_swint_ogc.pth"
+    config_file: str = str(FOLDER_ROOT / "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
+    grounded_checkpoint: str = str(FOLDER_ROOT / "groundingdino_swint_ogc.pth")
     device: str = "cuda"
     sam_version: str = "vit_h"
     use_sam_hq: bool = False
-    sam_checkpoint: str = "sam_vit_h_4b8939.pth"
-    sam_hq_checkpoint: str = "sam_vit_h_4b8939.pth"  # dummy
+    sam_checkpoint: str = str(FOLDER_ROOT / "sam_vit_h_4b8939.pth")
+    sam_hq_checkpoint: str = str(FOLDER_ROOT / "sam_vit_h_4b8939.pth") # dummy
     text_prompt: str = "arm . cup . keyboard . table . plate . bottle . PC . person"
     box_threshold: float = 0.3
     text_threshold: float = 0.25
