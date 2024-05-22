@@ -7,7 +7,7 @@ import json
 
 import numpy as np
 import cv2
-from grounded_sam_demo_my import GroundedSAMPredictor, colorize, overlaid_image, gen_mask_img, to_json
+from gsam import GroundedSAMPredictor, colorize, overlay_image, gen_mask_img, to_json
 
 
 if __name__ == "__main__":
@@ -69,7 +69,7 @@ if __name__ == "__main__":
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
         t10 = cv2.getTickCount()
-        blend_image = overlaid_image(boxes_filt, pred_phrases, cvimage, colorized)
+        blend_image = overlay_image(boxes_filt, pred_phrases, cvimage, colorized)
         cv2.imwrite(str(output_dir / f"{filename_stem}_sam.jpg"), blend_image)
         t11 = cv2.getTickCount()
         used_time["save_sam"] = (t11 - t10) / cv2.getTickFrequency()
