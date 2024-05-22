@@ -157,9 +157,7 @@ def get_grounding_output(model, torch_image, caption, box_threshold, text_thresh
 
 
 def gen_mask_img(mask_list: torch.Tensor, background_value=0) -> torch.Tensor:
-    print(f"{type(mask_list)=}")
     mask_img = torch.zeros(mask_list.shape[-2:])
-    print(f"{type(mask_img)=}")
     for idx, mask in enumerate(mask_list):
         mask_img[mask.cpu().numpy()[0] == True] = background_value + idx + 1
     return mask_img
