@@ -34,7 +34,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # cfg
-    config_file = args.config  # change the path of the model config file
     sam_version = args.sam_version
     sam_hq_checkpoint = args.sam_hq_checkpoint
     use_sam_hq = args.use_sam_hq
