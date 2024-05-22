@@ -166,7 +166,7 @@ def gen_mask_img(mask_list: torch.Tensor, background_value=0) -> torch.Tensor:
 
 def overlaid_image(boxes_filt: List, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray) -> np.ndarray:
     assert colorized.shape[2] == 3
-    alpha = 0.5
+    alpha = 0.3
     print(f"{colorized.shape=}")
     assert colorized.shape[2] == 3
     blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=np.uint8)
