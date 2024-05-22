@@ -224,13 +224,12 @@ class GroundedSAMPredictor:
     def infer_all(self, cvimage: np.ndarray):
         used = {}
         image_pil = cv2pil(cvimage)
-        device = self.device
         H, W = cvimage.shape[:2]
         torch_image, _ = self.transform(image_pil, None)  # 3, h, w
         # Dinoによる検出
         t0 = cv2.getTickCount()
         boxes_filt, pred_phrases = get_grounding_output(
-            self.model, torch_image, self.text_prompt, self.box_threshold, self.text_threshold, device=device
+            self.model, torch_image, self.text_prompt, self.box_threshold, self.text_threshold, device=self.device
         )
         boxes_filt = modify_boxes_filter(boxes_filt, W, H)
         t1 = cv2.getTickCount()
@@ -239,11 +238,11 @@ class GroundedSAMPredictor:
         t2 = cv2.getTickCount()
         if pred_phrases:
             self.sam_predictor.set_image(cvimage)
-            transformed_boxes = self.sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(device)
+            transformed_boxes = self.sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(self.device)
             masks, _, _ = self.sam_predictor.predict_torch(
                 point_coords = None,
                 point_labels = None,
-                boxes = transformed_boxes.to(device),
+                boxes = transformed_boxes.to(self.device),
                 multimask_output = False,
             )
         else:
@@ -305,11 +304,6 @@ if __name__ == "__main__":
     device = args.device
 
     output_dir.mkdir(exist_ok=True)
-
-    # model = load_model(config_file, grounded_checkpoint, device=device)
-    # initialize SAM
-    # sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-    # sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
 
     gsam_predictor = GroundedSAMPredictor()
 
