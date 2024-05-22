@@ -89,8 +89,9 @@ if __name__ == "__main__":
         cvimg = cvimg[:, : w //2,  :]
 
         gsam_predictor.infer_all(cvimage)
+        filename_stem = f"captured_{counter:04d}"
         image_path_stem = image_path.stem.replace(" ", "_")
-        cv2.imwrite(str(output_dir / f"{image_path_stem}_raw.jpg"), cvimage)
+        cv2.imwrite(str(output_dir / f"{filename_stem}_raw.jpg"), cvimage)
 
         # run grounding dino model
         used_time = {}
@@ -99,7 +100,7 @@ if __name__ == "__main__":
 
         t6 = cv2.getTickCount()
         colorized = colorize(gen_mask_img(masks).numpy())
-        output_mask_jpg = output_dir / f"{image_path_stem}_mask.jpg"
+        output_mask_jpg = output_dir / f"{filename_stem}_mask.jpg"
         cv2.imwrite(str(output_mask_jpg), colorized)
         mask_json = output_mask_jpg.with_suffix(".json")
         pred_phrases = gsam_predictor.pred_phrases
@@ -111,7 +112,7 @@ if __name__ == "__main__":
 
         t10 = cv2.getTickCount()
         blend_image = overlaid_image(boxes_filt, pred_phrases, cvimage, colorized)
-        cv2.imwrite(str(output_dir / f"{image_path_stem}_sam.jpg"), blend_image)
+        cv2.imwrite(str(output_dir / f"{filename_stem}_sam.jpg"), blend_image)
         t11 = cv2.getTickCount()
         used_time["save_sam"] = (t11 - t10) / cv2.getTickFrequency()
 
