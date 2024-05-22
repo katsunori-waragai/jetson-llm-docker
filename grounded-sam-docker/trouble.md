@@ -12,17 +12,17 @@
 - [x] `from some import *` はなくすこと。
 - [x] 実行ディレクトリを制約しないように書き換えること
 - [x] argsの処理をclass に反映させよう。
+- [x] dino とsamの区別がつきやすい識別子にすること。
+- [x] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
 - [] sam が標準のsamを使っているのをnanoSAMを使うように改変して処理時間を減らそう。
 - [] ファイルへの保存なしという選択もできるようにAPIを変更しよう。
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
 - [] PIL.Image はAPIのインタフェースから外す。
-- [] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
 - [] testをきちんとtestにしよう。
-- [] dino とsamの区別がつきやすい識別子にすること。
 - [] sam_hq_vit_h.pth をdownload して使えるようにすること
-- [] --input_image を使用している従来のスクリプトが使えていない。
 - huggingface からダウンロードできる。
 - https://huggingface.co/lkeab/hq-sam/tree/main
+- [] --input_image を使用している従来のスクリプトが使えていない。
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
