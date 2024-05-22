@@ -278,7 +278,6 @@ if __name__ == "__main__":
 
     # cfg
     sam_hq_checkpoint = args.sam_hq_checkpoint
-    use_sam_hq = args.use_sam_hq
     image_dir = Path(args.image_dir)
     output_dir = Path(args.output_dir)
 
@@ -287,7 +286,8 @@ if __name__ == "__main__":
     gsam_predictor = GroundedSAMPredictor(text_prompt=args.text_prompt,
                                           text_threshold=args.text_threshold,
                                           box_threshold=args.box_threshold,
-                                          device=args.device
+                                          device=args.device,
+                                          use_sam_hq=args.use_sam_hq
                                           )
 
     image_path_list = list(Path(image_dir).glob("*.jpg"))
