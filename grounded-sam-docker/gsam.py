@@ -121,15 +121,15 @@ def load_dino_model(model_config_path, model_checkpoint_path, device):
     return model
 
 
-def get_grounding_output(model, torch_image, caption, box_threshold, text_threshold, with_logits=True, device="cpu"):
+def get_grounding_output(dino_model, torch_image, caption, box_threshold, text_threshold, with_logits=True, device="cpu"):
     caption = caption.lower()
     caption = caption.strip()
     if not caption.endswith("."):
         caption = caption + "."
-    model = model.to(device)
+    dino_model = dino_model.to(device)
     torch_image = torch_image.to(device)
     with torch.no_grad():
-        outputs = model(torch_image[None], captions=[caption])
+        outputs = dino_model(torch_image[None], captions=[caption])
     logits = outputs["pred_logits"].cpu().sigmoid()[0]  # (nq, 256)
     boxes = outputs["pred_boxes"].cpu()[0]  # (nq, 4)
     logits.shape[0]
@@ -143,7 +143,7 @@ def get_grounding_output(model, torch_image, caption, box_threshold, text_thresh
     logits_filt.shape[0]
 
     # get phrase
-    tokenlizer = model.tokenizer
+    tokenlizer = dino_model.tokenizer
     tokenized = tokenlizer(caption)
     # build pred
     pred_phrases = []
