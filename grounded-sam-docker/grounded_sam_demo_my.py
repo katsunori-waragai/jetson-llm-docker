@@ -13,8 +13,8 @@ from PIL import Image
 
 FOLDER_ROOT = Path(__file__).resolve().parent
 
-sys.path.append(str(FOLDER_ROOT), "GroundingDINO")
-sys.path.append(str(FOLDER_ROOT), "segment_anything")
+sys.path.append(str(FOLDER_ROOT / "GroundingDINO"))
+sys.path.append(str(FOLDER_ROOT / "segment_anything"))
 
 
 # Grounding DINO
