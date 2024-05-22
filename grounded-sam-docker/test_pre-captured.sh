@@ -9,6 +9,6 @@ fi
 echo "start grounded Dino"
 python3 grounded_sam_demo_my.py \
    --image_dir ${CAPTURED_FOLDER} \
-   --output_dir "outputs_captured" \
+   --output_dir "outputs_${CAPTURED_FOLDER}" \
    --box_threshold 0.3   --text_threshold 0.25 \
    --text_prompt "arm . cup . keyboard . table " \
