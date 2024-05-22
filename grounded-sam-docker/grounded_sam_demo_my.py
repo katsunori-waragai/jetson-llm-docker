@@ -83,7 +83,7 @@ def colorize(segmentation_result: np.ndarray) -> np.ndarray:
     color_image = np.zeros((height, width, 3), dtype=np.uint8)
     num_colors = len(COLOR_MAP)
     maxint = int(np.max(segmentation_result.flatten()))
-    for i in range(maxint):
+    for i in range(maxint + 1):
         color_image[segmentation_result == i] = COLOR_MAP[i % num_colors]
     return color_image
 
