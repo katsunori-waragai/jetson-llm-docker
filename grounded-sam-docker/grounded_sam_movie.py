@@ -61,19 +61,6 @@ if __name__ == "__main__":
 
     output_dir.mkdir(exist_ok=True)
 
-    # model = load_model(config_file, grounded_checkpoint, device=device)
-    # # initialize SAM
-    # sam_ckp = sam_hq_checkpoint if use_sam_hq else sam_checkpoint
-    # sam_predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_ckp).to(device))
-    #
-    # transform = T.Compose(
-    #     [
-    #         T.RandomResize([800], max_size=1333),
-    #         T.ToTensor(),
-    #         T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-    #     ]
-    # )
-
     gsam_predictor = GroundedSAMPredictor()
 
     cap = cv2.VideoCapture(0)
