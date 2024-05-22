@@ -273,7 +273,6 @@ if __name__ == "__main__":
     parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
 
-    parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
     args = parser.parse_args()
 
     image_dir = Path(args.image_dir)
@@ -284,7 +283,6 @@ if __name__ == "__main__":
     gsam_predictor = GroundedSAMPredictor(text_prompt=args.text_prompt,
                                           text_threshold=args.text_threshold,
                                           box_threshold=args.box_threshold,
-                                          device=args.device,
                                           use_sam_hq=args.use_sam_hq
                                           )
 
