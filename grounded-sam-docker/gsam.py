@@ -55,7 +55,6 @@ COLOR_MAP = {
     17: [240, 128, 128],  # ライトコーラル
     18: [244, 164, 96],  # サドルブラウン
     19: [60, 179, 113],  # ミディアムシーブルー
-    # 0: [113, 60, 179],  # unknown color
 }
 
 
@@ -111,7 +110,7 @@ def cv2pil(image: np.ndarray) -> Image:
     return new_image
 
 
-def load_model(model_config_path, model_checkpoint_path, device):
+def load_dino_model(model_config_path, model_checkpoint_path, device):
     args = SLConfig.fromfile(model_config_path)
     args.device = device
     model = build_model(args)
@@ -165,11 +164,7 @@ def gen_mask_img(mask_list: torch.Tensor, background_value=0) -> torch.Tensor:
     return mask_img
 
 
-def overlaid_image(boxes_filt: List, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray) -> np.ndarray:
-    assert colorized.shape[2] == 3
-    alpha = 0.3
-    print(f"{colorized.shape=}")
-    assert colorized.shape[2] == 3
+def overlay_image(boxes_filt: List, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray, alpha=0.3) -> np.ndarray:
     blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=np.uint8)
     for box, label in zip(boxes_filt, pred_phrases):
         print(f"{box=} {label=}")
@@ -196,8 +191,8 @@ def modify_boxes_filter(boxes_filt, W: int, H: int):
 class GroundedSAMPredictor:
     # GroundingDino のPredictor
     # SAMのPredictor
-    config_file: str = str(FOLDER_ROOT / "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
-    grounded_checkpoint: str = str(FOLDER_ROOT / "groundingdino_swint_ogc.pth")
+    dino_config_file: str = str(FOLDER_ROOT / "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
+    dino_checkpoint: str = str(FOLDER_ROOT / "groundingdino_swint_ogc.pth")
     device: str = "cuda"
     sam_version: str = "vit_h"  # "SAM ViT version: vit_b / vit_l / vit_h"
     use_sam_hq: bool = False
@@ -209,7 +204,7 @@ class GroundedSAMPredictor:
 
     def __post_init__(self):
         # 各modelの設定をする。
-        self.model = load_model(self.config_file, self.grounded_checkpoint, device=self.device)
+        self.model = load_dino_model(self.dino_config_file, self.dino_checkpoint, device=self.device)
         # initialize SAM
         sam_ckp = self.sam_hq_checkpoint if self.use_sam_hq else self.sam_checkpoint
         self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
@@ -315,7 +310,7 @@ if __name__ == "__main__":
         used_time["save_mask"] = (t7 - t6) / cv2.getTickFrequency()
 
         t10 = cv2.getTickCount()
-        blend_image = overlaid_image(boxes_filt, pred_phrases, cvimage, colorized)
+        blend_image = overlay_image(boxes_filt, pred_phrases, cvimage, colorized)
         cv2.imwrite(str(output_dir / f"{image_path_stem}_sam.jpg"), blend_image)
         t11 = cv2.getTickCount()
         used_time["save_sam"] = (t11 - t10) / cv2.getTickFrequency()
