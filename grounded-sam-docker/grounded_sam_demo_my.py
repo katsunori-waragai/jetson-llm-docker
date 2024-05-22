@@ -303,7 +303,11 @@ if __name__ == "__main__":
 
     output_dir.mkdir(exist_ok=True)
 
-    gsam_predictor = GroundedSAMPredictor()
+    gsam_predictor = GroundedSAMPredictor(text_prompt=text_prompt,
+                                          text_threshold=text_threshold,
+                                          box_threshold=box_threshold,
+                                          device=device
+                                          )
 
     image_path_list = list(Path(image_dir).glob("*.jpg"))
     for p in image_path_list:
