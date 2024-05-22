@@ -23,7 +23,27 @@ USBカメラから画像を取得・保存して、その画像に対して、gr
 ### test_pre-captured.sh
 - capture済の画像をセグメンテーションする。
 
+### gsam.py
+```commandline
+python3 gsam.py -h
+usage: Grounded-Segment-Anything Demo [-h] [--use_sam_hq] --image_dir IMAGE_DIR --text_prompt TEXT_PROMPT --output_dir OUTPUT_DIR
+                                      [--box_threshold BOX_THRESHOLD] [--text_threshold TEXT_THRESHOLD]
 
+optional arguments:
+  -h, --help            show this help message and exit
+  --use_sam_hq          using sam-hq for prediction
+  --image_dir IMAGE_DIR
+                        path to image file
+  --text_prompt TEXT_PROMPT
+                        text prompt
+  --output_dir OUTPUT_DIR, -o OUTPUT_DIR
+                        output directory
+  --box_threshold BOX_THRESHOLD
+                        box threshold
+  --text_threshold TEXT_THRESHOLD
+                        text threshold
+
+```
 ## todo
 - use stable opencv-python
 
