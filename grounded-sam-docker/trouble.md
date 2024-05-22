@@ -20,6 +20,7 @@
 - [] testをきちんとtestにしよう。
 - [] dino とsamの区別がつきやすい識別子にすること。
 - [] sam_hq_vit_h.pth をdownload して使えるようにすること
+- [] --input_image を使用している従来のスクリプトが使えていない。
 - huggingface からダウンロードできる。
 - https://huggingface.co/lkeab/hq-sam/tree/main
 ```commandline
