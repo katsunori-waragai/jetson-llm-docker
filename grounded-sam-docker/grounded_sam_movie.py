@@ -90,7 +90,6 @@ if __name__ == "__main__":
 
         gsam_predictor.infer_all(cvimage)
         filename_stem = f"captured_{counter:04d}"
-        image_path_stem = image_path.stem.replace(" ", "_")
         cv2.imwrite(str(output_dir / f"{filename_stem}_raw.jpg"), cvimage)
 
         # run grounding dino model
