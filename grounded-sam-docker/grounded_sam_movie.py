@@ -14,9 +14,6 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
     parser.add_argument(
-        "--sam_hq_checkpoint", type=str, default=None, help="path to sam-hq checkpoint file"
-    )
-    parser.add_argument(
         "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
     )
     parser.add_argument("--text_prompt", type=str, required=True, help="text prompt")
