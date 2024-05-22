@@ -3,10 +3,11 @@ import os
 import sys
 from pathlib import Path
 from typing import List, Dict
+import json
 
 import numpy as np
 import cv2
-from grounded_sam_demo_my import GroundedSAMPredictor
+from grounded_sam_demo_my import GroundedSAMPredictor, colorize, overlaid_image
 
 
 if __name__ == "__main__":
