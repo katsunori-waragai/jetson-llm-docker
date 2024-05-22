@@ -17,6 +17,7 @@
 - [] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
 - [] argsの処理をclass に反映させよう。
 - [] testをきちんとtestにしよう。
+- [] dino とsamの区別がつきやすい識別子にすること。
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
