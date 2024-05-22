@@ -201,7 +201,7 @@ class GroundedSAMPredictor:
     sam_version: str = "vit_h"  # "SAM ViT version: vit_b / vit_l / vit_h"
     use_sam_hq: bool = False
     sam_checkpoint: str = str(FOLDER_ROOT / "sam_vit_h_4b8939.pth")
-    sam_hq_checkpoint: str = str(FOLDER_ROOT / "sam_vit_h_4b8939.pth") # dummy
+    sam_hq_checkpoint: str = str(FOLDER_ROOT / "sam_hq_vit_h.pth") #
     text_prompt: str = "arm . cup . keyboard . table . plate . bottle . PC . person"
     box_threshold: float = 0.3
     text_threshold: float = 0.25
