@@ -110,7 +110,7 @@ def cv2pil(image: np.ndarray) -> Image:
     return new_image
 
 
-def load_dino_model(model_config_path, model_checkpoint_path, device):
+def _load_dino_model(model_config_path, model_checkpoint_path, device):
     args = SLConfig.fromfile(model_config_path)
     args.device = device
     model = build_model(args)
@@ -121,7 +121,7 @@ def load_dino_model(model_config_path, model_checkpoint_path, device):
     return model
 
 
-def get_grounding_output(dino_model, torch_image, caption, box_threshold, text_threshold, with_logits=True, device="cpu"):
+def _get_grounding_output(dino_model, torch_image, caption, box_threshold, text_threshold, with_logits=True, device="cpu"):
     caption = caption.lower()
     caption = caption.strip()
     if not caption.endswith("."):
@@ -204,7 +204,7 @@ class GroundedSAMPredictor:
 
     def __post_init__(self):
         # 各modelの設定をする。
-        self.dino_model = load_dino_model(self.dino_config_file, self.dino_checkpoint, device=self.device)
+        self.dino_model = _load_dino_model(self.dino_config_file, self.dino_checkpoint, device=self.device)
         # initialize SAM
         sam_ckp = self.sam_hq_checkpoint if self.use_sam_hq else self.sam_checkpoint
         self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
@@ -223,7 +223,7 @@ class GroundedSAMPredictor:
         torch_image, _ = self.transform(image_pil, None)  # 3, h, w
         # Dinoによる検出
         t0 = cv2.getTickCount()
-        boxes_filt, pred_phrases = get_grounding_output(
+        boxes_filt, pred_phrases = _get_grounding_output(
             self.dino_model, torch_image, self.text_prompt, self.box_threshold, self.text_threshold, device=self.device
         )
         boxes_filt = modify_boxes_filter(boxes_filt, W, H)
