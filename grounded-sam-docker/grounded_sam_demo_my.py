@@ -284,7 +284,6 @@ if __name__ == "__main__":
 
     # cfg
     sam_version = args.sam_version
-    sam_checkpoint = args.sam_checkpoint
     sam_hq_checkpoint = args.sam_hq_checkpoint
     use_sam_hq = args.use_sam_hq
     image_dir = Path(args.image_dir)
