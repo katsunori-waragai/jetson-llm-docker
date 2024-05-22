@@ -13,19 +13,6 @@ from grounded_sam_demo_my import GroundedSAMPredictor, colorize, overlaid_image,
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
-    parser.add_argument("--config", type=str, required=True, help="path to config file")
-    parser.add_argument(
-        "--grounded_checkpoint", type=str, required=True, help="path to checkpoint file"
-    )
-    parser.add_argument(
-        "--sam_version", type=str, default="vit_h", required=False, help="SAM ViT version: vit_b / vit_l / vit_h"
-    )
-    parser.add_argument(
-        "--sam_checkpoint", type=str, required=False, help="path to sam checkpoint file"
-    )
-    parser.add_argument(
-        "--sam_hq_checkpoint", type=str, default=None, help="path to sam-hq checkpoint file"
-    )
     parser.add_argument(
         "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
     )
@@ -40,13 +27,6 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
     args = parser.parse_args()
 
-    # cfg
-    config_file = args.config  # change the path of the model config file
-    grounded_checkpoint = args.grounded_checkpoint  # change the path of the model
-    sam_version = args.sam_version
-    sam_checkpoint = args.sam_checkpoint
-    sam_hq_checkpoint = args.sam_hq_checkpoint
-    use_sam_hq = args.use_sam_hq
     output_dir = Path(args.output_dir)
 
     output_dir.mkdir(exist_ok=True)
@@ -54,9 +34,9 @@ if __name__ == "__main__":
     gsam_predictor = GroundedSAMPredictor(text_prompt=args.text_prompt,
                                           text_threshold=args.text_threshold,
                                           box_threshold=args.box_threshold,
-                                          device=args.device
+                                          device=args.device,
+                                          use_sam_hq=args.use_sam_hq
                                           )
-
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     counter = 0

@@ -11,8 +11,10 @@ import json
 import torch
 from PIL import Image
 
-sys.path.append(os.path.join(os.getcwd(), "GroundingDINO"))
-sys.path.append(os.path.join(os.getcwd(), "segment_anything"))
+FOLDER_ROOT = Path(__file__).resolve().parent
+
+sys.path.append(str(FOLDER_ROOT / "GroundingDINO"))
+sys.path.append(str(FOLDER_ROOT / "segment_anything"))
 
 
 # Grounding DINO
@@ -193,13 +195,13 @@ def modify_boxes_filter(boxes_filt, W: int, H: int):
 class GroundedSAMPredictor:
     # GroundingDino のPredictor
     # SAMのPredictor
-    config_file: str = "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
-    grounded_checkpoint: str = "groundingdino_swint_ogc.pth"
+    config_file: str = str(FOLDER_ROOT / "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
+    grounded_checkpoint: str = str(FOLDER_ROOT / "groundingdino_swint_ogc.pth")
     device: str = "cuda"
-    sam_version: str = "vit_h"
+    sam_version: str = "vit_h"  # "SAM ViT version: vit_b / vit_l / vit_h"
     use_sam_hq: bool = False
-    sam_checkpoint: str = "sam_vit_h_4b8939.pth"
-    sam_hq_checkpoint: str = "sam_vit_h_4b8939.pth"  # dummy
+    sam_checkpoint: str = str(FOLDER_ROOT / "sam_vit_h_4b8939.pth")
+    sam_hq_checkpoint: str = str(FOLDER_ROOT / "sam_hq_vit_h.pth") #
     text_prompt: str = "arm . cup . keyboard . table . plate . bottle . PC . person"
     box_threshold: float = 0.3
     text_threshold: float = 0.25
@@ -259,19 +261,6 @@ class GroundedSAMPredictor:
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
-    parser.add_argument("--config", type=str, required=True, help="path to config file")
-    parser.add_argument(
-        "--grounded_checkpoint", type=str, required=True, help="path to checkpoint file"
-    )
-    parser.add_argument(
-        "--sam_version", type=str, default="vit_h", required=False, help="SAM ViT version: vit_b / vit_l / vit_h"
-    )
-    parser.add_argument(
-        "--sam_checkpoint", type=str, required=False, help="path to sam checkpoint file"
-    )
-    parser.add_argument(
-        "--sam_hq_checkpoint", type=str, default=None, help="path to sam-hq checkpoint file"
-    )
     parser.add_argument(
         "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
     )
@@ -287,13 +276,6 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
     args = parser.parse_args()
 
-    # cfg
-    config_file = args.config  # change the path of the model config file
-    grounded_checkpoint = args.grounded_checkpoint  # change the path of the model
-    sam_version = args.sam_version
-    sam_checkpoint = args.sam_checkpoint
-    sam_hq_checkpoint = args.sam_hq_checkpoint
-    use_sam_hq = args.use_sam_hq
     image_dir = Path(args.image_dir)
     output_dir = Path(args.output_dir)
 
@@ -302,7 +284,8 @@ if __name__ == "__main__":
     gsam_predictor = GroundedSAMPredictor(text_prompt=args.text_prompt,
                                           text_threshold=args.text_threshold,
                                           box_threshold=args.box_threshold,
-                                          device=args.device
+                                          device=args.device,
+                                          use_sam_hq=args.use_sam_hq
                                           )
 
     image_path_list = list(Path(image_dir).glob("*.jpg"))

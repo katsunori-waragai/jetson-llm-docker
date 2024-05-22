@@ -7,9 +7,7 @@ else
   echo ${CAPTURED_FOLDER}/*.jpg | sed 's/ /\n/g'
 fi
 echo "start grounded Dino"
-python3 grounded_sam_demo_my.py   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-   --grounded_checkpoint groundingdino_swint_ogc.pth \
-   --sam_checkpoint sam_vit_h_4b8939.pth \
+python3 grounded_sam_demo_my.py \
    --image_dir ${CAPTURED_FOLDER} \
    --output_dir "outputs_captured" \
    --box_threshold 0.3   --text_threshold 0.25 \
