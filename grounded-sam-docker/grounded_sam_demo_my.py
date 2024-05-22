@@ -11,8 +11,10 @@ import json
 import torch
 from PIL import Image
 
-sys.path.append(os.path.join(os.getcwd(), "GroundingDINO"))
-sys.path.append(os.path.join(os.getcwd(), "segment_anything"))
+FOLDER_ROOT = Path(__file__).resolve().parent
+
+sys.path.append(str(FOLDER_ROOT), "GroundingDINO")
+sys.path.append(str(FOLDER_ROOT), "segment_anything")
 
 
 # Grounding DINO

@@ -18,6 +18,7 @@
 - [] argsの処理をclass に反映させよう。
 - [] testをきちんとtestにしよう。
 - [] dino とsamの区別がつきやすい識別子にすること。
+- [] 実行ディレクトリを制約しないように書き換えること
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
