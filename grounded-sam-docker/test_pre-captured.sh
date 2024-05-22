@@ -12,4 +12,3 @@ python3 grounded_sam_demo_my.py \
    --output_dir "outputs_captured" \
    --box_threshold 0.3   --text_threshold 0.25 \
    --text_prompt "arm . cup . keyboard . table " \
-   --device "cuda"
