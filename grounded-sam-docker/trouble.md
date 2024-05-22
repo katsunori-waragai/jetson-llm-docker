@@ -15,6 +15,7 @@
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
 - [] PIL.Image はAPIのインタフェースから外す。
 - [] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
+- [] argsの処理をclass に反映させよう。
 - [] testをきちんとtestにしよう。
 ```commandline
 outputs/demo1_mask.jpg

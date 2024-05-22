@@ -4,7 +4,6 @@ import sys
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Dict
-import inspect
 
 import numpy as np
 import cv2
@@ -311,14 +310,12 @@ if __name__ == "__main__":
         print(p)
 
     for image_path in sorted(image_path_list):
-        # 入力をopencv に変更すること
         cvimage = cv2.imread(str(image_path))
         gsam_predictor.infer_all(cvimage)
 
         image_path_stem = image_path.stem.replace(" ", "_")
         cv2.imwrite(str(output_dir / f"{image_path_stem}_raw.jpg"), cvimage)
 
-        # run grounding dino model
         used_time = gsam_predictor.used.copy()
 
         masks = gsam_predictor.masks
