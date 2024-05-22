@@ -19,6 +19,7 @@
 - [] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
 - [] testをきちんとtestにしよう。
 - [] dino とsamの区別がつきやすい識別子にすること。
+- [] sam_hq_vit_h.pth をdownload して使えるようにすること
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json

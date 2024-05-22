@@ -276,8 +276,6 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
     args = parser.parse_args()
 
-    # cfg
-    sam_hq_checkpoint = args.sam_hq_checkpoint
     image_dir = Path(args.image_dir)
     output_dir = Path(args.output_dir)
 

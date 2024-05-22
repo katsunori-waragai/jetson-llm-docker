@@ -27,9 +27,6 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
     args = parser.parse_args()
 
-    # cfg
-    sam_hq_checkpoint = args.sam_hq_checkpoint
-    use_sam_hq = args.use_sam_hq
     output_dir = Path(args.output_dir)
 
     output_dir.mkdir(exist_ok=True)
