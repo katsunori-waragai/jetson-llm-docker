@@ -30,9 +30,6 @@ from segment_anything import (
     sam_hq_model_registry,
     SamPredictor
 )
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
 
 COLOR_MAP = {
     0: [0, 0, 0],       # 黒
