@@ -224,7 +224,7 @@ class GroundedSAMPredictor:
     def infer_all(self, cvimage: np.ndarray):
         used = {}
         image_pil = cv2pil(cvimage)
-        device = self.devicegit
+        device = self.device
         H, W = cvimage.shape[:2]
         torch_image, _ = transform(image_pil, None)  # 3, h, w
         # Dinoによる検出
