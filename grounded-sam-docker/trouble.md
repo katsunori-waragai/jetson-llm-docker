@@ -10,15 +10,15 @@
 - [x] torch.Tensor をわかりやすくする。
 - [x] dataclass　を実装する。
 - [x] `from some import *` はなくすこと。
+- [x] 実行ディレクトリを制約しないように書き換えること
+- [x] argsの処理をclass に反映させよう。
 - [] sam が標準のsamを使っているのをnanoSAMを使うように改変して処理時間を減らそう。
 - [] ファイルへの保存なしという選択もできるようにAPIを変更しよう。
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
 - [] PIL.Image はAPIのインタフェースから外す。
 - [] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
-- [] argsの処理をclass に反映させよう。
 - [] testをきちんとtestにしよう。
 - [] dino とsamの区別がつきやすい識別子にすること。
-- [] 実行ディレクトリを制約しないように書き換えること
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
