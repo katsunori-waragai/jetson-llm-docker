@@ -198,7 +198,7 @@ class GroundedSAMPredictor:
     config_file: str = str(FOLDER_ROOT / "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
     grounded_checkpoint: str = str(FOLDER_ROOT / "groundingdino_swint_ogc.pth")
     device: str = "cuda"
-    sam_version: str = "vit_h"
+    sam_version: str = "vit_h"  # "SAM ViT version: vit_b / vit_l / vit_h"
     use_sam_hq: bool = False
     sam_checkpoint: str = str(FOLDER_ROOT / "sam_vit_h_4b8939.pth")
     sam_hq_checkpoint: str = str(FOLDER_ROOT / "sam_vit_h_4b8939.pth") # dummy
@@ -262,9 +262,6 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
     parser.add_argument(
-        "--sam_version", type=str, default="vit_h", required=False, help="SAM ViT version: vit_b / vit_l / vit_h"
-    )
-    parser.add_argument(
         "--sam_hq_checkpoint", type=str, default=None, help="path to sam-hq checkpoint file"
     )
     parser.add_argument(
@@ -283,7 +280,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # cfg
-    sam_version = args.sam_version
     sam_hq_checkpoint = args.sam_hq_checkpoint
     use_sam_hq = args.use_sam_hq
     image_dir = Path(args.image_dir)
