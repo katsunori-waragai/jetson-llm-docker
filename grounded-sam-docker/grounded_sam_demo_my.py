@@ -54,7 +54,8 @@ COLOR_MAP = {
     16: [75, 0, 130],  # インディゴ
     17: [240, 128, 128],  # ライトコーラル
     18: [244, 164, 96],  # サドルブラウン
-    19: [60, 179, 113]  # ミディアムシーブルー
+    19: [60, 179, 113],  # ミディアムシーブルー
+    # 0: [113, 60, 179],  # unknown color
 }
 
 
@@ -82,7 +83,7 @@ def colorize(segmentation_result: np.ndarray) -> np.ndarray:
     color_image = np.zeros((height, width, 3), dtype=np.uint8)
     num_colors = len(COLOR_MAP)
     maxint = int(np.max(segmentation_result.flatten()))
-    for i in range(maxint):
+    for i in range(maxint + 1):
         color_image[segmentation_result == i] = COLOR_MAP[i % num_colors]
     return color_image
 
@@ -166,7 +167,7 @@ def gen_mask_img(mask_list: torch.Tensor, background_value=0) -> torch.Tensor:
 
 def overlaid_image(boxes_filt: List, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray) -> np.ndarray:
     assert colorized.shape[2] == 3
-    alpha = 0.5
+    alpha = 0.3
     print(f"{colorized.shape=}")
     assert colorized.shape[2] == 3
     blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=np.uint8)
@@ -273,7 +274,6 @@ if __name__ == "__main__":
     parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
 
-    parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
     args = parser.parse_args()
 
     image_dir = Path(args.image_dir)
@@ -284,7 +284,6 @@ if __name__ == "__main__":
     gsam_predictor = GroundedSAMPredictor(text_prompt=args.text_prompt,
                                           text_threshold=args.text_threshold,
                                           box_threshold=args.box_threshold,
-                                          device=args.device,
                                           use_sam_hq=args.use_sam_hq
                                           )
 

@@ -20,6 +20,8 @@
 - [] testをきちんとtestにしよう。
 - [] dino とsamの区別がつきやすい識別子にすること。
 - [] sam_hq_vit_h.pth をdownload して使えるようにすること
+- huggingface からダウンロードできる。
+- https://huggingface.co/lkeab/hq-sam/tree/main
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
@@ -29,11 +31,9 @@ outputs/demo1_sam.jpg
 
 - 1枚の画像だけ処理するスクリプトはオーバーヘッドが大きすぎる。
 
-
-used_time={'grounding': 3.974650587, 'sam': 2.788701992, 'save_mask': 0.252452241, 'save_sam': 7.441547751, 'save_sam_blend': 0.107093193}
-used_time={'grounding': 0.730599378, 'sam': 1.840278247, 'save_mask': 0.373110757, 'save_sam': 7.586116283, 'save_sam_blend': 0.102947056}
-used_time={'grounding': 0.697567113, 'sam': 1.869858615, 'save_mask': 0.228883811, 'save_sam': 6.113102738, 'save_sam_blend': 0.128356961}
-used_time={'grounding': 0.679329176, 'sam': 1.85770102, 'save_mask': 0.255273111, 'save_sam': 7.080752494, 'save_sam_blend': 0.171673654}
-used_time={'grounding': 0.67732794, 'sam': 1.929674399, 'save_mask': 0.25038156, 'save_sam': 6.310392899, 'save_sam_blend': 0.128888416}
-used_time={'grounding': 0.670407028, 'sam': 1.962717893, 'save_mask': 0.229111996, 'save_sam': 4.959611013, 'save_sam_blend': 0.106903298}
-
+used_time={'grounding': 4.601885602, 'sam': 2.78923419, 'save_mask': 0.223663634, 'save_sam': 0.101654286}
+used_time={'grounding': 0.619241372, 'sam': 1.836635902, 'save_mask': 0.221149576, 'save_sam': 0.099712454}
+used_time={'grounding': 0.509424686, 'sam': 1.837601291, 'save_mask': 0.193354196, 'save_sam': 0.098929636}
+used_time={'grounding': 0.513645634, 'sam': 1.833863588, 'save_mask': 0.221209674, 'save_sam': 0.099474151}
+used_time={'grounding': 0.583415437, 'sam': 1.867050265, 'save_mask': 0.205879691, 'save_sam': 0.099982281}
+used_time={'grounding': 0.516912789, 'sam': 1.831642283, 'save_mask': 0.183015659, 'save_sam': 0.103907674}
