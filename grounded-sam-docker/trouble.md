@@ -7,14 +7,14 @@
 - [x] --image_dir を指定して入力フォルダ単位で処理するように改変した。
 - [x] cap.py も複数の画像を保存できるよう改変した。
 - [x] 後処理の時間がmatplotlibでかかりすぎているのを改善しよう。
+- [x] torch.Tensor をわかりやすくする。
+- [x] dataclass　を実装する。
+- [x] `from some import *` はなくすこと。
 - [] sam が標準のsamを使っているのをnanoSAMを使うように改変して処理時間を減らそう。
-- [] torch.Tensor をわかりやすくする。
 - [] ファイルへの保存なしという選択もできるようにAPIを変更しよう。
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
-- [] dataclass　を実装する。
 - [] PIL.Image はAPIのインタフェースから外す。
 - [] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
-- [] `from some import *` はなくすこと。
 - [] testをきちんとtestにしよう。
 ```commandline
 outputs/demo1_mask.jpg
