@@ -257,6 +257,7 @@ class GroundedSAMPredictor:
         self.masks = masks
         self.boxes_filt = boxes_filt
         self.colorized = colorize(gen_mask_img(masks).numpy())
+        self.used = used
 
 if __name__ == "__main__":
 
@@ -320,7 +321,7 @@ if __name__ == "__main__":
         cv2.imwrite(str(output_dir / f"{image_path_stem}_raw.jpg"), cvimage)
 
         # run grounding dino model
-        used_time = {}
+        used_time = gsam_predictor.used.copy()
 
         masks = gsam_predictor.masks
 
