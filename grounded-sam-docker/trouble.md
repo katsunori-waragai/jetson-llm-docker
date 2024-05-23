@@ -19,7 +19,13 @@
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
 - [] PIL.Image はAPIのインタフェースから外す。
 - [] testをきちんとtestにしよう。
+- [] use_sam_hq=Trueとすると、何が良くなるはずかを記載する。
+  - 木製のイスをセグメンテーションしている事例がある。 
+  - 標準のSAMの出力では、イスの隙間で地面の芝生が見えている領域までイスと同一のセグメンテーションになっている。 
+  - SAM-HQ Outputでは、イスの隙間越しに見える芝生の領域の多くが、イスのセグメンテーションから外れている。
+
 - [] sam_hq_vit_h.pth をdownload して使えるようにすること
+- https://github.com/SysCV/sam-hq#model-checkpoints
 - huggingface からダウンロードできる。
 - https://huggingface.co/lkeab/hq-sam/tree/main
 - [] --input_image を使用している従来のスクリプトが使えていない。
