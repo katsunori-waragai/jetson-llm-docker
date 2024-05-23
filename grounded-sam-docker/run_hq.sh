@@ -8,7 +8,7 @@ python3 grounded_sam_demo.py \
   --sam_hq_checkpoint ./sam_hq_vit_h.pth \
   --use_sam_hq \
   --input_image sam_hq_demo_image.png \
-  --output_dir "outputs" \
+  --output_dir "outputs_hq" \
   --box_threshold 0.3 \
   --text_threshold 0.25 \
   --text_prompt "chair." \

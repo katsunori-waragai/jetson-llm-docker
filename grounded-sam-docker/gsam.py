@@ -204,9 +204,6 @@ class GroundedSAMPredictor:
         self.dino_model = _load_dino_model(self.dino_config_file, self.dino_checkpoint, device=self.device)
         # initialize SAM
         sam_ckp = self.sam_hq_checkpoint if self.use_sam_hq else self.sam_checkpoint
-        print(f"{self.use_sam_hq=}")
-        print(f"{sam_ckp=}")
-        print(f"{Path(sam_ckp).is_file()=}")
         if self.use_sam_hq:
             self.sam_predictor = SamPredictor(sam_hq_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
         else:
