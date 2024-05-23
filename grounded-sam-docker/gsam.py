@@ -207,7 +207,10 @@ class GroundedSAMPredictor:
         print(f"{self.use_sam_hq=}")
         print(f"{sam_ckp=}")
         print(f"{Path(sam_ckp).is_file()=}")
-        self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
+        if self.use_sam_hq:
+            self.sam_predictor = SamPredictor(sam_hq_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
+        else:
+            self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
         self.transform = T.Compose(
         [
             T.RandomResize([800], max_size=1333),
