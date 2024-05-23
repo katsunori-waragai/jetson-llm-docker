@@ -8,6 +8,7 @@ else
 fi
 echo "start grounded Dino"
 python3 gsam.py \
+   --use_sam_hq \
    --image_dir ${CAPTURED_FOLDER} \
    --output_dir "outputs_captured" \
    --box_threshold 0.3   --text_threshold 0.25 \
