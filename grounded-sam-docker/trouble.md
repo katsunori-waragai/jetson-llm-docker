@@ -14,25 +14,29 @@
 - [x] argsの処理をclass に反映させよう。
 - [x] dino とsamの区別がつきやすい識別子にすること。
 - [x] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
-- [] sam が標準のsamを使っているのをnanoSAMを使うように改変して処理時間を減らそう。
-- [] ファイルへの保存なしという選択もできるようにAPIを変更しよう。
+- [x] png ファイルも入力に受け付ける。 
 - [x] use_sam_hq=Trueとすると、何が良くなるはずかを記載する。
   - 木製のイスをセグメンテーションしている事例がある。 
   - 標準のSAMの出力では、イスの隙間で地面の芝生が見えている領域までイスと同一のセグメンテーションになっている。 
   - SAM-HQ Outputでは、イスの隙間越しに見える芝生の領域の多くが、イスのセグメンテーションから外れている。
-- [x] png ファイルも入力に受け付ける。 
+- [x] sam_hq_vit_h.pth をdownload して使えるようにすること
+  - https://github.com/SysCV/sam-hq#model-checkpoints
+  - gdown --fuzzy https://drive.google.com/file/d/1qobFYrI4eyIANfBSmYcGuWRaSIXfMOQ8/view?usp=sharing
+  - 自分用のOneDrive sam_hq_vit_h.pth
+  - gdown --fuzzy https://drive.google.com/file/d/1XsTUFVy9o7vytZwf_zs-LR8UdZX1bmoU/view?usp=drive_link
+  - huggingface からダウンロードできる。
+  - https://huggingface.co/lkeab/hq-sam/tree/main
+
+- [] git clone を不要にしたい。
+- [] pip でインストール可能なモジュールに自作モジュールを改変したい。
+  - [] 連動して学習済みモデルのおく場所もpip でのインストール先に変更したい。
+- [] testをきちんとtestにしよう。
+- [] sam が標準のsamを使っているのをnanoSAMを使うように改変して処理時間を減らそう。
+- [] ファイルへの保存なしという選択もできるようにAPIを変更しよう。
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
 - [] PIL.Image はAPIのインタフェースから外す。
-- [] testをきちんとtestにしよう。
-
-- [] sam_hq_vit_h.pth をdownload して使えるようにすること
-- https://github.com/SysCV/sam-hq#model-checkpoints
-- gdown --fuzzy https://drive.google.com/file/d/1qobFYrI4eyIANfBSmYcGuWRaSIXfMOQ8/view?usp=sharing
-- 自分用のOneDrive sam_hq_vit_h.pth
-- gdown --fuzzy https://drive.google.com/file/d/1XsTUFVy9o7vytZwf_zs-LR8UdZX1bmoU/view?usp=drive_link
-- huggingface からダウンロードできる。
-- https://huggingface.co/lkeab/hq-sam/tree/main
 - [] --input_image を使用している従来のスクリプトが使えていない。
+- [] black を用いて書式をそろえたい。
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
