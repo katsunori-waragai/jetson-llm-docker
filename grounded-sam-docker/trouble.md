@@ -37,6 +37,10 @@
 - [] PIL.Image はAPIのインタフェースから外す。
 - [] --input_image を使用している従来のスクリプトが使えていない。
 - [] black を用いて書式をそろえたい。
+- [] "SAM ViT version: vit_b / vit_l / vit_h" の違いは何か？
+    - base, large, huge
+      - https://zenn.dev/mattyamonaca/articles/dcacb4f6dcd58f
+    - それらを変えた時のモデル*.pth はどこから入手するのか 
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
