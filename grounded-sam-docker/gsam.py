@@ -224,7 +224,7 @@ class GroundedSAMPredictor:
         )
         boxes_filt = modify_boxes_filter(boxes_filt, W, H)
         t1 = cv2.getTickCount()
-        used["grounding"] = (t1 - t0) / cv2.getTickFrequency()
+        used["dino"] = (t1 - t0) / cv2.getTickFrequency()
         t2 = cv2.getTickCount()
         if pred_phrases:
             self.sam_predictor.set_image(cvimage)
