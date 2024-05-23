@@ -5,8 +5,9 @@ from pathlib import Path
 from typing import List, Dict
 import json
 
-import numpy as np
 import cv2
+import numpy as np
+
 from gsam import GroundedSAMPredictor, colorize, overlay_image, gen_mask_img, to_json
 
 
@@ -20,14 +21,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
-
     parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
-
     args = parser.parse_args()
 
-    output_dir = Path(args.output_dir)
+    is_sidebyside = True  # ZED2i as USB camera
 
+    output_dir = Path(args.output_dir)
     output_dir.mkdir(exist_ok=True)
 
     gsam_predictor = GroundedSAMPredictor(text_prompt=args.text_prompt,
@@ -45,13 +45,13 @@ if __name__ == "__main__":
 
         counter += 1
         [h, w] = cvimage.shape[:2]
-        cvimage = cvimage[:, : w //2,  :]
+        if is_sidebyside:
+            cvimage = cvimage[:, : w //2,  :]
 
         gsam_predictor.infer_all(cvimage)
         filename_stem = f"captured_{counter:04d}"
         cv2.imwrite(str(output_dir / f"{filename_stem}_raw.jpg"), cvimage)
 
-        # run grounding dino model
         used_time = gsam_predictor.used.copy()
 
         masks = gsam_predictor.masks
