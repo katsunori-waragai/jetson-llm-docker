@@ -26,6 +26,9 @@
 
 - [] sam_hq_vit_h.pth をdownload して使えるようにすること
 - https://github.com/SysCV/sam-hq#model-checkpoints
+- gdown --fuzzy https://drive.google.com/file/d/1qobFYrI4eyIANfBSmYcGuWRaSIXfMOQ8/view?usp=sharing
+- 自分用のOneDrive sam_hq_vit_h.pth
+- gdown --fuzzy https://drive.google.com/file/d/1XsTUFVy9o7vytZwf_zs-LR8UdZX1bmoU/view?usp=drive_link
 - huggingface からダウンロードできる。
 - https://huggingface.co/lkeab/hq-sam/tree/main
 - [] --input_image を使用している従来のスクリプトが使えていない。
