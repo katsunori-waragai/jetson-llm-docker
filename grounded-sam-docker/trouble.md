@@ -43,6 +43,9 @@
     - base, large, huge
       - https://zenn.dev/mattyamonaca/articles/dcacb4f6dcd58f
     - それらを変えた時のモデル*.pth はどこから入手するのか 
+    - https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth
+    - https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
+    - https://github.com/facebookresearch/segment-anything/issues/533
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
