@@ -280,7 +280,7 @@ if __name__ == "__main__":
                                           use_sam_hq=args.use_sam_hq
                                           )
 
-    image_path_list = list(Path(image_dir).glob("*.jpg"))
+    image_path_list = list(Path(image_dir).glob("*.jpg")) + list(Path(image_dir).glob("*.png"))
     for p in image_path_list:
         print(p)
 
