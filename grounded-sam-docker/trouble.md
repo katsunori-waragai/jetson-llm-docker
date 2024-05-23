@@ -38,6 +38,7 @@
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
 - [] PIL.Image はAPIのインタフェースから外す。
 - [] --input_image を使用している従来のスクリプトが使えていない。
+- [] モデルのtensorRT 化ができていない。
 - [] "SAM ViT version: vit_b / vit_l / vit_h" の違いは何か？
     - base, large, huge
       - https://zenn.dev/mattyamonaca/articles/dcacb4f6dcd58f
