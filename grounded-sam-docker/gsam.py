@@ -254,7 +254,7 @@ class GroundedSAMPredictor:
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
+    parser = argparse.ArgumentParser(description="Grounded-Segment-Anything")
     parser.add_argument(
         "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
     )
