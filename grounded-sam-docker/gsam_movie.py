@@ -13,7 +13,7 @@ from gsam import GroundedSAMPredictor, colorize, overlay_image, gen_mask_img, to
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
+    parser = argparse.ArgumentParser(description="Grounded-Segment-Anything for USB camera")
     parser.add_argument(
         "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
     )

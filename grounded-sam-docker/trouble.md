@@ -16,10 +16,20 @@
 - [x] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
 - [] sam が標準のsamを使っているのをnanoSAMを使うように改変して処理時間を減らそう。
 - [] ファイルへの保存なしという選択もできるようにAPIを変更しよう。
+- [x] use_sam_hq=Trueとすると、何が良くなるはずかを記載する。
+  - 木製のイスをセグメンテーションしている事例がある。 
+  - 標準のSAMの出力では、イスの隙間で地面の芝生が見えている領域までイスと同一のセグメンテーションになっている。 
+  - SAM-HQ Outputでは、イスの隙間越しに見える芝生の領域の多くが、イスのセグメンテーションから外れている。
+- [x] png ファイルも入力に受け付ける。 
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
 - [] PIL.Image はAPIのインタフェースから外す。
 - [] testをきちんとtestにしよう。
+
 - [] sam_hq_vit_h.pth をdownload して使えるようにすること
+- https://github.com/SysCV/sam-hq#model-checkpoints
+- gdown --fuzzy https://drive.google.com/file/d/1qobFYrI4eyIANfBSmYcGuWRaSIXfMOQ8/view?usp=sharing
+- 自分用のOneDrive sam_hq_vit_h.pth
+- gdown --fuzzy https://drive.google.com/file/d/1XsTUFVy9o7vytZwf_zs-LR8UdZX1bmoU/view?usp=drive_link
 - huggingface からダウンロードできる。
 - https://huggingface.co/lkeab/hq-sam/tree/main
 - [] --input_image を使用している従来のスクリプトが使えていない。
@@ -32,9 +42,9 @@ outputs/demo1_sam.jpg
 
 - 1枚の画像だけ処理するスクリプトはオーバーヘッドが大きすぎる。
 
-used_time={'grounding': 4.601885602, 'sam': 2.78923419, 'save_mask': 0.223663634, 'save_sam': 0.101654286}
-used_time={'grounding': 0.619241372, 'sam': 1.836635902, 'save_mask': 0.221149576, 'save_sam': 0.099712454}
-used_time={'grounding': 0.509424686, 'sam': 1.837601291, 'save_mask': 0.193354196, 'save_sam': 0.098929636}
-used_time={'grounding': 0.513645634, 'sam': 1.833863588, 'save_mask': 0.221209674, 'save_sam': 0.099474151}
-used_time={'grounding': 0.583415437, 'sam': 1.867050265, 'save_mask': 0.205879691, 'save_sam': 0.099982281}
-used_time={'grounding': 0.516912789, 'sam': 1.831642283, 'save_mask': 0.183015659, 'save_sam': 0.103907674}
+used_time={'dino': 4.601885602, 'sam': 2.78923419, 'save_mask': 0.223663634, 'save_sam': 0.101654286}
+used_time={'dino': 0.619241372, 'sam': 1.836635902, 'save_mask': 0.221149576, 'save_sam': 0.099712454}
+used_time={'dino': 0.509424686, 'sam': 1.837601291, 'save_mask': 0.193354196, 'save_sam': 0.098929636}
+used_time={'dino': 0.513645634, 'sam': 1.833863588, 'save_mask': 0.221209674, 'save_sam': 0.099474151}
+used_time={'dino': 0.583415437, 'sam': 1.867050265, 'save_mask': 0.205879691, 'save_sam': 0.099982281}
+used_time={'dino': 0.516912789, 'sam': 1.831642283, 'save_mask': 0.183015659, 'save_sam': 0.103907674}

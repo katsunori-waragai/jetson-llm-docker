@@ -204,7 +204,10 @@ class GroundedSAMPredictor:
         self.dino_model = _load_dino_model(self.dino_config_file, self.dino_checkpoint, device=self.device)
         # initialize SAM
         sam_ckp = self.sam_hq_checkpoint if self.use_sam_hq else self.sam_checkpoint
-        self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
+        if self.use_sam_hq:
+            self.sam_predictor = SamPredictor(sam_hq_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
+        else:
+            self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
         self.transform = T.Compose(
         [
             T.RandomResize([800], max_size=1333),
@@ -251,7 +254,7 @@ class GroundedSAMPredictor:
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
+    parser = argparse.ArgumentParser(description="Grounded-Segment-Anything")
     parser.add_argument(
         "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
     )
@@ -274,7 +277,7 @@ if __name__ == "__main__":
                                           use_sam_hq=args.use_sam_hq
                                           )
 
-    image_path_list = list(Path(image_dir).glob("*.jpg"))
+    image_path_list = list(Path(image_dir).glob("*.jpg")) + list(Path(image_dir).glob("*.png"))
     for p in image_path_list:
         print(p)
 
