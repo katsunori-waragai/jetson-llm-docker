@@ -14,6 +14,8 @@
 - [x] argsの処理をclass に反映させよう。
 - [x] dino とsamの区別がつきやすい識別子にすること。
 - [x] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
+- [x] black を用いて書式をそろえたい。
+  - project.toml にline length を記述した。
 - [x] png ファイルも入力に受け付ける。 
 - [x] use_sam_hq=Trueとすると、何が良くなるはずかを記載する。
   - 木製のイスをセグメンテーションしている事例がある。 
@@ -36,7 +38,6 @@
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
 - [] PIL.Image はAPIのインタフェースから外す。
 - [] --input_image を使用している従来のスクリプトが使えていない。
-- [] black を用いて書式をそろえたい。
 - [] "SAM ViT version: vit_b / vit_l / vit_h" の違いは何か？
     - base, large, huge
       - https://zenn.dev/mattyamonaca/articles/dcacb4f6dcd58f
