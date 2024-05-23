@@ -21,27 +21,26 @@ sys.path.append(str(FOLDER_ROOT / "segment_anything"))
 import GroundingDINO.groundingdino.datasets.transforms as T
 from GroundingDINO.groundingdino.models import build_model
 from GroundingDINO.groundingdino.util.slconfig import SLConfig
-from GroundingDINO.groundingdino.util.utils import clean_state_dict, get_phrases_from_posmap
+from GroundingDINO.groundingdino.util.utils import (
+    clean_state_dict,
+    get_phrases_from_posmap,
+)
 
 
 # segment anything
-from segment_anything import (
-    sam_model_registry,
-    sam_hq_model_registry,
-    SamPredictor
-)
+from segment_anything import sam_model_registry, sam_hq_model_registry, SamPredictor
 
 COLOR_MAP = {
-    0: [0, 0, 0],       # 黒
-    1: [0, 255, 0],     # 緑
-    2: [0, 0, 255],     # 青
-    3: [255, 0, 0],     # 赤
-    4: [255, 255, 0],   # 黄色
-    5: [255, 0, 255],   # マゼンタ
-    6: [0, 255, 255],   # シアン
-    7: [128, 128, 128], # グレー
-    8: [128, 0, 0],     # マルーン
-    9: [128, 128, 0],   # オリーブ
+    0: [0, 0, 0],  # 黒
+    1: [0, 255, 0],  # 緑
+    2: [0, 0, 255],  # 青
+    3: [255, 0, 0],  # 赤
+    4: [255, 255, 0],  # 黄色
+    5: [255, 0, 255],  # マゼンタ
+    6: [0, 255, 255],  # シアン
+    7: [128, 128, 128],  # グレー
+    8: [128, 0, 0],  # マルーン
+    9: [128, 128, 0],  # オリーブ
     10: [0, 128, 0],  # ダークグリーン
     11: [0, 128, 128],  # ティール
     12: [0, 0, 128],  # ネイビー
@@ -55,22 +54,21 @@ COLOR_MAP = {
 }
 
 
-def to_json(label_list: List[str], box_list: List, background_value: int=0) -> Dict:
+def to_json(label_list: List[str], box_list: List, background_value: int = 0) -> Dict:
     value = background_value
-    json_data = [{
-        'value': value,
-        'label': 'background'
-    }]
+    json_data = [{"value": value, "label": "background"}]
     for label, box in zip(label_list, box_list):
         value += 1
-        name, logit = label.split('(')
+        name, logit = label.split("(")
         logit = logit[:-1]  # the last is ')'
-        json_data.append({
-            'value': value,
-            'label': name,
-            'logit': float(logit),
-            'box': box.numpy().tolist(),
-        })
+        json_data.append(
+            {
+                "value": value,
+                "label": name,
+                "logit": float(logit),
+                "box": box.numpy().tolist(),
+            }
+        )
     return json_data
 
 
@@ -83,8 +81,9 @@ def colorize(segmentation_result: np.ndarray) -> np.ndarray:
         color_image[segmentation_result == i] = COLOR_MAP[i % num_colors]
     return color_image
 
+
 def pil2cv(image: Image) -> np.ndarray:
-    ''' PIL型 -> OpenCV型 '''
+    """PIL型 -> OpenCV型"""
     new_image = np.array(image, dtype=np.uint8)
     if new_image.ndim == 2:
         pass
@@ -94,8 +93,9 @@ def pil2cv(image: Image) -> np.ndarray:
         new_image = cv2.cvtColor(new_image, cv2.COLOR_RGBA2BGRA)
     return new_image
 
+
 def cv2pil(image: np.ndarray) -> Image:
-    ''' OpenCV型 -> PIL型 '''
+    """OpenCV型 -> PIL型"""
     new_image = image.copy()
     if new_image.ndim == 2:
         pass
@@ -112,13 +112,23 @@ def _load_dino_model(model_config_path, model_checkpoint_path, device):
     args.device = device
     model = build_model(args)
     checkpoint = torch.load(model_checkpoint_path, map_location="cpu")
-    load_res = model.load_state_dict(clean_state_dict(checkpoint["model"]), strict=False)
+    load_res = model.load_state_dict(
+        clean_state_dict(checkpoint["model"]), strict=False
+    )
     print(load_res)
     _ = model.eval()
     return model
 
 
-def _get_grounding_output(dino_model, torch_image, caption, box_threshold, text_threshold, with_logits=True, device="cuda"):
+def _get_grounding_output(
+    dino_model,
+    torch_image,
+    caption,
+    box_threshold,
+    text_threshold,
+    with_logits=True,
+    device="cuda",
+):
     caption = caption.lower()
     caption = caption.strip()
     if not caption.endswith("."):
@@ -145,7 +155,9 @@ def _get_grounding_output(dino_model, torch_image, caption, box_threshold, text_
     # build pred
     pred_phrases = []
     for logit, box in zip(logits_filt, boxes_filt):
-        pred_phrase = get_phrases_from_posmap(logit > text_threshold, tokenized, tokenlizer)
+        pred_phrase = get_phrases_from_posmap(
+            logit > text_threshold, tokenized, tokenlizer
+        )
         if with_logits:
             pred_phrases.append(pred_phrase + f"({str(logit.max().item())[:4]})")
         else:
@@ -161,16 +173,27 @@ def gen_mask_img(mask_list: torch.Tensor, background_value=0) -> torch.Tensor:
     return mask_img
 
 
-def overlay_image(boxes_filt: List, pred_phrases: List[str], cvimage: np.ndarray, colorized: np.ndarray, alpha=0.3) -> np.ndarray:
+def overlay_image(
+    boxes_filt: List,
+    pred_phrases: List[str],
+    cvimage: np.ndarray,
+    colorized: np.ndarray,
+    alpha=0.3,
+) -> np.ndarray:
     blend_image = np.array(alpha * colorized + (1 - alpha) * cvimage, dtype=np.uint8)
     for box, label in zip(boxes_filt, pred_phrases):
         print(f"{box=} {label=}")
         x1, y1, x2, y2 = [int(a) for a in box]
         cv2.rectangle(blend_image, (x1, y1), (x2, y2), color=(0, 255, 0), thickness=3)
-        cv2.putText(blend_image, label, (x1, y1), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=1.0,
-                    color=(255, 0, 255),
-                    thickness=2, )
+        cv2.putText(
+            blend_image,
+            label,
+            (x1, y1),
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=1.0,
+            color=(255, 0, 255),
+            thickness=2,
+        )
     return blend_image
 
 
@@ -188,33 +211,43 @@ def modify_boxes_filter(boxes_filt, W: int, H: int):
 class GroundedSAMPredictor:
     # GroundingDino のPredictor
     # SAMのPredictor
-    dino_config_file: str = str(FOLDER_ROOT / "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
+    dino_config_file: str = str(
+        FOLDER_ROOT / "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
+    )
     dino_checkpoint: str = str(FOLDER_ROOT / "groundingdino_swint_ogc.pth")
     device: str = "cuda"
     sam_version: str = "vit_h"  # "SAM ViT version: vit_b / vit_l / vit_h"
     use_sam_hq: bool = False
     sam_checkpoint: str = str(FOLDER_ROOT / "sam_vit_h_4b8939.pth")
-    sam_hq_checkpoint: str = str(FOLDER_ROOT / "sam_hq_vit_h.pth") #
+    sam_hq_checkpoint: str = str(FOLDER_ROOT / "sam_hq_vit_h.pth")  #
     text_prompt: str = "arm . cup . keyboard . table . plate . bottle . PC . person"
     box_threshold: float = 0.3
     text_threshold: float = 0.25
 
     def __post_init__(self):
         # 各modelの設定をする。
-        self.dino_model = _load_dino_model(self.dino_config_file, self.dino_checkpoint, device=self.device)
+        self.dino_model = _load_dino_model(
+            self.dino_config_file, self.dino_checkpoint, device=self.device
+        )
         # initialize SAM
         sam_ckp = self.sam_hq_checkpoint if self.use_sam_hq else self.sam_checkpoint
         if self.use_sam_hq:
-            self.sam_predictor = SamPredictor(sam_hq_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
+            self.sam_predictor = SamPredictor(
+                sam_hq_model_registry[self.sam_version](checkpoint=sam_ckp).to(
+                    self.device
+                )
+            )
         else:
-            self.sam_predictor = SamPredictor(sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device))
+            self.sam_predictor = SamPredictor(
+                sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device)
+            )
         self.transform = T.Compose(
-        [
-            T.RandomResize([800], max_size=1333),
-            T.ToTensor(),
-            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ]
-    )
+            [
+                T.RandomResize([800], max_size=1333),
+                T.ToTensor(),
+                T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ]
+        )
 
     def infer_all(self, cvimage: np.ndarray):
         used = {}
@@ -223,7 +256,12 @@ class GroundedSAMPredictor:
         torch_image, _ = self.transform(image_pil, None)  # 3, h, w
         t0 = cv2.getTickCount()
         boxes_filt, pred_phrases = _get_grounding_output(
-            self.dino_model, torch_image, self.text_prompt, self.box_threshold, self.text_threshold, device=self.device
+            self.dino_model,
+            torch_image,
+            self.text_prompt,
+            self.box_threshold,
+            self.text_threshold,
+            device=self.device,
         )
         boxes_filt = modify_boxes_filter(boxes_filt, W, H)
         t1 = cv2.getTickCount()
@@ -231,12 +269,14 @@ class GroundedSAMPredictor:
         t2 = cv2.getTickCount()
         if pred_phrases:
             self.sam_predictor.set_image(cvimage)
-            transformed_boxes = self.sam_predictor.transform.apply_boxes_torch(boxes_filt, cvimage.shape[:2]).to(self.device)
+            transformed_boxes = self.sam_predictor.transform.apply_boxes_torch(
+                boxes_filt, cvimage.shape[:2]
+            ).to(self.device)
             masks, _, _ = self.sam_predictor.predict_torch(
-                point_coords = None,
-                point_labels = None,
-                boxes = transformed_boxes.to(self.device),
-                multimask_output = False,
+                point_coords=None,
+                point_labels=None,
+                boxes=transformed_boxes.to(self.device),
+                multimask_output=False,
             )
         else:
             C = len(pred_phrases)
@@ -252,32 +292,47 @@ class GroundedSAMPredictor:
         self.colorized = colorize(gen_mask_img(masks).numpy())
         self.used = used
 
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Grounded-Segment-Anything")
     parser.add_argument(
         "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
     )
-    parser.add_argument("--image_dir", type=str, required=True, help="path to image file")
+    parser.add_argument(
+        "--image_dir", type=str, required=True, help="path to image file"
+    )
     parser.add_argument("--text_prompt", type=str, required=True, help="text prompt")
     parser.add_argument(
-        "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
+        "--output_dir",
+        "-o",
+        type=str,
+        default="outputs",
+        required=True,
+        help="output directory",
     )
-    parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
-    parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
+    parser.add_argument(
+        "--box_threshold", type=float, default=0.3, help="box threshold"
+    )
+    parser.add_argument(
+        "--text_threshold", type=float, default=0.25, help="text threshold"
+    )
     args = parser.parse_args()
 
     image_dir = Path(args.image_dir)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(exist_ok=True)
 
-    gsam_predictor = GroundedSAMPredictor(text_prompt=args.text_prompt,
-                                          text_threshold=args.text_threshold,
-                                          box_threshold=args.box_threshold,
-                                          use_sam_hq=args.use_sam_hq
-                                          )
+    gsam_predictor = GroundedSAMPredictor(
+        text_prompt=args.text_prompt,
+        text_threshold=args.text_threshold,
+        box_threshold=args.box_threshold,
+        use_sam_hq=args.use_sam_hq,
+    )
 
-    image_path_list = list(Path(image_dir).glob("*.jpg")) + list(Path(image_dir).glob("*.png"))
+    image_path_list = list(Path(image_dir).glob("*.jpg")) + list(
+        Path(image_dir).glob("*.png")
+    )
     for p in image_path_list:
         print(p)
 

@@ -13,16 +13,27 @@ from gsam import GroundedSAMPredictor, colorize, overlay_image, gen_mask_img, to
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Grounded-Segment-Anything for USB camera")
+    parser = argparse.ArgumentParser(
+        description="Grounded-Segment-Anything for USB camera"
+    )
     parser.add_argument(
         "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
     )
     parser.add_argument("--text_prompt", type=str, required=True, help="text prompt")
     parser.add_argument(
-        "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
+        "--output_dir",
+        "-o",
+        type=str,
+        default="outputs",
+        required=True,
+        help="output directory",
     )
-    parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
-    parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
+    parser.add_argument(
+        "--box_threshold", type=float, default=0.3, help="box threshold"
+    )
+    parser.add_argument(
+        "--text_threshold", type=float, default=0.25, help="text threshold"
+    )
     args = parser.parse_args()
 
     is_sidebyside = True  # ZED2i as USB camera
@@ -30,11 +41,12 @@ if __name__ == "__main__":
     output_dir = Path(args.output_dir)
     output_dir.mkdir(exist_ok=True)
 
-    gsam_predictor = GroundedSAMPredictor(text_prompt=args.text_prompt,
-                                          text_threshold=args.text_threshold,
-                                          box_threshold=args.box_threshold,
-                                          use_sam_hq=args.use_sam_hq
-                                          )
+    gsam_predictor = GroundedSAMPredictor(
+        text_prompt=args.text_prompt,
+        text_threshold=args.text_threshold,
+        box_threshold=args.box_threshold,
+        use_sam_hq=args.use_sam_hq,
+    )
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     counter = 0
@@ -46,7 +58,7 @@ if __name__ == "__main__":
         counter += 1
         [h, w] = cvimage.shape[:2]
         if is_sidebyside:
-            cvimage = cvimage[:, : w //2,  :]
+            cvimage = cvimage[:, : w // 2, :]
 
         gsam_predictor.infer_all(cvimage)
         filename_stem = f"captured_{counter:04d}"
