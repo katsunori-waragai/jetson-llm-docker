@@ -46,6 +46,7 @@
     - https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth
     - https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
     - https://github.com/facebookresearch/segment-anything/issues/533
+- https://github.com/SysCV/sam-hq?tab=readme-ov-file#model-checkpoints
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
