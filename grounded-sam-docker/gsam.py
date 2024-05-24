@@ -240,13 +240,14 @@ class GroundedSAMPredictor:
     )
     dino_checkpoint: str = str(FOLDER_ROOT / "groundingdino_swint_ogc.pth")
     device: str = "cuda"
-    sam_version: str = "vit_h"  # "SAM ViT version: vit_b / vit_l / vit_h"
+    sam_version: str = "vit_b"  # "SAM ViT version: vit_b / vit_l / vit_h"
     use_sam_hq: bool = False
     text_prompt: str = "arm . cup . keyboard . table . plate . bottle . PC . person"
     box_threshold: float = 0.3
     text_threshold: float = 0.25
 
     def __post_init__(self):
+        assert self.sam_version in SAM_CHECKPOINT_FILES
         self.sam_checkpoint: str = str(FOLDER_ROOT / name_part(SAM_CHECKPOINT_FILES[self.sam_version]))  # ex.  "sam_vit_h_4b8939.pth"
         self.sam_hq_checkpoint: str = str(FOLDER_ROOT / SAM_HQ_CHECKPOINT_FILES[self.sam_version])  # ex. "sam_hq_vit_h.pth"
         # 各modelの設定をする。
