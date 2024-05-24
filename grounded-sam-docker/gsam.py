@@ -212,6 +212,12 @@ SAM_CHECKPOINT_FILES = {
     "vit_b": "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth",
 }
 
+SAM_HQ_CHECKPOINT_FILES = {
+    "vit_h": "sam_hq_vit_h.pth",
+    "vit_l": "sam_hq_vit_l.pth",
+    "vit_b": "sam_hq_vit_b.pth",
+    "vit_tiny": "sam_hq_vit_tiny",
+}
 print(f"{SAM_CHECKPOINT_FILES['vit_h']=}")
 print(f"{SAM_CHECKPOINT_FILES['vit_h'].split('/')[-1]=}")
 
@@ -236,13 +242,13 @@ class GroundedSAMPredictor:
     device: str = "cuda"
     sam_version: str = "vit_h"  # "SAM ViT version: vit_b / vit_l / vit_h"
     use_sam_hq: bool = False
-    sam_checkpoint: str = str(FOLDER_ROOT / "sam_vit_h_4b8939.pth")
-    sam_hq_checkpoint: str = str(FOLDER_ROOT / "sam_hq_vit_h.pth")  #
     text_prompt: str = "arm . cup . keyboard . table . plate . bottle . PC . person"
     box_threshold: float = 0.3
     text_threshold: float = 0.25
 
     def __post_init__(self):
+        self.sam_checkpoint: str = str(FOLDER_ROOT / name_part(SAM_CHECKPOINT_FILES[self.sam_version]))  # ex.  "sam_vit_h_4b8939.pth"
+        self.sam_hq_checkpoint: str = str(FOLDER_ROOT / SAM_HQ_CHECKPOINT_FILES[self.sam_version])  # ex. "sam_hq_vit_h.pth"
         # 各modelの設定をする。
         self.dino_model = _load_dino_model(
             self.dino_config_file, self.dino_checkpoint, device=self.device
