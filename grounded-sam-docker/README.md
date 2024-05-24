@@ -62,6 +62,37 @@ optional arguments:
                         text threshold
 
 ```
+
+## output files
+```commandline
+outputs/demo1_mask.jpg
+outputs/demo1_mask.json
+outputs/demo1_raw.jpg
+outputs/demo1_sam.jpg
+```
+
+## SAM model selection
+### execution time
+```commandline
+vit_h case
+used_time={'dino': 4.601885602, 'sam': 2.78923419, 'save_mask': 0.223663634, 'save_sam': 0.101654286}
+used_time={'dino': 0.619241372, 'sam': 1.836635902, 'save_mask': 0.221149576, 'save_sam': 0.099712454}
+used_time={'dino': 0.509424686, 'sam': 1.837601291, 'save_mask': 0.193354196, 'save_sam': 0.098929636}
+used_time={'dino': 0.513645634, 'sam': 1.833863588, 'save_mask': 0.221209674, 'save_sam': 0.099474151}
+used_time={'dino': 0.583415437, 'sam': 1.867050265, 'save_mask': 0.205879691, 'save_sam': 0.099982281}
+used_time={'dino': 0.516912789, 'sam': 1.831642283, 'save_mask': 0.183015659, 'save_sam': 0.103907674}
+vit_l case
+used_time={'dino': 4.801369182, 'sam': 1.433056724, 'save_mask': 0.238014577, 'save_sam': 0.090027557}
+used_time={'dino': 0.581472926, 'sam': 1.070962919, 'save_mask': 0.237833933, 'save_sam': 0.088467575}
+used_time={'dino': 0.513170818, 'sam': 1.073418961, 'save_mask': 0.21821957, 'save_sam': 0.087076492}
+used_time={'dino': 0.517417823, 'sam': 1.097062882, 'save_mask': 0.237811434, 'save_sam': 0.227442488}
+used_time={'dino': 0.512869719, 'sam': 1.089623328, 'save_mask': 0.218557809, 'save_sam': 0.087464781}
+used_time={'dino': 0.518495263, 'sam': 1.090717183, 'save_mask': 0.196923878, 'save_sam': 0.086473765}
+```
+
+### segmentation quality
+- 
+
 ## todo
 - use stable opencv-python
 
