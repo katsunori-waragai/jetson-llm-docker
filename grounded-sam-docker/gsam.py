@@ -215,6 +215,9 @@ SAM_CHECKPOINT_FILES = {
 print(f"{SAM_CHECKPOINT_FILES['vit_h']=}")
 print(f"{SAM_CHECKPOINT_FILES['vit_h'].split('/')[-1]=}")
 
+def name_part(url_filename):
+    return url_filename.split("/")[-1]
+
 @dataclass
 class GroundedSAMPredictor:
     """
