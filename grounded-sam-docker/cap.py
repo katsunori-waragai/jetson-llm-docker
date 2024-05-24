@@ -3,9 +3,12 @@ from pathlib import Path
 import cv2
 
 import argparse
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--outdir", default="captured", help="captured file directory")
-parser.add_argument("--is_zed", action="store_true", help="ZED2 stereo camera as USB camera")
+parser.add_argument(
+    "--is_zed", action="store_true", help="ZED2 stereo camera as USB camera"
+)
 args = parser.parse_args()
 
 cap = cv2.VideoCapture(0)
@@ -18,7 +21,7 @@ while True:
     r, image = cap.read()
     if is_zed:
         h, w = image.shape[:2]
-        image = image[:, :w//2, :]
+        image = image[:, : w // 2, :]
     oimg = image.copy()
     cv2.putText(oimg, "s: save", (20, 20), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 255, 0))
     cv2.putText(oimg, "q: quit", (20, 40), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 255, 0))

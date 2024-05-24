@@ -28,10 +28,19 @@ RUN python3 -m pip install --no-cache-dir diffusers[torch]==0.15.1 opencv-python
 RUN python3 -m pip install gdown
 
 # download pre-trained files
-RUN cd /root/Grounded-Segment-Anything && wget --quiet https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
-RUN cd /root/Grounded-Segment-Anything && wget --quiet https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+WORKDIR /root/Grounded-Segment-Anything
+RUN wget --quiet https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+RUN wget --quiet https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth
+RUN wget --quiet https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
+RUN wget --quiet https://huggingface.co/lkeab/hq-sam/resolve/main/sam_hq_vit_tiny.pth
+
+RUN wget --quiet https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 # for HQ SAM model sam_hq_vit_h.pth
-RUN cd /root/Grounded-Segment-Anything && gdown --fuzzy https://drive.google.com/file/d/1XsTUFVy9o7vytZwf_zs-LR8UdZX1bmoU/view?usp=drive_link
+# RUN gdown --fuzzy https://drive.google.com/file/d/1XsTUFVy9o7vytZwf_zs-LR8UdZX1bmoU/view?usp=drive_link
+
+RUN gdown --fuzzy https://drive.google.com/file/d/11yExZLOve38kRZPfRx_MRxfIAKmfMY47/view?usp=sharing
+RUN gdown --fuzzy https://drive.google.com/file/d/1qobFYrI4eyIANfBSmYcGuWRaSIXfMOQ8/view?usp=sharing
+RUN gdown --fuzzy https://drive.google.com/file/d/1Uk17tDKX1YAKas5knI4y9ZJCo0lRVL0G/view?usp=sharing
 
 COPY *.sh /root/Grounded-Segment-Anything/
 COPY *.py /root/Grounded-Segment-Anything/

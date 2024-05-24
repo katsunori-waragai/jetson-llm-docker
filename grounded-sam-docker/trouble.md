@@ -14,25 +14,39 @@
 - [x] argsの処理をclass に反映させよう。
 - [x] dino とsamの区別がつきやすい識別子にすること。
 - [x] モジュールの外部で参照しないものは"_"始まりの変数名に変更する。
-- [] sam が標準のsamを使っているのをnanoSAMを使うように改変して処理時間を減らそう。
-- [] ファイルへの保存なしという選択もできるようにAPIを変更しよう。
+- [x] black を用いて書式をそろえたい。
+  - project.toml にline length を記述した。
+- [x] png ファイルも入力に受け付ける。 
 - [x] use_sam_hq=Trueとすると、何が良くなるはずかを記載する。
   - 木製のイスをセグメンテーションしている事例がある。 
   - 標準のSAMの出力では、イスの隙間で地面の芝生が見えている領域までイスと同一のセグメンテーションになっている。 
   - SAM-HQ Outputでは、イスの隙間越しに見える芝生の領域の多くが、イスのセグメンテーションから外れている。
-- [x] png ファイルも入力に受け付ける。 
+- [x] sam_hq_vit_h.pth をdownload して使えるようにすること
+  - https://github.com/SysCV/sam-hq#model-checkpoints
+  - gdown --fuzzy https://drive.google.com/file/d/1qobFYrI4eyIANfBSmYcGuWRaSIXfMOQ8/view?usp=sharing
+  - 自分用のOneDrive sam_hq_vit_h.pth
+  - gdown --fuzzy https://drive.google.com/file/d/1XsTUFVy9o7vytZwf_zs-LR8UdZX1bmoU/view?usp=drive_link
+  - huggingface からダウンロードできる。
+  - https://huggingface.co/lkeab/hq-sam/tree/main
+
+- [] git clone を不要にしたい。
+- [] pip でインストール可能なモジュールに自作モジュールを改変したい。
+  - [] 連動して学習済みモデルのおく場所もpip でのインストール先に変更したい。
+- [] testをきちんとtestにしよう。
+- [] sam が標準のsamを使っているのをnanoSAMを使うように改変して処理時間を減らそう。
+- [] ファイルへの保存なしという選択もできるようにAPIを変更しよう。
 - [] grounding の処理時間は、２回め以降は1 [s] 以下になっている。
 - [] PIL.Image はAPIのインタフェースから外す。
-- [] testをきちんとtestにしよう。
-
-- [] sam_hq_vit_h.pth をdownload して使えるようにすること
-- https://github.com/SysCV/sam-hq#model-checkpoints
-- gdown --fuzzy https://drive.google.com/file/d/1qobFYrI4eyIANfBSmYcGuWRaSIXfMOQ8/view?usp=sharing
-- 自分用のOneDrive sam_hq_vit_h.pth
-- gdown --fuzzy https://drive.google.com/file/d/1XsTUFVy9o7vytZwf_zs-LR8UdZX1bmoU/view?usp=drive_link
-- huggingface からダウンロードできる。
-- https://huggingface.co/lkeab/hq-sam/tree/main
 - [] --input_image を使用している従来のスクリプトが使えていない。
+- [] モデルのtensorRT 化ができていない。
+- [] "SAM ViT version: vit_b / vit_l / vit_h" の違いは何か？
+    - base, large, huge
+      - https://zenn.dev/mattyamonaca/articles/dcacb4f6dcd58f
+    - それらを変えた時のモデル*.pth はどこから入手するのか 
+    - https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth
+    - https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
+    - https://github.com/facebookresearch/segment-anything/issues/533
+- https://github.com/SysCV/sam-hq?tab=readme-ov-file#model-checkpoints
 ```commandline
 outputs/demo1_mask.jpg
 outputs/demo1_mask.json
