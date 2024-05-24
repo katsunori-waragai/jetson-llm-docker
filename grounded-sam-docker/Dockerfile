@@ -17,7 +17,6 @@ RUN apt clean -y && apt autoremove -y && rm -rf /var/lib/apt/lists/*
 WORKDIR /root/Grounded-Segment-Anything
 RUN python3 -m pip install --no-cache-dir -e segment_anything
 
-# When using build isolation, PyTorch with newer CUDA is installed and can't compile GroundingDINO
 RUN python3 -m pip install --no-cache-dir wheel
 RUN python3 -m pip install --no-cache-dir --no-build-isolation -e GroundingDINO
 
@@ -30,14 +29,14 @@ RUN python3 -m pip install gdown
 # download pre-trained files
 WORKDIR /root/Grounded-Segment-Anything
 RUN wget --quiet https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+# following models are optional
 RUN wget --quiet https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth
 RUN wget --quiet https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
 RUN wget --quiet https://huggingface.co/lkeab/hq-sam/resolve/main/sam_hq_vit_tiny.pth
 
 RUN wget --quiet https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
-# for HQ SAM model sam_hq_vit_h.pth
-# RUN gdown --fuzzy https://drive.google.com/file/d/1XsTUFVy9o7vytZwf_zs-LR8UdZX1bmoU/view?usp=drive_link
 
+# following models are optional for HQ models
 RUN gdown --fuzzy https://drive.google.com/file/d/11yExZLOve38kRZPfRx_MRxfIAKmfMY47/view?usp=sharing
 RUN gdown --fuzzy https://drive.google.com/file/d/1qobFYrI4eyIANfBSmYcGuWRaSIXfMOQ8/view?usp=sharing
 RUN gdown --fuzzy https://drive.google.com/file/d/1Uk17tDKX1YAKas5knI4y9ZJCo0lRVL0G/view?usp=sharing

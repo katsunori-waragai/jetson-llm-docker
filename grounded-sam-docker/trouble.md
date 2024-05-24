@@ -28,7 +28,16 @@
   - gdown --fuzzy https://drive.google.com/file/d/1XsTUFVy9o7vytZwf_zs-LR8UdZX1bmoU/view?usp=drive_link
   - huggingface からダウンロードできる。
   - https://huggingface.co/lkeab/hq-sam/tree/main
-
+- [x] "SAM ViT version: vit_b / vit_l / vit_h" の違いは何か？
+    - base, large, huge
+      - https://zenn.dev/mattyamonaca/articles/dcacb4f6dcd58f
+    - それらを変えた時のモデル*.pth はどこから入手するのか 
+    - https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth
+    - https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
+    - https://github.com/facebookresearch/segment-anything/issues/533
+- https://github.com/SysCV/sam-hq?tab=readme-ov-file#model-checkpoints
+- [x] SAM Vit version を軽量なモデルに切り替えることで高速化したい。
+  - vit_b に切り替えた。
 - [] git clone を不要にしたい。
 - [] pip でインストール可能なモジュールに自作モジュールを改変したい。
   - [] 連動して学習済みモデルのおく場所もpip でのインストール先に変更したい。
@@ -39,26 +48,3 @@
 - [] PIL.Image はAPIのインタフェースから外す。
 - [] --input_image を使用している従来のスクリプトが使えていない。
 - [] モデルのtensorRT 化ができていない。
-- [] "SAM ViT version: vit_b / vit_l / vit_h" の違いは何か？
-    - base, large, huge
-      - https://zenn.dev/mattyamonaca/articles/dcacb4f6dcd58f
-    - それらを変えた時のモデル*.pth はどこから入手するのか 
-    - https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth
-    - https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
-    - https://github.com/facebookresearch/segment-anything/issues/533
-- https://github.com/SysCV/sam-hq?tab=readme-ov-file#model-checkpoints
-```commandline
-outputs/demo1_mask.jpg
-outputs/demo1_mask.json
-outputs/demo1_raw.jpg
-outputs/demo1_sam.jpg
-```
-
-- 1枚の画像だけ処理するスクリプトはオーバーヘッドが大きすぎる。
-
-used_time={'dino': 4.601885602, 'sam': 2.78923419, 'save_mask': 0.223663634, 'save_sam': 0.101654286}
-used_time={'dino': 0.619241372, 'sam': 1.836635902, 'save_mask': 0.221149576, 'save_sam': 0.099712454}
-used_time={'dino': 0.509424686, 'sam': 1.837601291, 'save_mask': 0.193354196, 'save_sam': 0.098929636}
-used_time={'dino': 0.513645634, 'sam': 1.833863588, 'save_mask': 0.221209674, 'save_sam': 0.099474151}
-used_time={'dino': 0.583415437, 'sam': 1.867050265, 'save_mask': 0.205879691, 'save_sam': 0.099982281}
-used_time={'dino': 0.516912789, 'sam': 1.831642283, 'save_mask': 0.183015659, 'save_sam': 0.103907674}
