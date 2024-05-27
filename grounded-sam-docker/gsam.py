@@ -314,7 +314,7 @@ class GroundedSAMPredictor:
         self.pred_phrases = pred_phrases
         self.masks = masks
         self.boxes_filt = boxes_filt
-        self.colorized = colorize(gen_mask_img(masks).numpy())
+        # self.colorized = colorize(gen_mask_img(masks).numpy())
         self.used = used
 
 
