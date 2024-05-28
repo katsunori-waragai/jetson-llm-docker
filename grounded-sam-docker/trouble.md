@@ -54,3 +54,14 @@
 - `python3 -m pip install .` でインストールできるようにする。
 - そのインストールと整合するようにpthファイルを置く。
 - pytest でテストできるtestスクリプトを作る。
+----------------------------------------------------
+orin:~/Grounded-Segment-Anything# bash run_usbcam.sh 
+start grounded Dino
+/root/Grounded-Segment-Anything/GroundingDINO/groundingdino/models/GroundingDINO/ms_deform_attn.py:31: UserWarning: Failed to load custom C++ ops. Running on CPU mode Only!
+  warnings.warn("Failed to load custom C++ ops. Running on CPU mode Only!")
+Traceback (most recent call last):
+  File "gsam_movie.py", line 7, in <module>
+    from gsam_module import to_json, colorize, colorize_torch, gen_mask_img, overlay_image, GroundedSAMPredictor
+  File "/root/Grounded-Segment-Anything/gsam_module.py", line 32, in <module>
+    from segment_anything import sam_model_registry, sam_hq_model_registry, SamPredictor
+ImportError: cannot import name 'sam_hq_model_registry' from 'segment_anything' (/usr/local/lib/python3.8/dist-packages/segment_anything/__init__.py)
