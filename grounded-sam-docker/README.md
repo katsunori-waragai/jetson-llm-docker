@@ -96,4 +96,6 @@ used_time={'dino': 0.518495263, 'sam': 1.090717183, 'save_mask': 0.196923878, 's
 ## todo
 - use stable opencv-python
 
-
+## SEE ALSO
+ZED SDK と連動させるバージョンの所在
+https://github.com/katsunori-waragai/zed-gsam
