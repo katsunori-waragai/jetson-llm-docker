@@ -16,7 +16,7 @@ RUN apt clean -y && apt autoremove -y && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/Grounded-Segment-Anything
 RUN python3 -m pip install --no-cache-dir wheel
-RUN python3 -m pip install segment_anything GroundingDINO
+RUN python3 -m pip install --no-cache-dir segment_anything GroundingDINO
 
 WORKDIR /root
 RUN python3 -m pip install --no-cache-dir diffusers[torch]==0.15.1 opencv-python==3.4.18.65 \
