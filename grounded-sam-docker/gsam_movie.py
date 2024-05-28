@@ -1,15 +1,10 @@
 import argparse
-import os
-import sys
 from pathlib import Path
-from typing import List, Dict
 import json
 
 import cv2
-import numpy as np
 
-from gsam import GroundedSAMPredictor, colorize, overlay_image, gen_mask_img, to_json
-
+from gsam_module import to_json, colorize, colorize_torch, gen_mask_img, overlay_image, GroundedSAMPredictor
 
 if __name__ == "__main__":
 
@@ -69,7 +64,8 @@ if __name__ == "__main__":
         masks = gsam_predictor.masks
 
         t6 = cv2.getTickCount()
-        colorized = colorize(gen_mask_img(masks).numpy())
+        # colorized = colorize(gen_mask_img(masks).cpu().numpy())
+        colorized = colorize_torch(gen_mask_img(masks)).cpu().numpy()
         output_mask_jpg = output_dir / f"{filename_stem}_mask.jpg"
         cv2.imwrite(str(output_mask_jpg), colorized)
         mask_json = output_mask_jpg.with_suffix(".json")
