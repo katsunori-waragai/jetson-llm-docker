@@ -13,8 +13,8 @@ from PIL import Image
 
 FOLDER_ROOT = Path(__file__).resolve().parent
 
-sys.path.append(str(FOLDER_ROOT / "GroundingDINO"))
-sys.path.append(str(FOLDER_ROOT / "segment_anything"))
+# sys.path.append(str(FOLDER_ROOT / "GroundingDINO"))
+# sys.path.append(str(FOLDER_ROOT / "segment_anything"))
 
 
 # Grounding DINO
@@ -29,7 +29,9 @@ from GroundingDINO.groundingdino.util.utils import (
 __VERSION__ = "0.10"
 
 # segment anything
-from segment_anything import sam_model_registry, sam_hq_model_registry, SamPredictor
+from segment_anything import (sam_model_registry,
+                              # sam_hq_model_registry,
+                              SamPredictor)
 
 COLOR_ARRAY = np.array([
     [0, 0, 0],  # 黒
@@ -281,12 +283,13 @@ class GroundedSAMPredictor:
         )
         # initialize SAM
         sam_ckp = self.sam_hq_checkpoint if self.use_sam_hq else self.sam_checkpoint
-        if self.use_sam_hq:
-            self.sam_predictor = SamPredictor(
-                sam_hq_model_registry[self.sam_version](checkpoint=sam_ckp).to(
-                    self.device
-                )
-            )
+        if 0 or self.use_sam_hq:
+            pass
+            # self.sam_predictor = SamPredictor(
+            #     sam_hq_model_registry[self.sam_version](checkpoint=sam_ckp).to(
+            #         self.device
+            #     )
+            # )
         else:
             self.sam_predictor = SamPredictor(
                 sam_model_registry[self.sam_version](checkpoint=sam_ckp).to(self.device)
