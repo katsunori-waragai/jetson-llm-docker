@@ -1,5 +1,5 @@
-FROM nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
-RUN python3 -m pip install pillow --upgrade 
+FROM dustynv/nanosam:r36.2.0
+RUN python3 -m pip install pillow --upgrade
 RUN python3 -m pip install timm
 RUN python3 -m pip install onnx
 RUN python3 -m pip install matplotlib
