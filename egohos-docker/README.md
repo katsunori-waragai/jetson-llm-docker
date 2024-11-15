@@ -5,6 +5,11 @@
 ## original repo
 https://github.com/owenzlz/EgoHOS
 
+## 動作結果例
+![](doc/Egohos_example.png)
+
+左右それぞれの腕と手、対象物についてセグメンテーションをします。
+
 ## 手順
 ```commandline
 sh docker_build.sh
