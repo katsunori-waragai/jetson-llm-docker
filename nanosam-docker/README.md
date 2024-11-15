@@ -76,3 +76,7 @@ optional arguments:
 densenet121_baseline_att_256x256_B_epoch_160.pth 
 以下の場所からダウンロードできる。
 https://github.com/NVIDIA-AI-IOT/trt_pose
+
+
+ [Import Error] Unable to import tensorrt inside pytorch:2.1-r36.2.0 #472 
+https://github.com/dusty-nv/jetson-containers/issues/472
