@@ -30,27 +30,34 @@ RUN cd /root/nanosam/ && trtexec \
     --optShapes=point_coords:1x1x2,point_labels:1x1 \
     --maxShapes=point_coords:1x10x2,point_labels:1x10
 
-# download resnet18_image_encoder.onnx from Google Drive destnation is /root/nanosam/data
-RUN cd /root/nanosam/data && \
-	gdown --fuzzy https://drive.google.com/file/d/14-SsvoaTl-esC3JOzomHDnI9OGgdO2OR/view
-
-# download densenet121_baseline_att_256x256_B_epoch_160.pth (used in TRT_pose)
-RUN cd /root/nanosam/data && \
-	gdown --fuzzy https://drive.google.com/open?id=13FkJkx7evQ1WwP54UmdiDXWyFMY1OxDU
-
-RUN cd /root/nanosam/ && trtexec \
-    --onnx=data/resnet18_image_encoder.onnx \
-    --saveEngine=data/resnet18_image_encoder.engine \
-    --fp16
-
-RUN python3 -m pip uninstall opencv-python
-RUN python3 -m pip uninstall opencv-python-headless
-RUN python3 -m pip install opencv-python==3.4.18.65
-
-COPY [1-9]*.sh /root/nanosam/
-COPY my_*.py cvpil.py /root/nanosam/ 
-
-# image file viwewer
-RUN apt-get update
-RUN apt-get install -y eog
-
+RUN cd /root/nanosam/ && python3 -m nanosam.tools.export_sam_mask_decoder_onnx \
+    --model-type=vit_t \
+    --checkpoint=assets/mobile_sam.pt \
+    --output=data/mobile_sam_mask_decoder.onnx
+#
+# # download resnet18_image_encoder.onnx from Google Drive destnation is /root/nanosam/data
+# # RUN cd /root/nanosam/data && \
+# #	gdown --fuzzy https://drive.google.com/file/d/14-SsvoaTl-esC3JOzomHDnI9OGgdO2OR/view
+#
+#
+#
+# # download densenet121_baseline_att_256x256_B_epoch_160.pth (used in TRT_pose)
+# # RUN cd /root/nanosam/data && \
+# #	gdown --fuzzy https://drive.google.com/open?id=13FkJkx7evQ1WwP54UmdiDXWyFMY1OxDU
+#
+# RUN cd /root/nanosam/ && trtexec \
+#     --onnx=data/resnet18_image_encoder.onnx \
+#     --saveEngine=data/resnet18_image_encoder.engine \
+#     --fp16
+#
+# RUN python3 -m pip uninstall opencv-python
+# RUN python3 -m pip uninstall opencv-python-headless
+# RUN python3 -m pip install opencv-python==3.4.18.65
+#
+# COPY [1-9]*.sh /root/nanosam/
+# COPY my_*.py cvpil.py /root/nanosam/
+#
+# # image file viwewer
+# RUN apt-get update
+# RUN apt-get install -y eog
+#
