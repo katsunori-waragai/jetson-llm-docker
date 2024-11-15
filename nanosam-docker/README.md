@@ -80,3 +80,34 @@ https://github.com/NVIDIA-AI-IOT/trt_pose
 
  [Import Error] Unable to import tensorrt inside pytorch:2.1-r36.2.0 #472 
 https://github.com/dusty-nv/jetson-containers/issues/472
+
+
+python3 -m pip install tensorrt
+Collecting tensorrt
+  Downloading tensorrt-10.6.0.tar.gz (16 kB)
+  Preparing metadata (setup.py) ... done
+Collecting tensorrt-cu12==10.6.0 (from tensorrt)
+  Downloading tensorrt-cu12-10.6.0.tar.gz (18 kB)
+  Preparing metadata (setup.py) ... error
+  error: subprocess-exited-with-error
+  
+  × python setup.py egg_info did not run successfully.
+  │ exit code: 1
+  ╰─> [6 lines of output]
+      Traceback (most recent call last):
+        File "<string>", line 2, in <module>
+        File "<pip-setuptools-caller>", line 34, in <module>
+        File "/tmp/pip-install-ahhg6ijg/tensorrt-cu12_951ba6738311462090e07de3dd83d493/setup.py", line 71, in <module>
+          raise RuntimeError("TensorRT does not currently build wheels for Tegra systems")
+      RuntimeError: TensorRT does not currently build wheels for Tegra systems
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: metadata-generation-failed
+
+× Encountered error while generating package metadata.
+╰─> See above for output.
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.
+
