@@ -81,7 +81,7 @@ https://github.com/NVIDIA-AI-IOT/trt_pose
  [Import Error] Unable to import tensorrt inside pytorch:2.1-r36.2.0 #472 
 https://github.com/dusty-nv/jetson-containers/issues/472
 
-
+```commandline
 python3 -m pip install tensorrt
 Collecting tensorrt
   Downloading tensorrt-10.6.0.tar.gz (16 kB)
@@ -110,4 +110,6 @@ error: metadata-generation-failed
 
 note: This is an issue with the package mentioned above, not pip.
 hint: See above for details.
+
+```
 
