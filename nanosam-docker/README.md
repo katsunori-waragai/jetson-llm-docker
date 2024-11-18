@@ -1,5 +1,10 @@
 # docker for nanosam
 
+#### Important
+Link to pre-trained model (resnet18_image_encoder.onnx) is broken.
+https://github.com/NVIDIA-AI-IOT/nanosam
+
+So I included the pretrained models using Git LFS.
 
 ## Original nanosam
 
