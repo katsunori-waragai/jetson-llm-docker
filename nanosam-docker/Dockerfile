@@ -55,4 +55,4 @@ COPY my_*.py cvpil.py /root/nanosam/
 
 # image file viwewer
 RUN apt-get update
-RUN apt-get install -y eog
+RUN apt-get install -y eog nano
