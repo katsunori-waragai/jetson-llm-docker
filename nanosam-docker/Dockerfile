@@ -23,6 +23,9 @@ RUN cd /root/nanosam/ && python3 -m nanosam.tools.export_sam_mask_decoder_onnx \
 
 ENV PATH=$PATH:/usr/src/tensorrt/bin/
 
+WORKDIR /root/nanosam/
+COPY data/* ./data/
+
 RUN cd /root/nanosam/ && trtexec \
     --onnx=data/mobile_sam_mask_decoder.onnx \
     --saveEngine=data/mobile_sam_mask_decoder.engine \
@@ -30,13 +33,13 @@ RUN cd /root/nanosam/ && trtexec \
     --optShapes=point_coords:1x1x2,point_labels:1x1 \
     --maxShapes=point_coords:1x10x2,point_labels:1x10
 
-# download resnet18_image_encoder.onnx from Google Drive destnation is /root/nanosam/data
-RUN cd /root/nanosam/data && \
-	gdown --fuzzy https://drive.google.com/file/d/14-SsvoaTl-esC3JOzomHDnI9OGgdO2OR/view
+# # download resnet18_image_encoder.onnx from Google Drive destnation is /root/nanosam/data
+# RUN cd /root/nanosam/data && \
+# 	gdown --fuzzy https://drive.google.com/file/d/14-SsvoaTl-esC3JOzomHDnI9OGgdO2OR/view
 
 # download densenet121_baseline_att_256x256_B_epoch_160.pth (used in TRT_pose)
-RUN cd /root/nanosam/data && \
-	gdown --fuzzy https://drive.google.com/open?id=13FkJkx7evQ1WwP54UmdiDXWyFMY1OxDU
+# RUN cd /root/nanosam/data && \
+# 	gdown --fuzzy https://drive.google.com/open?id=13FkJkx7evQ1WwP54UmdiDXWyFMY1OxDU
 
 RUN cd /root/nanosam/ && trtexec \
     --onnx=data/resnet18_image_encoder.onnx \
