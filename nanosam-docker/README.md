@@ -20,12 +20,30 @@ cd /root/nanosam
   - resnet18_image_encoder.onnx
   - densenet121_baseline_att_256x256_B_epoch_160.pth
 
-
-dustynv/nanosam:r36.2.0
+#### pre-trained モデル
+```commandline
 data/mobile_sam_mask_decoder.engine
 data/mobile_sam_mask_decoder.onnx
 data/resnet18_image_encoder.engine
 data/resnet18_image_encoder.onnx
+```
+
+上記のファイルがGoogle Drive からダウンロードできるはずのもの。
+しかし、2024年11月時点ではダウンロードできなかった。
+Jetson へのnanosam の移植は、Docker　imageが用意されていた。
+`dustynv/nanosam:r36.2.0`
+
+このdocker環境を立ち上げると
+```commandline
+data/mobile_sam_mask_decoder.engine
+data/mobile_sam_mask_decoder.onnx
+data/resnet18_image_encoder.engine
+data/resnet18_image_encoder.onnx
+```
+のファイルが含まれていた。
+これらのファイルをscpでホスト環境に持ち出すことができる。
+
+
 
 # 動作検証用のデモプログラムの実行
 ```commandline
