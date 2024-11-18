@@ -79,6 +79,10 @@ optional arguments:
 ```
 - 引数で指定した静止画について指定のencoderを用いてセグメンテーションするスクリプト
 
+2024/11の時点で、セグメンテーションのコードは動作している。
+しかし、ポーズを利用するコードは、モデルファイルがダウンロードできないため、動作していない。
+densenet121_baseline_att_256x256_B_epoch_160.pth
+
 ### my_segment_from_pose.py
 ```commandline
 python3 my_segment_from_pose.py -h 
@@ -116,6 +120,9 @@ Traceback (most recent call last):
 FileNotFoundError: [Errno 2] No such file or directory: '/root/nanosam/data/densenet121_baseline_att_256x256_B_epoch_160.pth'
 
 ```
+
+densenet121のモデルのダウンロードと利用の関係がつじつまがあっていない。
+そのため、実行時のエラーを生じている。
 
 ## 以下のモデルファイルのダウンロード
 - trt-pose を使うセグメンテーションの実行時に利用する。
