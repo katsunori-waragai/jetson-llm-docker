@@ -21,6 +21,12 @@ cd /root/nanosam
   - densenet121_baseline_att_256x256_B_epoch_160.pth
 
 
+dustynv/nanosam:r36.2.0
+data/mobile_sam_mask_decoder.engine
+data/mobile_sam_mask_decoder.onnx
+data/resnet18_image_encoder.engine
+data/resnet18_image_encoder.onnx
+
 # 動作検証用のデモプログラムの実行
 ```commandline
 sh 5_demo.sh
