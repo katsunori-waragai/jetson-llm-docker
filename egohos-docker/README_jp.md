@@ -19,7 +19,15 @@ sh docker_run.sh
 ## Dockerfile の中で実行していること
 - 一連のdownload の実行
 
-## EGOHOSだけでは足りないと感じているもの
+## docker 環境内での作業
+- シェルスクリプト内で起動するpythonはpython3と明示する。
+そうでないと、python2.7が起動してしまう。
+- python3を実行するようにすること。
+- 修正済みのscriptのgit clone 先への重ね書き
+- 自作scriptのgit clone 先への重ね書き
+  - 自前動画のダウンロードとその動画への推論の実行
+
+## 足りないと感じているもの
 - 腕や手の関節の位置を出すことが含まれていない。
 - まして、その３D版もない。
 - これだけ、ハンドを動作させることはできない。
@@ -46,8 +54,11 @@ bash pred_all_obj2.sh
 
 predict_obj1_videos.shの中で呼び出しているpredict_videos.py の中にpythonインタプリタをpythonとだけ記述してある部分があり、これもpython3 と明示的に指定する。
 
-cbと略記されているのは contact boundary である。
+
+cbと略記されているのは
+contact boundary である。
 それによって、どの領域で手が対象物と触れているのかを把握できる。
+
 
 ### output 
 testimages
@@ -64,3 +75,10 @@ testimages/pred_twohands_vis
 ## 動画での推論
 - 動画はmp4のファイル形式をサポートしている。
   - webmなどのファイルは事前にmp4に変換しておく。
+
+
+## todo
+- conversion to TRT
+
+## troubleshooting
+- 検出結果を保存する際にastype(dtype=np.uint8)を指定すること。
