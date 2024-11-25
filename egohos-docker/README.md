@@ -6,7 +6,7 @@
 https://github.com/owenzlz/EgoHOS
 
 ## example of working result
-! [](doc/Egohos_example.png)
+![](doc/Egohos_example.png)
 
 Segmentation for each left and right arm, hand and object.
 
