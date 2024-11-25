@@ -1,31 +1,31 @@
 # docker for EgoHOS
-- 自己視点画像での腕検出と対象物の検出
-- 対象物は1st orderと 2nd orderとがある。
+- Arm detection and object detection in egcentric image
+- There are 1st order and 2nd order objects.
 
 ## original repo
 https://github.com/owenzlz/EgoHOS
 
-## 動作結果例
-![](doc/Egohos_example.png)
+## example of working result
+! [](doc/Egohos_example.png)
 
-左右それぞれの腕と手、対象物についてセグメンテーションをします。
+Segmentation for each left and right arm, hand and object.
 
-## 手順
+## Procedure
 ```commandline
 sh docker_build.sh
 sh docker_run.sh
 
 ```
-## Dockerfile の中で実行していること
-- 一連のdownload の実行
+## Running in the Dockerfile
+- Running a series of downloads.
 
-## EGOHOSだけでは足りないと感じているもの
-- 腕や手の関節の位置を出すことが含まれていない。
-- まして、その３D版もない。
-- これだけ、ハンドを動作させることはできない。
-- 1st, 2nd order interacting object が何かを教えてくれない。 
-- 物体をハンドリングしている手の場合だと、手の一部が隠れている。
-  - その隠れている指の状態を予測することが大事となる。
+## What we feel is missing from EGOHOS alone
+- It doesn't include producing the position of the joints of the arms and hands.
+- Nor is there a 3D version of it.
+- So much so that it is not possible to make the hand work.
+- 1st, 2nd order interacting object does not tell you what it is. 
+- In the case of a hand handling an object, part of the hand is hidden.
+  - It is important to predict the state of the hidden fingers.
 
 ```commandline
 cd mmsegmentation # if you are not in this directory
@@ -38,16 +38,16 @@ bash pred_all_obj2.sh
 
 --mode two_hands_obj1 1st order interacting objects
 --mode tow_hands_obj2 1st and 2nd order interacting objects
-とがある。
-ポットから鍋にお湯を注ぐ動作があるときには、ポットに手を触れているので、ポットが
-1st order interacting objectになる。
-対応して、--checkpoint_file に違いがある。
+and.
+When there is an action of pouring hot water from a pot to a pan, the pot is touching the hand, so the pot
+1st order interacting object.
+Correspondingly, there is a difference in the --checkpoint_file.
 
 
-predict_obj1_videos.shの中で呼び出しているpredict_videos.py の中にpythonインタプリタをpythonとだけ記述してある部分があり、これもpython3 と明示的に指定する。
+In predict_videos.py, which is called in predict_obj1_videos.sh, there is a part where the python interpreter is only described as python, which is also explicitly specified as python3.
 
-cbと略記されているのは contact boundary である。
-それによって、どの領域で手が対象物と触れているのかを把握できる。
+The abbreviation “cb” is the contact boundary.
+This allows us to know in which area the hand is in contact with the object.
 
 ### output 
 testimages
@@ -61,6 +61,6 @@ testimages/pred_obj2_vis
 testimages/pred_twohands
 testimages/pred_twohands_vis
 
-## 動画での推論
-- 動画はmp4のファイル形式をサポートしている。
-  - webmなどのファイルは事前にmp4に変換しておく。
+## Reasoning with videos
+- Video supports mp4 file format.
+  - Files such as webm should be converted to mp4 in advance.
